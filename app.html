@@ -775,10 +775,16 @@
           <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
         </svg>
       </div>
-      <div class="upload-box-title">Drop your chat export here</div>
-      <div class="upload-box-sub">ChatGPT or Claude JSON export · Processed in your browser</div>
-      <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
-      <input type="file" id="fileInput" accept=".json,.zip">
+      <div class="upload-box-title">Drop your chat exports here</div>
+      <div class="upload-box-sub">Claude · ChatGPT · Gemini · Grok · Multiple files welcome</div>
+      <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose Files</button>
+      <input type="file" id="fileInput" accept=".json" multiple>
+    </div>
+
+    <div id="filesList" style="display:none;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--mid);margin-bottom:10px">Files added — add more or generate</div>
+      <div id="filesListInner" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <button onclick="generateFromFiles()" class="upload-btn" style="margin-top:14px;width:100%">Generate My Profile →</button>
     </div>
 
     <div class="privacy-note">
@@ -796,19 +802,37 @@
         <div class="guide-card">
           <h4>💬 ChatGPT</h4>
           <ol>
-            <li>Go to Settings → Data Controls</li>
+            <li>Settings → Data Controls</li>
             <li>Click "Export data"</li>
-            <li>Wait for the email from OpenAI</li>
-            <li>Download and upload the <strong>conversations.json</strong> file</li>
+            <li>Wait for email from OpenAI</li>
+            <li>Upload <strong>conversations.json</strong></li>
           </ol>
         </div>
         <div class="guide-card">
           <h4>🤖 Claude</h4>
           <ol>
-            <li>Go to Settings → Privacy</li>
+            <li>Settings → Privacy</li>
             <li>Click "Export conversations"</li>
             <li>Download the JSON file</li>
             <li>Upload it here</li>
+          </ol>
+        </div>
+        <div class="guide-card">
+          <h4>✨ Gemini</h4>
+          <ol>
+            <li>Go to takeout.google.com</li>
+            <li>Select "Gemini Apps Activity"</li>
+            <li>Export and download</li>
+            <li>Upload the JSON file</li>
+          </ol>
+        </div>
+        <div class="guide-card">
+          <h4>𝕏 Grok</h4>
+          <ol>
+            <li>Go to x.com → Settings</li>
+            <li>Privacy → Your Account</li>
+            <li>Click "Request your archive"</li>
+            <li>Upload <strong>grok-conversations.json</strong></li>
           </ol>
         </div>
       </div>
@@ -942,50 +966,182 @@
 </div>
 
 <script>
-// ── FILE HANDLING ──
+// ── MULTI-FILE HANDLING ──
 const uploadBox = document.getElementById('uploadBox');
 const fileInput = document.getElementById('fileInput');
+let _pendingFiles = []; // stores parsed data from each file
 
 uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.classList.add('drag-over'); });
 uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('drag-over'));
 uploadBox.addEventListener('drop', e => {
   e.preventDefault();
   uploadBox.classList.remove('drag-over');
-  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  Array.from(e.dataTransfer.files).forEach(f => addFile(f));
 });
-fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+fileInput.addEventListener('change', e => {
+  Array.from(e.target.files).forEach(f => addFile(f));
+  e.target.value = '';
+});
 
-async function handleFile(file) {
+function detectPlatform(data, filename) {
+  const fn = filename.toLowerCase();
+  // Grok: X archive contains grok-conversations
+  if (fn.includes('grok')) return 'Grok';
+  // Gemini: Google Takeout format
+  if (fn.includes('gemini') || fn.includes('bard')) return 'Gemini';
+  // ChatGPT: array of objects with mapping property
+  if (Array.isArray(data) && data[0]?.mapping) return 'ChatGPT';
+  // ChatGPT alternate
+  if (data?.conversations && data.conversations[0]?.mapping) return 'ChatGPT';
+  // Claude: array with chat_messages or sender field
+  if (Array.isArray(data) && (data[0]?.chat_messages || data[0]?.uuid)) return 'Claude';
+  // Gemini Takeout: has conversations array with specific structure
+  if (data?.conversations && data.conversations[0]?.parts) return 'Gemini';
+  // Grok: messages with role field
+  if (Array.isArray(data) && data[0]?.messages && data[0]?.messages[0]?.role) return 'Grok';
+  return 'AI Assistant';
+}
+
+async function addFile(file) {
   showError('');
-  if (!file.name.endsWith('.json') && !file.name.endsWith('.zip')) {
-    showError('Please upload a JSON file. Export your history from ChatGPT or Claude settings.');
+  if (!file.name.endsWith('.json')) {
+    showError('Please upload JSON files only.');
     return;
   }
-  if (file.name.endsWith('.zip')) {
-    showError('ZIP file detected: please extract it and upload the conversations.json file inside.');
+  // Check for duplicate
+  if (_pendingFiles.find(f => f.name === file.name)) {
+    showError(file.name + ' already added.');
     return;
   }
-
-  let text;
+  let text, data;
   try { text = await file.text(); }
-  catch(e) { showError('Could not read file. Please try again.'); return; }
-
-  let data;
+  catch(e) { showError('Could not read ' + file.name); return; }
   try { data = JSON.parse(text); }
-  catch(e) { showError('Invalid JSON file. Make sure you downloaded the correct export file.'); return; }
+  catch(e) { showError(file.name + ' is not valid JSON.'); return; }
 
-  const metadata = extractMetadata(data);
-  if (metadata.userMessages < 20) {
-    showError('Not enough conversation data found. You need at least 20 messages to generate a profile.');
+  const platform = detectPlatform(data, file.name);
+  _pendingFiles.push({ name: file.name, data, platform });
+  renderFilesList();
+}
+
+function renderFilesList() {
+  const list = document.getElementById('filesList');
+  const inner = document.getElementById('filesListInner');
+  if (_pendingFiles.length === 0) { list.style.display = 'none'; return; }
+  list.style.display = 'block';
+  inner.innerHTML = _pendingFiles.map((f, i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--white);border:1px solid var(--border);border-radius:6px;">
+      <div>
+        <span style="font-size:13px;font-weight:500">${f.name}</span>
+        <span style="font-size:11px;color:var(--mid);margin-left:8px">${f.platform}</span>
+      </div>
+      <button onclick="removeFile(${i})" style="background:none;border:none;color:var(--mid);cursor:pointer;font-size:18px;line-height:1;padding:0 4px">×</button>
+    </div>`).join('');
+}
+
+function removeFile(i) {
+  _pendingFiles.splice(i, 1);
+  renderFilesList();
+}
+
+function generateFromFiles() {
+  if (_pendingFiles.length === 0) { showError('Please add at least one file.'); return; }
+  const allMetadata = _pendingFiles.map(f => extractMetadata(f.data, f.platform));
+  const merged = allMetadata.length === 1 ? allMetadata[0] : mergeMetadata(allMetadata);
+  if (merged.userMessages < 20) {
+    showError('Not enough conversation data found. You need at least 20 messages.');
     return;
   }
+  startAnalysis(merged);
+}
 
-  startAnalysis(metadata);
+function mergeMetadata(metadataArray) {
+  // Combine all metadata from multiple platforms into one unified profile
+  const platforms = metadataArray.map(m => m.platform).filter(Boolean);
+  let totalConversations = 0, userMessages = 0, totalWords = 0;
+  let questionCount = 0, pushbackCount = 0, deepDiveCount = 0, longMessages = 0;
+  const allTimestamps = [];
+  const mergedHourCount = {};
+  const mergedMonthCounts = {};
+
+  metadataArray.forEach(m => {
+    totalConversations += m.totalConversations || 0;
+    userMessages += m.userMessages || 0;
+    totalWords += (m.avgWordsPerMessage || 0) * (m.userMessages || 0);
+    questionCount += Math.round((m.questionRatio / 100) * (m.userMessages || 0));
+    pushbackCount += Math.round((m.pushbackRatio / 100) * (m.userMessages || 0));
+    deepDiveCount += Math.round((m.deepDiveRatio / 100) * (m.userMessages || 0));
+    longMessages += Math.round((m.longMessagePct / 100) * (m.userMessages || 0));
+    if (m.firstDate) allTimestamps.push(m.firstDate);
+    if (m.lastDate) allTimestamps.push(m.lastDate);
+    // Merge hour counts
+    Object.entries(m.hourCount || {}).forEach(([h, c]) => {
+      mergedHourCount[h] = (mergedHourCount[h] || 0) + c;
+    });
+    // Merge month chart
+    (m.monthChart || []).forEach(mc => {
+      mergedMonthCounts[mc.label] = (mergedMonthCounts[mc.label] || 0) + mc.pct;
+    });
+  });
+
+  const avgWords = userMessages ? Math.round(totalWords / userMessages) : 0;
+  const questionRatio = userMessages ? Math.round((questionCount / userMessages) * 100) : 0;
+  const pushbackRatio = userMessages ? Math.round((pushbackCount / userMessages) * 100) : 0;
+  const deepDiveRatio = userMessages ? Math.round((deepDiveCount / userMessages) * 100) : 0;
+  const longPct = userMessages ? Math.round((longMessages / userMessages) * 100) : 0;
+
+  allTimestamps.sort((a, b) => a - b);
+  const firstDate = allTimestamps[0];
+  const lastDate = allTimestamps[allTimestamps.length - 1];
+  const spanDays = firstDate && lastDate ? Math.round((lastDate - firstDate) / (1000 * 60 * 60 * 24)) : 0;
+  const spanMonths = Math.round(spanDays / 30);
+
+  const peakHour = Object.entries(mergedHourCount).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const nightMsgs = (mergedHourCount[22]||0)+(mergedHourCount[23]||0)+(mergedHourCount[0]||0)+(mergedHourCount[1]||0)+(mergedHourCount[2]||0);
+  const totalHourMsgs = Object.values(mergedHourCount).reduce((a,b) => a+b, 0);
+  const nightPct = totalHourMsgs ? Math.round((nightMsgs / totalHourMsgs) * 100) : 0;
+  const peakHourLabel = peakHour !== undefined ? (peakHour === '0' ? 'midnight' : peakHour + ':00') : 'unknown';
+
+  const depthScore = Math.min(95, Math.max(15, Math.round(avgWords * 1.4)));
+  const vocabRichness = Math.min(100, Math.round(50 + (pushbackRatio + questionRatio) / 4));
+
+  // Integrity score — boosted for multi-platform (harder to fake)
+  const spanScore = Math.min(100, (spanDays / 365) * 100);
+  const volScore = Math.min(100, (userMessages / 500) * 100);
+  const varScore = Math.min(100, pushbackRatio + questionRatio);
+  const multiPlatformBonus = Math.min(15, platforms.length * 5);
+  const integrityScore = Math.round(spanScore * 0.3 + volScore * 0.3 + varScore * 0.2 + multiPlatformBonus * 0.2 + 10);
+
+  const sortedMonths = Object.keys(mergedMonthCounts).sort();
+  const maxMonthVal = Math.max(...Object.values(mergedMonthCounts), 1);
+  const monthChart = sortedMonths.map(m => ({
+    label: m, pct: Math.round((mergedMonthCounts[m] / maxMonthVal) * 100)
+  }));
+
+  return {
+    totalConversations, userMessages, avgWordsPerMessage: avgWords,
+    questionRatio, pushbackRatio, deepDiveRatio, vocabRichness, depthScore,
+    longMessagePct: longPct, peakHours: peakHourLabel, nightPct,
+    spanDays, spanMonths, integrityScore: Math.max(30, Math.min(99, integrityScore)),
+    firstDate, lastDate, monthChart, hourCount: mergedHourCount,
+    platforms, platformCount: platforms.length,
+    singlePlatform: false
+  };
 }
 
 // ── METADATA EXTRACTION (local, no content read) ──
-function extractMetadata(data) {
-  let conversations = Array.isArray(data) ? data : (data.conversations || data.chat_history || []);
+function extractMetadata(data, platform) {
+  // Normalise conversation array across all platforms
+  let conversations = [];
+  if (Array.isArray(data)) {
+    conversations = data;
+  } else if (data.conversations) {
+    conversations = data.conversations;
+  } else if (data.chat_history) {
+    conversations = data.chat_history;
+  } else {
+    conversations = [];
+  }
   const totalConversations = conversations.length;
   let userMessages = 0, totalWords = 0, questionCount = 0;
   let pushbackCount = 0, deepDiveCount = 0, longMessages = 0;
@@ -996,19 +1152,36 @@ function extractMetadata(data) {
   const monthCounts = {};
 
   conversations.forEach(conv => {
-    const msgs = conv.mapping
-      ? Object.values(conv.mapping).filter(m => m.message?.content)
-      : (conv.chat_messages || conv.messages || []);
+    // Normalise messages across ChatGPT / Claude / Gemini / Grok formats
+    let msgs = [];
+    if (conv.mapping) {
+      // ChatGPT format
+      msgs = Object.values(conv.mapping).filter(m => m.message?.content);
+    } else if (conv.parts) {
+      // Gemini Takeout format — conv itself contains parts
+      msgs = conv.parts.map(p => ({ _gemini: true, role: p.role, text: p.text, created_at: conv.created_at }));
+    } else if (conv.chat_messages) {
+      msgs = conv.chat_messages;
+    } else if (conv.messages) {
+      msgs = conv.messages;
+    }
 
     msgs.forEach(msg => {
-      const role = msg.message ? msg.message.author?.role : (msg.sender || msg.role);
+      let role, msgContent, created;
+      if (msg._gemini) {
+        role = msg.role === 'user' ? 'user' : 'assistant';
+        msgContent = msg.text || '';
+        created = msg.created_at ? new Date(msg.created_at) : null;
+      } else if (msg.message) {
+        role = msg.message.author?.role;
+        msgContent = Array.isArray(msg.message.content) ? msg.message.content.map(c => c.text||'').join(' ') : (msg.message.content || '');
+        created = msg.message.create_time ? new Date(msg.message.create_time * 1000) : null;
+      } else {
+        role = msg.sender || msg.role || msg.author;
+        msgContent = msg.text || msg.content || msg.parts?.map?.(p => p.text||'').join(' ') || '';
+        created = msg.created_at ? new Date(msg.created_at) : (msg.timestamp ? new Date(msg.timestamp) : null);
+      }
       const isUser = role === 'user' || role === 'human';
-      const content = msg.message
-        ? (Array.isArray(msg.message.content) ? msg.message.content.map(c => c.text||'').join(' ') : msg.message.content || '')
-        : (msg.text || msg.content || '');
-      const created = msg.message?.create_time
-        ? new Date(msg.message.create_time * 1000)
-        : (msg.created_at ? new Date(msg.created_at) : null);
 
       if (created && !isNaN(created)) {
         timestamps.push(created);
@@ -1017,15 +1190,15 @@ function extractMetadata(data) {
         monthCounts[mk] = (monthCounts[mk] || 0) + 1;
       }
 
-      if (!isUser || typeof content !== 'string') return;
+      if (!isUser || typeof msgContent !== 'string') return;
       userMessages++;
-      const words = content.trim().split(/\s+/).filter(Boolean);
+      const words = msgContent.trim().split(/\s+/).filter(Boolean);
       totalWords += words.length;
       messageLengths.push(words.length);
       words.forEach(w => uniqueVocab.add(w.toLowerCase().replace(/[^a-z]/g,'')));
       if (words.length > 100) longMessages++;
-      if (content.includes('?')) questionCount++;
-      const cl = content.toLowerCase();
+      if (msgContent.includes('?')) questionCount++;
+      const cl = msgContent.toLowerCase();
       if (['but','however','actually','disagree','not sure','wait','no but','i think you'].some(w => cl.includes(w))) pushbackCount++;
       if (['why','how exactly','explain','elaborate','what if','go deeper','more detail'].some(w => cl.includes(w))) deepDiveCount++;
     });
@@ -1077,12 +1250,18 @@ function extractMetadata(data) {
     longMessagePct: longPct, peakHours: peakHourLabel, nightPct,
     spanDays, spanMonths, integrityScore: Math.max(30, integrityScore),
     firstDate, lastDate, monthChart, hourCount,
+    platform: platform || 'AI Assistant',
     singlePlatform: true
   };
 }
 
 // ── ANALYSIS ANIMATION ──
 function startAnalysis(metadata) {
+  // Show platform badges if multiple sources
+  if (metadata.platformCount > 1) {
+    const eyebrow = document.querySelector('#analyzingState .analyzing-eyebrow');
+    if (eyebrow) eyebrow.textContent = 'Merging ' + metadata.platformCount + ' sources · Building unified profile';
+  }
   document.getElementById('uploadState').style.display = 'none';
   document.getElementById('analyzingState').style.display = 'block';
 
@@ -1344,6 +1523,10 @@ function resetTool() {
   document.getElementById('resultsState').style.display = 'none';
   document.getElementById('uploadState').style.display = 'block';
   document.getElementById('fileInput').value = '';
+  document.getElementById('filesList').style.display = 'none';
+  document.getElementById('filesListInner').innerHTML = '';
+  document.getElementById('savedBanner').style.display = 'none';
+  _pendingFiles = [];
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
