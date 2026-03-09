@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThinkLedger — Wande's Cognitive Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0f;
+    --paper: #f7f5f0;
+    --mid: #6b6760;
+    --accent: #1a3a2a;
+    --accent-light: #e8ede9;
+    --border: #e0ddd8;
+    --white: #ffffff;
+    --gold: #b8962e;
+    --gold-light: #faf5e8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+  }
+
+  .logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    color: var(--ink);
+  }
+  .logo span { color: var(--accent); }
+
+  .verified-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 5px 12px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 56px 32px 100px;
+  }
+
+  .profile-top {
+    margin-bottom: 40px;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .profile-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 16px;
+  }
+
+  .profile-name-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .profile-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(40px, 7vw, 64px);
+    letter-spacing: -2px;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .archetype-pill {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--accent);
+    border: 1.5px solid var(--accent);
+    padding: 8px 20px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .profile-meta {
+    font-size: 13px;
+    color: var(--mid);
+    margin-bottom: 32px;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  .stat-cell {
+    background: var(--white);
+    padding: 22px 20px;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    letter-spacing: -1px;
+    color: var(--ink);
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--mid);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .summary-card {
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 10px;
+    padding: 40px 44px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+
+  .summary-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 20px;
+  }
+
+  .summary-text {
+    font-family: 'Instrument Serif', serif;
+    font-size: 21px;
+    line-height: 1.65;
+    font-style: italic;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 20px;
+  }
+
+  .signals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  .signal-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+  }
+
+  .signal-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .signal-name {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: var(--ink);
+  }
+
+  .signal-score {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .bar-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1) 0.6s;
+  }
+
+  .signal-observation {
+    font-size: 12px;
+    color: var(--mid);
+    line-height: 1.5;
+  }
+
+  .callout {
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .callout.night {
+    background: #0f0f1a;
+    color: #c8c4ff;
+    border: 1px solid #2a2a4a;
+    animation: fadeUp 0.5s ease 0.25s both;
+  }
+  .callout.night .callout-title { color: #e8e4ff; }
+
+  .callout.insight {
+    background: var(--gold-light);
+    border: 1px solid #e8d9a0;
+    animation: fadeUp 0.5s ease 0.3s both;
+  }
+  .callout.insight .callout-title { color: var(--gold); }
+
+  .callout-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+  .callout-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .callout-text { font-size: 13px; line-height: 1.6; opacity: 0.85; }
+
+  .traits-wrap {
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease 0.32s both;
+  }
+
+  .traits-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .trait {
+    padding: 7px 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  /* CAREER FIT */
+  .career-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease 0.36s both;
+  }
+
+  .career-header {
+    padding: 28px 36px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .career-intro {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.65;
+    margin-top: 8px;
+  }
+
+  .career-roles { padding: 8px 36px 16px; }
+
+  .role-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: start;
+    gap: 16px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .role-row:last-child { border-bottom: none; }
+
+  .role-rank {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px;
+    color: var(--border);
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .role-rank.top { color: var(--accent); }
+
+  .role-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .role-unexpected {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--gold-light);
+    border: 1px solid #e8d9a0;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .role-why {
+    font-size: 13px;
+    color: var(--mid);
+    line-height: 1.65;
+  }
+
+  .role-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .role-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--mid);
+  }
+  .role-tag.match {
+    background: var(--accent-light);
+    border-color: #b8d4c0;
+    color: var(--accent);
+  }
+
+  .fit-score {
+    font-family: 'Instrument Serif', serif;
+    font-size: 13px;
+    color: var(--mid);
+    white-space: nowrap;
+    padding-top: 3px;
+    text-align: right;
+  }
+  .fit-score strong {
+    font-size: 22px;
+    color: var(--ink);
+    display: block;
+    line-height: 1;
+  }
+  .fit-score span { font-size: 11px; }
+
+  .employer-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease 0.4s both;
+  }
+
+  .employer-quote {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 16px;
+    border-left: 3px solid var(--accent);
+    padding-left: 20px;
+  }
+
+  .employer-note { font-size: 12px; color: var(--mid); }
+
+  .privacy-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.5s ease 0.44s both;
+  }
+
+  .privacy-icon {
+    width: 36px; height: 36px;
+    background: var(--white);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+
+  .privacy-text { font-size: 12px; color: var(--mid); line-height: 1.5; }
+
+  .share-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.5s ease 0.48s both;
+  }
+
+  .btn {
+    padding: 12px 28px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.8; }
+  .btn.primary { background: var(--accent); color: var(--white); }
+  .btn.secondary { background: var(--white); color: var(--ink); border: 1.5px solid var(--border); }
+
+  /* INTEGRITY + TIMESPAN */
+  .integrity-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 40px;
+    animation: fadeUp 0.5s ease 0.12s both;
+  }
+
+  .timespan-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ts-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 4px;
+  }
+
+  .ts-dates {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    color: var(--ink);
+  }
+
+  .ts-arrow { color: var(--accent); margin: 0 4px; }
+
+  .ts-sub {
+    font-size: 11px;
+    color: var(--mid);
+    margin-top: 2px;
+  }
+
+  .ts-chart-label {
+    font-size: 10px;
+    color: var(--mid);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .ts-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 44px;
+  }
+
+  .ts-bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 44px;
+    gap: 4px;
+  }
+
+  .ts-bar {
+    width: 100%;
+    background: var(--accent);
+    border-radius: 2px 2px 0 0;
+    min-height: 2px;
+    transition: height 1s ease 0.8s;
+  }
+
+  .ts-bar.gap { background: var(--border); opacity: 0.4; }
+  .ts-bar.peak { background: var(--accent); opacity: 1; }
+
+  .ts-bar-month {
+    font-size: 8px;
+    color: var(--mid);
+    text-align: center;
+    line-height: 1;
+    height: 10px;
+    white-space: nowrap;
+  }
+
+  .integrity-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .integrity-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .integrity-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 10px;
+    white-space: nowrap;
+  }
+
+  .integrity-score-wrap {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 8px;
+  }
+
+  .integrity-ring { width: 80px; height: 80px; }
+
+  .integrity-number {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .integrity-verdict {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  .integrity-right { flex: 1; }
+
+  .integrity-checks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 4px;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .check-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .check-dot.green { background: #2d7a4f; }
+  .check-dot.amber { background: #c49a2a; }
+
+  .check-text {
+    font-size: 12px;
+    color: var(--mid);
+    line-height: 1.5;
+  }
+
+  .check-text strong { color: var(--ink); font-weight: 500; }
+
+  @media(max-width:600px){
+    .integrity-wrap { grid-template-columns: 1fr; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media(max-width:600px){
+    nav { padding: 16px 20px; }
+    .page { padding: 36px 20px 80px; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    .signals-grid { grid-template-columns: 1fr; }
+    .profile-name-row { flex-direction: column; align-items: flex-start; }
+    .summary-card { padding: 28px 24px; }
+    .career-header, .career-roles { padding-left: 20px; padding-right: 20px; }
+    .role-row { grid-template-columns: 24px 1fr; }
+    .fit-score { display: none; }
+  }
+
+  @media print {
+    nav { position: static; }
+    .share-row { display: none; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><a href="/" style="text-decoration:none;color:inherit">Think<span>Ledger</span></a></div>
+  <div class="verified-badge">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    Verified Profile
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="profile-top">
+    <div class="profile-eyebrow">Cognitive Profile · Claude Export · March 2026</div>
+    <div class="profile-name-row">
+      <div class="profile-name">Wande</div>
+      <div class="archetype-pill">Bridge Builder</div>
+    </div>
+    <div class="profile-meta">161 conversations · 1,532 messages · 110,548 words · March 2026</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-cell">
+      <span class="stat-number">72</span>
+      <span class="stat-label">Avg words/message</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-number">36%</span>
+      <span class="stat-label">Pushback rate</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-number">1am</span>
+      <span class="stat-label">Peak thinking hour</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-number">11%</span>
+      <span class="stat-label">Questions asked</span>
+    </div>
+  </div>
+
+  <!-- TIME SPAN + INTEGRITY -->
+  <div class="integrity-wrap">
+
+    <div class="timespan-card">
+      <div class="ts-left">
+        <div class="ts-label">Profile Window</div>
+        <div class="ts-dates">Nov 2024 <span class="ts-arrow">→</span> Mar 2026</div>
+        <div class="ts-sub">16 months of longitudinal data</div>
+      </div>
+      <div class="ts-chart">
+        <div class="ts-chart-label">Message activity over time</div>
+        <div class="ts-bars">
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="4"></div><div class="ts-bar-month">N'24</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="13"></div><div class="ts-bar-month">N'25</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="38"></div><div class="ts-bar-month">D</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="30"></div><div class="ts-bar-month">J</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar peak" data-h="100"></div><div class="ts-bar-month">F</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="14"></div><div class="ts-bar-month">M'26</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="integrity-card">
+      <div class="integrity-left">
+        <div class="integrity-label">Profile Integrity</div>
+        <div class="integrity-score-wrap">
+          <svg class="integrity-ring" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="34" fill="none" stroke="#e0ddd8" stroke-width="5"/>
+            <circle cx="40" cy="40" r="34" fill="none" stroke="#1a3a2a" stroke-width="5"
+              stroke-dasharray="213.6" stroke-dashoffset="213.6"
+              stroke-linecap="round" transform="rotate(-90 40 40)" id="integrityArc"/>
+          </svg>
+          <div class="integrity-number">89</div>
+        </div>
+        <div class="integrity-verdict">High Confidence</div>
+      </div>
+      <div class="integrity-right">
+        <div class="integrity-checks">
+          <div class="check-row">
+            <div class="check-dot green"></div>
+            <div class="check-text"><strong>Longitudinal</strong> — 16 months, not a recent batch upload</div>
+          </div>
+          <div class="check-row">
+            <div class="check-dot green"></div>
+            <div class="check-text"><strong>Natural variance</strong> — gaps and bursts consistent with real usage patterns</div>
+          </div>
+          <div class="check-row">
+            <div class="check-dot green"></div>
+            <div class="check-text"><strong>Volume</strong> — 1,532 messages too large to credibly fabricate</div>
+          </div>
+          <div class="check-row">
+            <div class="check-dot amber"></div>
+            <div class="check-text"><strong>Single platform</strong> — cross-platform verification would strengthen this further</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-label">Cognitive Summary</div>
+    <div class="summary-text">
+      Wande thinks in structured arguments, not fragments — 72 words per message on average, arriving with a fully formed position rather than a half-formed question. They push back 36% of the time, using AI as a sparring partner rather than an oracle. What emerges across 161 sessions is the portrait of someone who moves naturally between political, human, and operational realities — reading rooms as fluently as they read systems, and doing their best thinking alone, after midnight, when the world has gone quiet.
+    </div>
+  </div>
+
+  <div class="callout night">
+    <div class="callout-icon">🌙</div>
+    <div>
+      <div class="callout-title">The Midnight Mind</div>
+      <div class="callout-text">286 messages sent at 1am. 255 at midnight. 214 at 10pm. Wande's most intellectually active hours are when the world is asleep. This is not a 9-to-5 thinker — ideas arrive at depth when distractions disappear. Night-owl cognition is strongly associated with divergent thinking and systems-level pattern recognition.</div>
+    </div>
+  </div>
+
+  <div class="signals-grid">
+
+    <div class="signal-card">
+      <div class="signal-top">
+        <div class="signal-name">Critical Independence</div>
+        <div class="signal-score">91</div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" data-score="91"></div></div>
+      <div class="signal-observation">Challenges AI outputs in 36% of exchanges — uses it as a foil, not an authority. Holds its own position under pressure rather than deferring.</div>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-top">
+        <div class="signal-name">Depth of Engagement</div>
+        <div class="signal-score">95</div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" data-score="95"></div></div>
+      <div class="signal-observation">72-word average message length across 110k+ total words. Thinks in full arguments. Sustained engagement over time, not bursts.</div>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-top">
+        <div class="signal-name">Intellectual Assertion</div>
+        <div class="signal-score">89</div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" data-score="89"></div></div>
+      <div class="signal-observation">Only 11% of messages are questions. Arrives with a view and tests it — proposes rather than consults.</div>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-top">
+        <div class="signal-name">Human Intelligence</div>
+        <div class="signal-score">92</div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" data-score="92"></div></div>
+      <div class="signal-observation">Thinks instinctively about people — their incentives, anxieties, unspoken needs. Reads rooms as naturally as systems. Rare alongside analytical depth.</div>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-top">
+        <div class="signal-name">Cross-Domain Fluency</div>
+        <div class="signal-score">90</div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" data-score="90"></div></div>
+      <div class="signal-observation">Moves between political, operational, and cultural registers without losing the thread. Comfortable in the logic of a government ministry and a startup whiteboard.</div>
+    </div>
+
+    <div class="signal-card">
+      <div class="signal-top">
+        <div class="signal-name">Cognitive Stamina</div>
+        <div class="signal-score">88</div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" data-score="88"></div></div>
+      <div class="signal-observation">161 sessions of sustained engagement. Returns to hard problems repeatedly to refine, not restart. A long-game mind that doesn't quit.</div>
+    </div>
+
+  </div>
+
+  <div class="traits-wrap">
+    <div class="section-title">Thinking Traits</div>
+    <div class="traits-list">
+      <span class="trait">Reads rooms instinctively</span>
+      <span class="trait">Argues before asking</span>
+      <span class="trait">Night-mode cognition</span>
+      <span class="trait">Multi-register fluency</span>
+      <span class="trait">Long-game orientation</span>
+      <span class="trait">People-first systems thinker</span>
+      <span class="trait">Bilingual reasoning</span>
+      <span class="trait">Contrarian by default</span>
+      <span class="trait">Politically literate</span>
+      <span class="trait">Practitioner, not theorist</span>
+    </div>
+  </div>
+
+  <div class="callout insight">
+    <div class="callout-icon">💡</div>
+    <div>
+      <div class="callout-title">The Signal Most CVs Miss</div>
+      <div class="callout-text">The combination here is unusual: someone who thinks analytically at depth AND reads human dynamics naturally. Most people are one or the other. The analytical mind that also notices when someone in the room is uncomfortable, anticipates what they need before they ask, and adjusts accordingly — that's a rare profile. It doesn't fit neatly into job titles, which is exactly why it keeps getting filtered out by standard hiring processes.</div>
+    </div>
+  </div>
+
+  <!-- CAREER FIT -->
+  <div class="career-card">
+    <div class="career-header">
+      <div class="section-title" style="margin-bottom:8px;">Where This Profile Belongs</div>
+      <div class="career-intro">Derived purely from cognitive signals — pushback rate, depth, human intelligence pattern, cross-domain fluency, stamina. No biographical detail considered. Includes roles you may not have thought of.</div>
+    </div>
+
+    <div class="career-roles">
+
+      <div class="role-row">
+        <div class="role-rank top">1</div>
+        <div class="role-body">
+          <div class="role-title">Strategic Advisor to a Decision-Maker <span class="role-unexpected">Unexpected</span></div>
+          <div class="role-why">The cognitive signals here — high pushback (36%), strong human intelligence, thinking in full arguments at depth — describe someone whose value is judgment, not execution. The best advisors to leaders hold a position under pressure, read what's actually happening in a room, and translate complexity into a clear recommendation without losing the nuance. That's a pattern, not a credential. This profile produces it consistently across 161 sessions.</div>
+          <div class="role-tags">
+            <span class="role-tag match">Critical independence</span>
+            <span class="role-tag match">Human intelligence</span>
+            <span class="role-tag match">Depth of engagement</span>
+            <span class="role-tag">Executives · Foundations · Development institutions</span>
+          </div>
+        </div>
+        <div class="fit-score"><strong>96</strong><span>fit score</span></div>
+      </div>
+
+      <div class="role-row">
+        <div class="role-rank top">2</div>
+        <div class="role-body">
+          <div class="role-title">High-Stakes Partnerships Lead <span class="role-unexpected">Unexpected</span></div>
+          <div class="role-why">Partnerships that actually matter — between organisations with different logics, different incentives, different cultures — require a specific kind of thinker. Someone who can hold both sides of an argument simultaneously (visible in the 36% pushback and the assertive but people-aware thinking pattern), stay in it for the long game (88 on cognitive stamina), and care enough about the human dimension to make trust real rather than contractual. That combination is the signal here.</div>
+          <div class="role-tags">
+            <span class="role-tag match">Long-game stamina</span>
+            <span class="role-tag match">Human intelligence</span>
+            <span class="role-tag match">Cross-domain fluency</span>
+            <span class="role-tag">International orgs · Cross-border ventures · Public-private</span>
+          </div>
+        </div>
+        <div class="fit-score"><strong>93</strong><span>fit score</span></div>
+      </div>
+
+      <div class="role-row">
+        <div class="role-rank top">3</div>
+        <div class="role-body">
+          <div class="role-title">Market Intelligence & Entry Strategy <span class="role-unexpected">Unexpected</span></div>
+          <div class="role-why">The thinking pattern here — arguing from the ground up, not from the framework down — is the cognitive opposite of a consultant who parachutes in with a slide deck. The 95 depth score and cross-domain fluency signal someone who builds an understanding of a market from first principles, holds the operational and political dimensions at once, and can identify what the spreadsheet doesn't show. Organisations entering complex markets pay a premium for that and rarely find it.</div>
+          <div class="role-tags">
+            <span class="role-tag match">First-principles thinking</span>
+            <span class="role-tag match">Cross-domain fluency</span>
+            <span class="role-tag">Global tech · Development finance · Emerging market operators</span>
+          </div>
+        </div>
+        <div class="fit-score"><strong>91</strong><span>fit score</span></div>
+      </div>
+
+      <div class="role-row">
+        <div class="role-rank">4</div>
+        <div class="role-body">
+          <div class="role-title">Founder</div>
+          <div class="role-why">The independent thinking, nocturnal depth, contrarian instinct, and rejection stamina are a founder's cognitive profile. The honest caveat from the data: the same independence that makes this profile exceptional also makes it hard to activate inside someone else's structure. The question isn't capability — it's whether the right problem and the right moment have aligned yet. When they do, this profile builds rather than joins.</div>
+          <div class="role-tags">
+            <span class="role-tag match">Independence</span>
+            <span class="role-tag match">Contrarian thinking</span>
+            <span class="role-tag match">Cognitive stamina</span>
+          </div>
+        </div>
+        <div class="fit-score"><strong>87</strong><span>fit score</span></div>
+      </div>
+
+      <div class="role-row">
+        <div class="role-rank">✗</div>
+        <div class="role-body">
+          <div class="role-title">Where this profile does not thrive</div>
+          <div class="role-why">Environments that reward deference over challenge, pedigree over judgment, and process compliance over independent thinking. The 36% pushback rate and the 89 intellectual assertion score — strengths in the right context — create friction in organisations where the instinct to question reads as insubordination rather than rigour.</div>
+          <div class="role-tags">
+            <span class="role-tag">Rigid hierarchy</span>
+            <span class="role-tag">CV-first screening</span>
+            <span class="role-tag">Slow consensus cultures</span>
+          </div>
+        </div>
+        <div class="fit-score"><strong>—</strong><span>avoid</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="employer-card">
+    <div class="section-title">What the right employer reads</div>
+    <div class="employer-quote">
+      "The analytical depth and the human intelligence don't usually come together. This profile scores high on both — and does its best work in the space between systems and people, where most organisations struggle most."
+    </div>
+    <div class="employer-note">Derived entirely from conversation structure and behavioural metadata. No conversation content was read or stored.</div>
+  </div>
+
+  <div class="privacy-card">
+    <div class="privacy-icon">
+      <svg width="15" height="15" fill="none" stroke="#1a3a2a" stroke-width="1.8" viewBox="0 0 24 24">
+        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+      </svg>
+    </div>
+    <div class="privacy-text">
+      <strong style="color:var(--ink)">What was never seen:</strong> No conversation topics, no names, no URLs, no ideas, no projects, no personal details. Only timing patterns, message lengths, question frequency, and pushback signals were extracted.
+    </div>
+  </div>
+
+  <div class="share-row">
+    <button class="btn primary" onclick="window.print()">Download PDF</button>
+    <button class="btn secondary" onclick="copyLink()">Copy Shareable Link</button>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      // Signal bars
+      document.querySelectorAll('.bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.score + '%';
+      });
+
+      // Activity bars
+      document.querySelectorAll('.ts-bar').forEach(bar => {
+        const h = parseInt(bar.dataset.h) || 0;
+        bar.style.height = Math.max(2, Math.round(h * 0.44)) + 'px';
+      });
+
+      // Integrity ring (89/100 = 89% of circumference)
+      const arc = document.getElementById('integrityArc');
+      if (arc) {
+        const circumference = 213.6;
+        const offset = circumference - (89 / 100) * circumference;
+        arc.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1)';
+        arc.style.strokeDashoffset = offset;
+      }
+    }, 400);
+  });
+
+  function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = document.querySelectorAll('.btn.secondary')[0];
+      const orig = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>

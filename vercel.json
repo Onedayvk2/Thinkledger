@@ -1,0 +1,12 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "routes": [
+    { "src": "/api/generate", "dest": "/api/generate.js" },
+    { "src": "/api/profile", "dest": "/api/profile.js" },
+    { "src": "/profile/([^/]+)", "dest": "/profile.html" },
+    { "src": "/app", "dest": "/app.html" },
+    { "src": "/demo", "dest": "/demo.html" },
+    { "src": "/", "dest": "/index.html" }
+  ]
+}

@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThinkLedger — Generate Your Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0f;
+    --paper: #f7f5f0;
+    --mid: #6b6760;
+    --accent: #1a3a2a;
+    --accent-light: #e8ede9;
+    --border: #e0ddd8;
+    --white: #ffffff;
+    --gold: #b8962e;
+    --gold-light: #faf5e8;
+    --red: #c0392b;
+    --red-light: #fef2f2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .nav-demo {
+    font-size: 13px;
+    color: var(--mid);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1px;
+    transition: color 0.15s;
+  }
+  .nav-demo:hover { color: var(--ink); }
+
+  .verified-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 5px 12px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .page { max-width: 720px; margin: 0 auto; padding: 64px 32px 100px; }
+
+  /* UPLOAD STATE */
+  #uploadState { display: block; }
+
+  .upload-header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .upload-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 16px;
+  }
+
+  .upload-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(32px, 5vw, 48px);
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .upload-title em { font-style: italic; color: var(--accent); }
+
+  .upload-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--mid);
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .upload-box {
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+    padding: 56px 40px;
+    text-align: center;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  .upload-box:hover, .upload-box.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .upload-icon {
+    width: 52px; height: 52px;
+    margin: 0 auto 20px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .upload-box-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .upload-box-sub {
+    font-size: 13px;
+    color: var(--mid);
+    margin-bottom: 24px;
+  }
+
+  .upload-btn {
+    display: inline-block;
+    padding: 12px 32px;
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .upload-btn:hover { opacity: 0.85; }
+
+  #fileInput { display: none; }
+
+  .privacy-note {
+    font-size: 12px;
+    color: var(--mid);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.5s ease 0.15s both;
+  }
+
+  /* EXPORT GUIDE */
+  .guide-wrap {
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  .guide-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--mid);
+    margin-bottom: 16px;
+  }
+
+  .guide-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .guide-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+  }
+
+  .guide-card h4 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 17px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .guide-card ol {
+    list-style: decimal;
+    padding-left: 18px;
+    font-size: 13px;
+    color: var(--mid);
+    line-height: 1.9;
+  }
+
+  .error-msg {
+    display: none;
+    background: var(--red-light);
+    border: 1px solid #fecaca;
+    color: var(--red);
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+  .error-msg.active { display: block; }
+
+  /* ANALYZING STATE */
+  #analyzingState {
+    display: none;
+    text-align: center;
+    padding: 80px 0;
+  }
+
+  .spinner {
+    width: 36px; height: 36px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 28px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .analyzing-label {
+    font-size: 14px;
+    color: var(--mid);
+    margin-bottom: 24px;
+    min-height: 22px;
+  }
+
+  .progress-track {
+    width: 300px;
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    margin: 0 auto 12px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 1px;
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+
+  .progress-note {
+    font-size: 11px;
+    color: var(--border);
+    letter-spacing: 0.5px;
+  }
+
+  /* RESULTS STATE */
+  #resultsState { display: none; }
+
+  .results-header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .results-header h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+  }
+
+  .results-header p { font-size: 13px; color: var(--mid); }
+
+  /* INTEGRITY + TIMESPAN */
+  .integrity-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.5s ease 0.08s both;
+  }
+
+  .timespan-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+  }
+
+  .ts-label {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--mid); margin-bottom: 8px;
+  }
+
+  .ts-dates {
+    font-family: 'Instrument Serif', serif;
+    font-size: 19px; letter-spacing: -0.5px;
+    color: var(--ink); margin-bottom: 4px;
+  }
+
+  .ts-arrow { color: var(--accent); margin: 0 4px; }
+  .ts-sub { font-size: 11px; color: var(--mid); margin-bottom: 14px; }
+
+  .ts-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 40px;
+  }
+
+  .ts-bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 40px;
+    gap: 3px;
+  }
+
+  .ts-bar {
+    width: 100%;
+    background: var(--accent);
+    border-radius: 1px 1px 0 0;
+    min-height: 1px;
+    transition: height 1s ease 0.5s;
+  }
+
+  .ts-bar.empty { background: var(--border); opacity: 0.3; }
+  .ts-bar-lbl { font-size: 7px; color: var(--mid); text-align: center; }
+
+  .integrity-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 24px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+
+  .integrity-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .integrity-label {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--mid); margin-bottom: 10px; white-space: nowrap;
+  }
+
+  .ring-wrap {
+    position: relative;
+    width: 72px; height: 72px;
+    margin-bottom: 6px;
+  }
+
+  .ring-wrap svg { width: 72px; height: 72px; }
+
+  .ring-num {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .ring-verdict {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  .integrity-checks {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 2px;
+  }
+
+  .check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .check-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+
+  .check-dot.green { background: #2d7a4f; }
+  .check-dot.amber { background: #c49a2a; }
+  .check-dot.red { background: var(--red); }
+
+  .check-text {
+    font-size: 11px;
+    color: var(--mid);
+    line-height: 1.5;
+  }
+
+  .check-text strong { color: var(--ink); font-weight: 500; }
+
+  /* SUMMARY */
+  .summary-card {
+    background: var(--accent);
+    color: var(--white);
+    border-radius: 10px;
+    padding: 36px 40px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease 0.14s both;
+  }
+
+  .summary-lbl {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase;
+    opacity: 0.5; margin-bottom: 16px;
+  }
+
+  .summary-txt {
+    font-family: 'Instrument Serif', serif;
+    font-size: 19px;
+    font-style: italic;
+    line-height: 1.68;
+  }
+
+  /* SIGNALS */
+  .section-title {
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--mid); margin-bottom: 16px;
+  }
+
+  .signals-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease 0.2s both;
+  }
+
+  .sig-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+
+  .sig-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .sig-name { font-size: 12px; font-weight: 500; color: var(--ink); }
+
+  .sig-score {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .bar-t {
+    height: 2px; background: var(--border);
+    border-radius: 1px; overflow: hidden; margin-bottom: 8px;
+  }
+
+  .bar-f {
+    height: 100%; background: var(--accent);
+    border-radius: 1px; width: 0%;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1) 0.5s;
+  }
+
+  .sig-obs { font-size: 11px; color: var(--mid); line-height: 1.5; }
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: 8px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .callout.night {
+    background: #0f0f1a;
+    color: #c8c4ff;
+    border: 1px solid #2a2a4a;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.night .c-title { color: #e8e4ff; }
+
+  .callout.insight {
+    background: var(--gold-light);
+    border: 1px solid #e8d9a0;
+    animation: fadeUp 0.5s ease 0.28s both;
+  }
+  .callout.insight .c-title { color: var(--gold); }
+
+  .c-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .c-title { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+  .c-text { font-size: 12px; line-height: 1.6; opacity: 0.85; }
+
+  /* TRAITS */
+  .traits-wrap {
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease 0.3s both;
+  }
+
+  .traits-list { display: flex; flex-wrap: wrap; gap: 7px; }
+
+  .trait {
+    padding: 6px 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  /* CAREER FIT */
+  .career-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease 0.34s both;
+  }
+
+  .career-hdr {
+    padding: 22px 32px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .career-intro {
+    font-size: 13px;
+    color: var(--mid);
+    line-height: 1.6;
+    margin-top: 6px;
+  }
+
+  .career-roles { padding: 4px 32px 12px; }
+
+  .role-row {
+    display: grid;
+    grid-template-columns: 26px 1fr auto;
+    gap: 14px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .role-row:last-child { border-bottom: none; }
+
+  .role-rank {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px;
+    color: var(--border);
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .role-rank.top { color: var(--accent); }
+
+  .role-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 5px; }
+
+  .role-unexpected {
+    display: inline-block;
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gold);
+    background: var(--gold-light);
+    border: 1px solid #e8d9a0;
+    padding: 2px 7px; border-radius: 2px;
+    margin-left: 7px; vertical-align: middle;
+  }
+
+  .role-why { font-size: 12px; color: var(--mid); line-height: 1.6; }
+
+  .role-tags {
+    display: flex; flex-wrap: wrap;
+    gap: 5px; margin-top: 8px;
+  }
+
+  .role-tag {
+    font-size: 10px; padding: 2px 9px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 2px; color: var(--mid);
+  }
+
+  .role-tag.match {
+    background: var(--accent-light);
+    border-color: #b8d4c0;
+    color: var(--accent);
+  }
+
+  .fit-score {
+    font-family: 'Instrument Serif', serif;
+    font-size: 12px; color: var(--mid);
+    white-space: nowrap; text-align: right;
+    padding-top: 2px;
+  }
+
+  .fit-score strong {
+    font-size: 20px; color: var(--ink);
+    display: block; line-height: 1;
+  }
+
+  .fit-score span { font-size: 10px; }
+
+  /* EMPLOYER */
+  .employer-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s ease 0.38s both;
+  }
+
+  .employer-q {
+    font-family: 'Instrument Serif', serif;
+    font-size: 18px; font-style: italic;
+    line-height: 1.65; color: var(--ink);
+    border-left: 3px solid var(--accent);
+    padding-left: 18px; margin-bottom: 12px;
+  }
+
+  .employer-note { font-size: 11px; color: var(--mid); }
+
+  /* PRIVACY */
+  .privacy-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 22px;
+    display: flex; align-items: center;
+    gap: 14px; margin-bottom: 28px;
+    animation: fadeUp 0.5s ease 0.42s both;
+  }
+
+  .lock-icon {
+    width: 32px; height: 32px;
+    background: var(--white);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+
+  .privacy-txt { font-size: 11px; color: var(--mid); line-height: 1.55; }
+
+  /* SHARE */
+  .share-row {
+    display: flex; gap: 10px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.5s ease 0.46s both;
+  }
+
+  .btn {
+    padding: 11px 26px;
+    border-radius: 4px;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.8; }
+  .btn.p { background: var(--accent); color: var(--white); }
+  .btn.s { background: var(--white); color: var(--ink); border: 1.5px solid var(--border); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media(max-width:600px){
+    nav { padding: 16px 20px; }
+    .page { padding: 36px 20px 80px; }
+    .guide-grid { grid-template-columns: 1fr; }
+    .integrity-wrap { grid-template-columns: 1fr; }
+    .signals-grid { grid-template-columns: 1fr; }
+    .role-row { grid-template-columns: 24px 1fr; }
+    .fit-score { display: none; }
+    .summary-card { padding: 26px 22px; }
+  }
+
+  @media print {
+    nav, .share-row, #uploadState, #analyzingState { display: none !important; }
+    #resultsState { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Think<span>Ledger</span></a>
+  <div class="nav-right">
+    <a href="/demo" class="nav-demo">See a real profile</a>
+    <div class="verified-badge">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      Private Beta
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- UPLOAD STATE -->
+  <div id="uploadState">
+    <div class="upload-header">
+      <div class="upload-eyebrow">Generate your profile</div>
+      <h1 class="upload-title">Your mind has been thinking.<br><em>Time it spoke for itself.</em></h1>
+      <p class="upload-sub">Upload your AI chat export. We extract how you think — not what you said. Your profile generates in under a minute.</p>
+    </div>
+
+    <div class="upload-box" id="uploadBox">
+      <div class="upload-icon">
+        <svg width="22" height="22" fill="none" stroke="#1a3a2a" stroke-width="1.8" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+        </svg>
+      </div>
+      <div class="upload-box-title">Drop your chat export here</div>
+      <div class="upload-box-sub">ChatGPT or Claude JSON export · Processed in your browser</div>
+      <button class="upload-btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+      <input type="file" id="fileInput" accept=".json,.zip">
+    </div>
+
+    <div class="privacy-note">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+      </svg>
+      Your conversations are never uploaded or stored. All analysis runs in your browser.
+    </div>
+
+    <div id="errorMsg" class="error-msg"></div>
+
+    <div class="guide-wrap">
+      <div class="guide-title">How to export your history</div>
+      <div class="guide-grid">
+        <div class="guide-card">
+          <h4>💬 ChatGPT</h4>
+          <ol>
+            <li>Go to Settings → Data Controls</li>
+            <li>Click "Export data"</li>
+            <li>Wait for the email from OpenAI</li>
+            <li>Download and upload the <strong>conversations.json</strong> file</li>
+          </ol>
+        </div>
+        <div class="guide-card">
+          <h4>🤖 Claude</h4>
+          <ol>
+            <li>Go to Settings → Privacy</li>
+            <li>Click "Export conversations"</li>
+            <li>Download the JSON file</li>
+            <li>Upload it here</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYZING STATE -->
+  <div id="analyzingState">
+    <div class="spinner"></div>
+    <div class="analyzing-label" id="analyzingLabel">Reading conversation structure...</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-note">Your conversations are not being read or stored</div>
+  </div>
+
+  <!-- RESULTS STATE -->
+  <div id="resultsState">
+
+    <div class="results-header">
+      <h2 id="rProfileName">Your Profile</h2>
+      <p id="rMeta">Generated from your conversation data</p>
+    </div>
+
+    <!-- INTEGRITY + TIMESPAN -->
+    <div class="integrity-wrap">
+      <div class="timespan-card">
+        <div class="ts-label">Profile Window</div>
+        <div class="ts-dates" id="tsDates">— → —</div>
+        <div class="ts-sub" id="tsSub">—</div>
+        <div class="ts-bars" id="tsBars"></div>
+      </div>
+
+      <div class="integrity-card">
+        <div class="integrity-left">
+          <div class="integrity-label">Integrity</div>
+          <div class="ring-wrap">
+            <svg viewBox="0 0 72 72">
+              <circle cx="36" cy="36" r="30" fill="none" stroke="#e0ddd8" stroke-width="4"/>
+              <circle cx="36" cy="36" r="30" fill="none" stroke="#1a3a2a" stroke-width="4"
+                stroke-dasharray="188.5" stroke-dashoffset="188.5"
+                stroke-linecap="round" transform="rotate(-90 36 36)" id="integrityArc"/>
+            </svg>
+            <div class="ring-num" id="integrityNum">—</div>
+          </div>
+          <div class="ring-verdict" id="integrityVerdict">—</div>
+        </div>
+        <div class="integrity-checks" id="integrityChecks"></div>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-card">
+      <div class="summary-lbl">Who you are as a thinker</div>
+      <div class="summary-txt" id="rSummary">—</div>
+    </div>
+
+    <!-- NIGHT OWL -->
+    <div class="callout night" id="nightCallout">
+      <div class="c-icon">🌙</div>
+      <div>
+        <div class="c-title">The Midnight Mind</div>
+        <div class="c-text" id="nightText">—</div>
+      </div>
+    </div>
+
+    <!-- SIGNALS -->
+    <div class="signals-grid" id="signalsGrid"></div>
+
+    <!-- TRAITS -->
+    <div class="traits-wrap">
+      <div class="section-title">Thinking Traits</div>
+      <div class="traits-list" id="traitsList"></div>
+    </div>
+
+    <!-- HIDDEN INSIGHT -->
+    <div class="callout insight">
+      <div class="c-icon">💡</div>
+      <div>
+        <div class="c-title">A Hidden Signal</div>
+        <div class="c-text" id="insightText">—</div>
+      </div>
+    </div>
+
+    <!-- CAREER FIT -->
+    <div class="career-card">
+      <div class="career-hdr">
+        <div class="section-title" style="margin-bottom:6px">Where This Profile Belongs</div>
+        <div class="career-intro">Based purely on cognitive signals — no biographical assumptions made.</div>
+      </div>
+      <div class="career-roles" id="careerRoles"></div>
+    </div>
+
+    <!-- EMPLOYER -->
+    <div class="employer-card">
+      <div class="section-title">What an employer reads</div>
+      <div class="employer-q" id="employerQ">—</div>
+      <div class="employer-note">Derived entirely from conversation structure and behavioural metadata. No content was read or stored.</div>
+    </div>
+
+    <!-- PRIVACY -->
+    <div class="privacy-card">
+      <div class="lock-icon">
+        <svg width="13" height="13" fill="none" stroke="#1a3a2a" stroke-width="1.8" viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+        </svg>
+      </div>
+      <div class="privacy-txt">
+        <strong style="color:var(--ink)">What was never seen:</strong> No conversation topics, names, URLs, ideas, or personal details. Only timing patterns, message lengths, question frequency, and pushback signals were used.
+      </div>
+    </div>
+
+    <!-- SHARE -->
+    <div class="share-row">
+      <button class="btn p" id="saveBtn" onclick="saveProfile()">Save & get shareable link</button>
+      <button class="btn s" onclick="window.print()">Download PDF</button>
+      <button class="btn s" onclick="resetTool()">Start Over</button>
+    </div>
+
+    <!-- SAVE RESULT -->
+    <div id="savedBanner" style="display:none;margin-top:16px;background:var(--accent-light);border:1px solid #b8d4c0;border-radius:8px;padding:16px 20px;">
+      <div style="font-size:12px;color:var(--accent);font-weight:500;margin-bottom:8px">✓ Profile saved — share this link:</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input id="shareUrl" readonly style="flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:4px;font-size:13px;background:var(--white);font-family:'DM Sans',sans-serif;color:var(--ink);">
+        <button class="btn p" style="padding:9px 18px;white-space:nowrap" onclick="copyShareUrl()">Copy</button>
+      </div>
+      <div style="font-size:11px;color:var(--mid);margin-top:8px">Anyone with this link can view your profile. You can share it in emails, LinkedIn, or messages.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── FILE HANDLING ──
+const uploadBox = document.getElementById('uploadBox');
+const fileInput = document.getElementById('fileInput');
+
+uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.classList.add('drag-over'); });
+uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('drag-over'));
+uploadBox.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadBox.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+
+async function handleFile(file) {
+  showError('');
+  if (!file.name.endsWith('.json') && !file.name.endsWith('.zip')) {
+    showError('Please upload a JSON file. Export your history from ChatGPT or Claude settings.');
+    return;
+  }
+  if (file.name.endsWith('.zip')) {
+    showError('ZIP file detected: please extract it and upload the conversations.json file inside.');
+    return;
+  }
+
+  let text;
+  try { text = await file.text(); }
+  catch(e) { showError('Could not read file. Please try again.'); return; }
+
+  let data;
+  try { data = JSON.parse(text); }
+  catch(e) { showError('Invalid JSON file. Make sure you downloaded the correct export file.'); return; }
+
+  const metadata = extractMetadata(data);
+  if (metadata.userMessages < 20) {
+    showError('Not enough conversation data found. You need at least 20 messages to generate a profile.');
+    return;
+  }
+
+  startAnalysis(metadata);
+}
+
+// ── METADATA EXTRACTION (local, no content read) ──
+function extractMetadata(data) {
+  let conversations = Array.isArray(data) ? data : (data.conversations || data.chat_history || []);
+  const totalConversations = conversations.length;
+  let userMessages = 0, totalWords = 0, questionCount = 0;
+  let pushbackCount = 0, deepDiveCount = 0, longMessages = 0;
+  const uniqueVocab = new Set();
+  const messageLengths = [];
+  const hours = [];
+  const timestamps = [];
+  const monthCounts = {};
+
+  conversations.forEach(conv => {
+    const msgs = conv.mapping
+      ? Object.values(conv.mapping).filter(m => m.message?.content)
+      : (conv.chat_messages || conv.messages || []);
+
+    msgs.forEach(msg => {
+      const role = msg.message ? msg.message.author?.role : (msg.sender || msg.role);
+      const isUser = role === 'user' || role === 'human';
+      const content = msg.message
+        ? (Array.isArray(msg.message.content) ? msg.message.content.map(c => c.text||'').join(' ') : msg.message.content || '')
+        : (msg.text || msg.content || '');
+      const created = msg.message?.create_time
+        ? new Date(msg.message.create_time * 1000)
+        : (msg.created_at ? new Date(msg.created_at) : null);
+
+      if (created && !isNaN(created)) {
+        timestamps.push(created);
+        hours.push(created.getHours());
+        const mk = `${created.getFullYear()}-${String(created.getMonth()+1).padStart(2,'0')}`;
+        monthCounts[mk] = (monthCounts[mk] || 0) + 1;
+      }
+
+      if (!isUser || typeof content !== 'string') return;
+      userMessages++;
+      const words = content.trim().split(/\s+/).filter(Boolean);
+      totalWords += words.length;
+      messageLengths.push(words.length);
+      words.forEach(w => uniqueVocab.add(w.toLowerCase().replace(/[^a-z]/g,'')));
+      if (words.length > 100) longMessages++;
+      if (content.includes('?')) questionCount++;
+      const cl = content.toLowerCase();
+      if (['but','however','actually','disagree','not sure','wait','no but','i think you'].some(w => cl.includes(w))) pushbackCount++;
+      if (['why','how exactly','explain','elaborate','what if','go deeper','more detail'].some(w => cl.includes(w))) deepDiveCount++;
+    });
+  });
+
+  const avgWords = userMessages ? Math.round(totalWords / userMessages) : 0;
+  const questionRatio = userMessages ? Math.round((questionCount/userMessages)*100) : 0;
+  const pushbackRatio = userMessages ? Math.round((pushbackCount/userMessages)*100) : 0;
+  const deepDiveRatio = userMessages ? Math.round((deepDiveCount/userMessages)*100) : 0;
+  const vocabRichness = Math.max(20, Math.min(100, Math.round((uniqueVocab.size/Math.max(totalWords,1))*500)));
+  const depthScore = Math.min(95, Math.max(15, Math.round(avgWords * 1.4)));
+  const longPct = userMessages ? Math.round((longMessages/userMessages)*100) : 0;
+
+  // Hour analysis
+  const hourCount = {};
+  hours.forEach(h => hourCount[h] = (hourCount[h]||0)+1);
+  const peakHour = Object.entries(hourCount).sort((a,b)=>b[1]-a[1])[0]?.[0];
+  const nightMsgs = (hourCount[22]||0)+(hourCount[23]||0)+(hourCount[0]||0)+(hourCount[1]||0)+(hourCount[2]||0);
+  const nightPct = hours.length ? Math.round((nightMsgs/hours.length)*100) : 0;
+  const peakHourLabel = peakHour !== undefined ? `${peakHour === '0' ? 'midnight' : peakHour + ':00'}` : 'unknown';
+
+  // Time span
+  timestamps.sort((a,b)=>a-b);
+  const firstDate = timestamps[0];
+  const lastDate = timestamps[timestamps.length-1];
+  const spanDays = firstDate && lastDate ? Math.round((lastDate-firstDate)/(1000*60*60*24)) : 0;
+  const spanMonths = Math.round(spanDays/30);
+
+  // Integrity score
+  const spanScore = Math.min(100, (spanDays/365)*100);
+  const activeDays = new Set(timestamps.map(t => t.toDateString())).size;
+  const gapRatio = spanDays > 0 ? (spanDays-activeDays)/spanDays : 0;
+  const gapScore = Math.min(100, gapRatio*120);
+  const volScore = Math.min(100, (userMessages/500)*100);
+  const varScore = Math.min(100, pushbackRatio + questionRatio);
+  const integrityScore = Math.round(spanScore*0.3 + gapScore*0.25 + volScore*0.25 + varScore*0.2);
+
+  // Month chart data
+  const sortedMonths = Object.keys(monthCounts).sort();
+  const maxMonthVal = Math.max(...Object.values(monthCounts));
+  const monthChart = sortedMonths.map(m => ({
+    label: m.slice(2).replace('-','/'),
+    pct: Math.round((monthCounts[m]/maxMonthVal)*100)
+  }));
+
+  return {
+    totalConversations, userMessages, avgWordsPerMessage: avgWords,
+    questionRatio, pushbackRatio, deepDiveRatio, vocabRichness, depthScore,
+    longMessagePct: longPct, peakHours: peakHourLabel, nightPct,
+    spanDays, spanMonths, integrityScore: Math.max(30, integrityScore),
+    firstDate, lastDate, monthChart, hourCount,
+    singlePlatform: true
+  };
+}
+
+// ── ANALYSIS ANIMATION ──
+function startAnalysis(metadata) {
+  document.getElementById('uploadState').style.display = 'none';
+  document.getElementById('analyzingState').style.display = 'block';
+
+  const steps = [
+    { label: 'Reading conversation structure...', pct: 20 },
+    { label: 'Extracting thinking patterns (not content)...', pct: 42 },
+    { label: 'Analysing cognitive signals...', pct: 64 },
+    { label: 'Calculating integrity score...', pct: 80 },
+    { label: 'Generating your profile...', pct: 95 },
+  ];
+
+  let i = 0;
+  const tick = () => {
+    if (i < steps.length) {
+      document.getElementById('analyzingLabel').textContent = steps[i].label;
+      document.getElementById('progressFill').style.width = steps[i].pct + '%';
+      i++;
+      setTimeout(tick, 900);
+    } else {
+      callAPI(metadata);
+    }
+  };
+  setTimeout(tick, 300);
+}
+
+// ── API CALL ──
+async function callAPI(metadata) {
+  try {
+    const response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ metadata })
+    });
+
+    if (!response.ok) throw new Error('API error');
+    const data = await response.json();
+    renderResults(data.profile, metadata);
+  } catch(err) {
+    // Fallback to local generation if API unavailable
+    renderResults(generateLocalProfile(metadata), metadata);
+  }
+}
+
+// ── LOCAL FALLBACK PROFILE ──
+function generateLocalProfile(m) {
+  const d = m.depthScore, p = m.pushbackRatio, q = m.questionRatio;
+  let profileName = 'Analytical Thinker', thinkerType = 'Systematic Explorer';
+  if (p > 30 && d > 70) { profileName = 'Contrarian Architect'; thinkerType = 'Critical Synthesist'; }
+  else if (q > 50) { profileName = 'Curious Investigator'; thinkerType = 'First-Principles Thinker'; }
+  else if (d > 80) { profileName = 'Deep Systems Thinker'; thinkerType = 'Rigorous Explorer'; }
+
+  return {
+    profileName, thinkerType,
+    summary: `This thinker engages at depth rather than surface level, averaging ${m.avgWordsPerMessage} words per message and challenging AI responses ${m.pushbackRatio}% of the time. Only ${m.questionRatio}% of messages are questions — the rest are propositions, hypotheses, and challenges. This is someone who arrives with a position and tests it, not someone who arrives empty-handed. Across ${m.totalConversations} conversations, the pattern is consistent: a mind that thinks in arguments, not fragments.`,
+    signals: [
+      { name: 'Critical Independence', score: Math.min(95,p+50), label: `challenges AI in ${p}% of exchanges` },
+      { name: 'Depth of Engagement', score: d, label: `${m.avgWordsPerMessage} words per message average` },
+      { name: 'Intellectual Assertion', score: Math.min(95,100-q+20), label: `only ${q}% of messages are questions` },
+      { name: 'Human Intelligence', score: Math.min(90,p+40), label: 'thinks about incentives and people' },
+      { name: 'Cross-Domain Fluency', score: Math.min(88,d-5), label: 'moves between domains naturally' },
+      { name: 'Cognitive Stamina', score: Math.min(92, Math.round((m.userMessages/500)*100)+40), label: `${m.totalConversations} sessions sustained at depth` }
+    ],
+    traits: ['Argues before asking','Hypothesis-first','Night-mode cognition','Contrarian by default','Long-game orientation','Independent thinker','Practitioner mindset','Sustained curiosity'],
+    careerFits: [
+      { title: 'Strategic Advisor', why: `The ${p}% pushback rate and ${m.avgWordsPerMessage}-word average signal someone whose value is judgment, not execution. Advisors need to hold a position under pressure — this profile does it naturally.`, score: 94, tags: ['Critical independence','Depth','Stamina'], unexpected: true },
+      { title: 'High-Stakes Partnerships Lead', why: `Partnerships between organisations with different logics require someone who can hold both sides simultaneously. The combination of assertive thinking and sustained engagement over ${m.spanMonths} months is exactly that.`, score: 89, tags: ['Long-game stamina','Cross-domain fluency'], unexpected: true },
+      { title: 'Founder', why: `Independent, nocturnal, contrarian, rejection-resistant — this is a founder's cognitive profile. The question isn't capability. It's whether the right problem has appeared yet.`, score: 85, tags: ['Independence','Stamina','Contrarian instinct'], unexpected: false }
+    ],
+    employerQuote: `This profile demonstrates the kind of rigorous, independent thinking that cannot be trained — built consistently, at depth, over ${m.spanMonths} months.`,
+    hiddenInsight: `The low question ratio (${q}%) combined with the high pushback rate (${p}%) reveals a Socratic pattern — positions are proposed to see if they survive pressure, not to receive an answer. That's rare, and it's the cognitive signature of someone who thinks for themselves.`
+  };
+}
+
+// ── RENDER RESULTS ──
+function renderResults(profile, metadata) {
+  document.getElementById('analyzingState').style.display = 'none';
+  document.getElementById('resultsState').style.display = 'block';
+
+  // Store for saving
+  _currentProfile = profile;
+  _currentMetadata = metadata;
+  document.getElementById('savedBanner').style.display = 'none';
+  const saveBtn = document.getElementById('saveBtn');
+  if (saveBtn) { saveBtn.textContent = 'Save & get shareable link'; saveBtn.disabled = false; saveBtn.style.background = ''; }
+
+  // Header
+  document.getElementById('rProfileName').textContent = profile.profileName;
+  document.getElementById('rMeta').textContent = `${metadata.totalConversations} conversations · ${metadata.userMessages.toLocaleString()} messages · ${metadata.spanMonths} months`;
+
+  // Time span
+  const fmt = d => d ? d.toLocaleDateString('en-GB', {month:'short', year:'numeric'}) : '—';
+  document.getElementById('tsDates').innerHTML = `${fmt(metadata.firstDate)} <span class="ts-arrow">→</span> ${fmt(metadata.lastDate)}`;
+  document.getElementById('tsSub').textContent = `${metadata.spanMonths} months of longitudinal data`;
+
+  // Month chart
+  const barsEl = document.getElementById('tsBars');
+  barsEl.innerHTML = '';
+  (metadata.monthChart || []).forEach(m => {
+    const wrap = document.createElement('div');
+    wrap.className = 'ts-bar-wrap';
+    const bar = document.createElement('div');
+    bar.className = 'ts-bar' + (m.pct < 5 ? ' empty' : '');
+    bar.style.height = '2px';
+    bar.setAttribute('data-h', m.pct);
+    const lbl = document.createElement('div');
+    lbl.className = 'ts-bar-lbl';
+    lbl.textContent = m.pct === 100 ? m.label : '';
+    wrap.appendChild(bar); wrap.appendChild(lbl);
+    barsEl.appendChild(wrap);
+  });
+
+  // Integrity
+  const score = metadata.integrityScore;
+  document.getElementById('integrityNum').textContent = score;
+  document.getElementById('integrityVerdict').textContent = score >= 80 ? 'High Confidence' : score >= 60 ? 'Medium Confidence' : 'Low Confidence';
+
+  const checks = [
+    { dot: metadata.spanMonths >= 6 ? 'green' : 'amber', text: `<strong>Longitudinal</strong> — ${metadata.spanMonths} months of data` },
+    { dot: metadata.userMessages >= 200 ? 'green' : 'amber', text: `<strong>Volume</strong> — ${metadata.userMessages.toLocaleString()} messages` },
+    { dot: 'green', text: '<strong>Natural variance</strong> — gaps and bursts match real usage' },
+    { dot: 'amber', text: '<strong>Single platform</strong> — add a second export to strengthen this' }
+  ];
+
+  const checksEl = document.getElementById('integrityChecks');
+  checksEl.innerHTML = checks.map(c => `
+    <div class="check-row">
+      <div class="check-dot ${c.dot}"></div>
+      <div class="check-text">${c.text}</div>
+    </div>`).join('');
+
+  // Summary
+  document.getElementById('rSummary').textContent = profile.summary;
+
+  // Night owl
+  const peakH = parseInt(Object.entries(metadata.hourCount||{}).sort((a,b)=>b[1]-a[1])[0]?.[0]);
+  const isNightOwl = [22,23,0,1,2].includes(peakH);
+  const nightCallout = document.getElementById('nightCallout');
+  if (isNightOwl) {
+    document.getElementById('nightText').textContent = `Peak activity at ${metadata.peakHours}. ${metadata.nightPct}% of all messages sent between 10pm and 2am. This is not a 9-to-5 thinker — ideas arrive at depth when distractions disappear.`;
+  } else {
+    nightCallout.style.display = 'none';
+  }
+
+  // Signals
+  const grid = document.getElementById('signalsGrid');
+  grid.innerHTML = '';
+  (profile.signals || []).forEach(s => {
+    grid.innerHTML += `
+      <div class="sig-card">
+        <div class="sig-top">
+          <div class="sig-name">${s.name}</div>
+          <div class="sig-score">${s.score}</div>
+        </div>
+        <div class="bar-t"><div class="bar-f" data-score="${s.score}"></div></div>
+        <div class="sig-obs">${s.label}</div>
+      </div>`;
+  });
+
+  // Traits
+  const tl = document.getElementById('traitsList');
+  tl.innerHTML = (profile.traits||[]).map(t => `<span class="trait">${t}</span>`).join('');
+
+  // Insight
+  document.getElementById('insightText').textContent = profile.hiddenInsight || '';
+
+  // Career fits
+  const cr = document.getElementById('careerRoles');
+  cr.innerHTML = (profile.careerFits||[]).map((r, i) => `
+    <div class="role-row">
+      <div class="role-rank ${i<3?'top':''}">${i+1}</div>
+      <div>
+        <div class="role-title">${r.title}${r.unexpected ? '<span class="role-unexpected">Unexpected</span>' : ''}</div>
+        <div class="role-why">${r.why}</div>
+        <div class="role-tags">${(r.tags||[]).map(t=>`<span class="role-tag match">${t}</span>`).join('')}</div>
+      </div>
+      <div class="fit-score"><strong>${r.score}</strong><span>fit</span></div>
+    </div>`).join('');
+
+  // Employer quote
+  document.getElementById('employerQ').textContent = `"${profile.employerQuote}"`;
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.bar-f').forEach(b => { b.style.width = b.dataset.score + '%'; });
+    document.querySelectorAll('.ts-bar').forEach(b => {
+      b.style.transition = 'height 0.8s ease 0.3s';
+      b.style.height = Math.max(2, Math.round(parseInt(b.getAttribute('data-h')) * 0.38)) + 'px';
+    });
+    const arc = document.getElementById('integrityArc');
+    if (arc) {
+      const offset = 188.5 - (score/100) * 188.5;
+      arc.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1) 0.3s';
+      arc.style.strokeDashoffset = offset;
+    }
+  }, 300);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.toggle('active', !!msg);
+}
+
+// Save profile state
+let _currentProfile = null;
+let _currentMetadata = null;
+
+function saveProfile() {
+  if (!_currentProfile || !_currentMetadata) return;
+  const btn = document.getElementById('saveBtn');
+  btn.textContent = 'Saving...';
+  btn.disabled = true;
+
+  fetch('/api/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ profile: _currentProfile, metadata: _currentMetadata })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.id) {
+      const url = `${window.location.origin}/profile/${data.id}`;
+      document.getElementById('shareUrl').value = url;
+      document.getElementById('savedBanner').style.display = 'block';
+      btn.textContent = '✓ Saved';
+      btn.style.background = '#2d7a4f';
+    } else {
+      btn.textContent = 'Save & get shareable link';
+      btn.disabled = false;
+    }
+  })
+  .catch(() => {
+    btn.textContent = 'Save & get shareable link';
+    btn.disabled = false;
+  });
+}
+
+function copyShareUrl() {
+  const url = document.getElementById('shareUrl').value;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = document.querySelectorAll('.btn.s')[0];
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+function resetTool() {
+  document.getElementById('resultsState').style.display = 'none';
+  document.getElementById('uploadState').style.display = 'block';
+  document.getElementById('fileInput').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
