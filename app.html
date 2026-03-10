@@ -1213,8 +1213,8 @@ function extractMetadata(data, platform) {
     // Normalise messages across ChatGPT / Claude / Gemini / Grok formats
     let msgs = [];
     if (conv.mapping) {
-      // ChatGPT format
-      msgs = Object.values(conv.mapping).filter(m => m.message?.content);
+      // ChatGPT format - include all nodes with a message, content check happens during extraction
+      msgs = Object.values(conv.mapping).filter(m => m.message?.author?.role);
     } else if (conv.parts) {
       // Gemini Takeout format — conv itself contains parts
       msgs = conv.parts.map(p => ({ _gemini: true, role: p.role, text: p.text, created_at: conv.created_at }));
@@ -1232,7 +1232,20 @@ function extractMetadata(data, platform) {
         created = msg.created_at ? new Date(msg.created_at) : null;
       } else if (msg.message) {
         role = msg.message.author?.role;
-        msgContent = Array.isArray(msg.message.content) ? msg.message.content.map(c => c.text||'').join(' ') : (msg.message.content || '');
+        // Handle ChatGPT content — string, array, or {content_type, parts} object
+        const rawContent = msg.message.content;
+        if (!rawContent) {
+          msgContent = '';
+        } else if (typeof rawContent === 'string') {
+          msgContent = rawContent;
+        } else if (Array.isArray(rawContent)) {
+          msgContent = rawContent.map(c => typeof c === 'string' ? c : (c.text || '')).join(' ');
+        } else if (typeof rawContent === 'object' && rawContent.parts) {
+          // New ChatGPT format: {content_type: 'text', parts: ['message text']}
+          msgContent = rawContent.parts.filter(p => typeof p === 'string').join(' ');
+        } else {
+          msgContent = '';
+        }
         created = msg.message.create_time ? new Date(msg.message.create_time * 1000) : null;
       } else {
         role = msg.sender || msg.role || msg.author;
