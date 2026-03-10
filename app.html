@@ -1407,7 +1407,7 @@ function generateLocalProfile(m) {
   if (isVeryShort && isHighVolume) {
     archetype = 'The Debugger';
     thinkerType = 'Iterative Builder';
-    summaryFn = () => `This is a doer's profile. At ${avg} words per message across ${m.totalConversations} conversations, the pattern is clear — short, precise, task-focused exchanges that iterate rapidly toward a solution. This person doesn't philosophise about problems; they run them. The volume of ${m.userMessages} messages reflects someone who learns by doing, corrects by doing, and ships by doing. AI is a tool here, not a thought partner — and that distinction matters.`;
+    summaryFn = () => `This is a doer's profile. At ${avg} words per message across ${m.totalConversations} conversations, the pattern is clear — short, precise, task-focused exchanges that iterate rapidly toward a solution. This person does not philosophise about problems; they run them. The volume of ${m.userMessages} messages reflects someone who learns by doing, corrects by doing, and ships by doing. AI is a tool here, not a thought partner — and that distinction matters.`;
     signalsFn = () => [
       { name: 'Execution Speed', score: Math.min(95, 60 + (isHighVolume ? 20 : 0)), label: `${m.userMessages} messages — high iteration rate` },
       { name: 'Precision', score: Math.min(92, 70 + (isShort ? 15 : 0)), label: `${avg} words/message — surgical, not verbose` },
@@ -1424,12 +1424,12 @@ function generateLocalProfile(m) {
       { title: 'Startup CTO', why: `High execution capacity with sustained engagement over ${m.spanMonths} months — this person can hold a technical vision and build it simultaneously.`, score: 79, tags: ['Stamina','Build velocity'], unexpected: true }
     ];
     quoteFn = () => `${m.userMessages} messages, ${avg} words each — this is what a builder's mind looks like in motion.`;
-    insightFn = () => `The low message length (${avg} words) isn't a sign of shallow thinking — it's the signature of someone who thinks through their hands. The code is the thought.`;
+    insightFn = () => `The low message length (${avg} words) is not a sign of shallow thinking — it is the signature of someone who thinks through their hands. The code is the thought.`;
 
   } else if (isHighPushback && isDeep) {
     archetype = 'The Challenger';
     thinkerType = 'The Challenger';
-    summaryFn = () => `This mind doesn't accept the first answer — and the data is unambiguous about it. A ${p}% pushback rate combined with ${avg} words per message describes someone who arrives at AI conversations with a position already forming and pressure-tests it until something breaks or holds. Across ${m.spanMonths} months, this pattern is consistent: not someone who uses AI to think, but someone who uses AI to argue. The result is a thinker whose conclusions have been stress-tested.`;
+    summaryFn = () => `This mind does not accept the first answer — and the data is unambiguous about it. A ${p}% pushback rate combined with ${avg} words per message describes someone who arrives at AI conversations with a position already forming and pressure-tests it until something breaks or holds. Across ${m.spanMonths} months, this pattern is consistent: not someone who uses AI to think, but someone who uses AI to argue. The result is a thinker whose conclusions have been stress-tested.`;
     signalsFn = () => [
       { name: 'Position Strength', score: Math.min(95, p + 50), label: `challenges responses in ${p}% of exchanges` },
       { name: 'Argumentative Depth', score: d, label: `${avg} words per message — arrives with a position` },
@@ -1438,20 +1438,20 @@ function generateLocalProfile(m) {
       { name: 'Cognitive Stamina', score: Math.min(88, Math.round((m.userMessages/500)*80)+30), label: `${m.totalConversations} sustained sessions` },
       { name: 'Independent Reasoning', score: Math.min(91, p + 42), label: 'forms conclusions before asking' }
     ];
-    traitsFn = () => ['Position-first thinker','Argues to stress-test','Resistant to weak reasoning','Independent by default','Thinks in counterarguments','High intellectual standards','Doesn't move without evidence','Makes rooms sharper'];
+    traitsFn = () => ['Position-first thinker','Argues to stress-test','Resistant to weak reasoning','Independent by default','Thinks in counterarguments','High intellectual standards','Does not move without evidence','Makes rooms sharper'];
     careersFn = () => [
       { title: 'Strategic Advisor', why: `A ${p}% pushback rate over ${m.spanMonths} months is the fingerprint of someone whose value is their judgment. Advisors hold positions under pressure — this profile does it naturally.`, score: 93, tags: ['Position strength','Independence'], unexpected: false },
       { title: 'Investor / Analyst', why: `Investment requires resisting narratives. The challenger pattern — arriving with a thesis and pressure-testing it — is exactly how good investment decisions get made.`, score: 88, tags: ['Intellectual resistance','Depth'], unexpected: false },
-      { title: 'Policy & Research Lead', why: `Complex policy requires someone who argues before they conclude. The ${p}% challenge rate and ${avg}-word depth suggest someone who wouldn't sign off on a weak brief.`, score: 85, tags: ['Depth','Reasoning'], unexpected: false },
+      { title: 'Policy & Research Lead', why: `Complex policy requires someone who argues before they conclude. The ${p}% challenge rate and ${avg}-word depth suggest someone who would not sign off on a weak brief.`, score: 85, tags: ['Depth','Reasoning'], unexpected: false },
       { title: 'Founder', why: `Contrarian conviction, rejection-resistant, high standards — the challenger profile maps naturally to founding. The question is which problem is worth the fight.`, score: 82, tags: ['Independence','Stamina'], unexpected: true }
     ];
-    quoteFn = () => `This person makes the work better — not because they're difficult, but because they won't let weak thinking survive in the room.`;
+    quoteFn = () => `This person makes the work better — not because they are difficult, but because they will not let weak thinking survive in the room.`;
     insightFn = () => `The ${p}% pushback rate is high — but the depth score (${d}) confirms these aren't reactive challenges. They're considered ones. That combination is rare and genuinely valuable.`;
 
   } else if (isLowPushback && isDeep) {
     archetype = 'The Absorber';
     thinkerType = 'The Absorber';
-    summaryFn = () => `Low pushback does not mean passive — and this profile proves it. At ${avg} words per message with only ${p}% direct challenges, this is someone who processes fully before forming a position. They don't argue with AI because they're integrating, not debating — the debate happens later, in real rooms, with real stakes. Across ${m.totalConversations} conversations, the pattern is someone who arrives open and leaves decided.`;
+    summaryFn = () => `Low pushback does not mean passive — and this profile proves it. At ${avg} words per message with only ${p}% direct challenges, this is someone who processes fully before forming a position. They do not argue with AI because they are integrating, not debating — the debate happens later, in real rooms, with real stakes. Across ${m.totalConversations} conversations, the pattern is someone who arrives open and leaves decided.`;
     signalsFn = () => [
       { name: 'Integrative Depth', score: d, label: `${avg} words/message — full processing before output` },
       { name: 'Receptive Intelligence', score: Math.min(92, 100 - p + 30), label: `${p}% pushback — absorbs before filtering` },
@@ -1462,18 +1462,18 @@ function generateLocalProfile(m) {
     ];
     traitsFn = () => ['Processes before concluding','Absorbs fully before filtering','Debates in real rooms not with tools','Intellectual flexibility','High-quality output from deep input','Patient under complexity','Considered not reactive','Updates position with evidence'];
     careersFn = () => [
-      { title: 'Research Lead', why: `The absorber pattern — deep engagement, low reactivity, high processing — is the cognitive fingerprint of excellent research. This person doesn't rush to conclusions.`, score: 92, tags: ['Depth','Patience','Processing'], unexpected: false },
+      { title: 'Research Lead', why: `The absorber pattern — deep engagement, low reactivity, high processing — is the cognitive fingerprint of excellent research. This person does not rush to conclusions.`, score: 92, tags: ['Depth','Patience','Processing'], unexpected: false },
       { title: 'Chief of Staff', why: `CoS roles require someone who processes enormous amounts of information and synthesises without distorting it. Low pushback with high depth is exactly that profile.`, score: 88, tags: ['Integration','Depth'], unexpected: false },
       { title: 'Strategy Consultant', why: `Clients need advisors who listen before they prescribe. The ${p}% pushback rate combined with ${avg}-word depth describes someone who earns conclusions rather than performing them.`, score: 85, tags: ['Receptive intelligence','Output quality'], unexpected: false },
       { title: 'Executive Coach', why: `The absorber profile — genuinely open, deeply processing, not reflexively challenging — maps directly to the best coaches. They hold space and then act precisely.`, score: 80, tags: ['Flexibility','Depth'], unexpected: true }
     ];
-    quoteFn = () => `Don't mistake the quiet for empty — this person is processing everything, and when they speak, it's finished thinking.`;
-    insightFn = () => `The ${p}% pushback rate would look like passivity on paper. But paired with ${avg} words per message and ${d}/100 depth, it's the opposite — someone so confident in their processing they don't need to perform disagreement.`;
+    quoteFn = () => `Do not mistake the quiet for empty — this person is processing everything, and when they speak, it is finished thinking.`;
+    insightFn = () => `The ${p}% pushback rate would look like passivity on paper. But paired with ${avg} words per message and ${d}/100 depth, it is the opposite — someone so confident in their processing they do not need to perform disagreement.`;
 
   } else if (isNightOwl && isDeep) {
     archetype = 'The Strategist';
     thinkerType = 'The Strategist';
-    summaryFn = () => `${m.nightPct}% of messages sent between 10pm and 2am. That isn't insomnia — it's a cognitive schedule. This person's mind runs at depth when the noise disappears, averaging ${avg} words per message across ${m.totalConversations} sessions over ${m.spanMonths} months. The pattern is a slow burn: long periods of observation, then concentrated output. This is not a 9-to-5 thinker, and roles that demand one would waste what this profile offers.`;
+    summaryFn = () => `${m.nightPct}% of messages sent between 10pm and 2am. That is not insomnia — it is a cognitive schedule. This person's mind runs at depth when the noise disappears, averaging ${avg} words per message across ${m.totalConversations} sessions over ${m.spanMonths} months. The pattern is a slow burn: long periods of observation, then concentrated output. This is not a 9-to-5 thinker, and roles that demand one would waste what this profile offers.`;
     signalsFn = () => [
       { name: 'Strategic Depth', score: d, label: `${avg} words/message — deliberate, not reactive` },
       { name: 'Night Cognition', score: Math.min(93, night * 1.5 + 30), label: `${m.nightPct}% activity after 10pm` },
@@ -1490,12 +1490,12 @@ function generateLocalProfile(m) {
       { title: 'Writer / Researcher', why: `The combination of solitude, depth, and sustained engagement over ${m.spanMonths} months describes someone who can hold a complex idea long enough to resolve it.`, score: 81, tags: ['Depth','Stamina'], unexpected: true }
     ];
     quoteFn = () => `This is what a long-game mind looks like — not flashy, not fast, but consistently deep when it matters most.`;
-    insightFn = () => `The peak hour of ${m.peakHours} isn't a quirk — it's structural. This person's best thinking requires a specific condition: silence. The data over ${m.spanMonths} months confirms it hasn't changed.`;
+    insightFn = () => `The peak hour of ${m.peakHours} is not a quirk — it is structural. This person's best thinking requires a specific condition: silence. The data over ${m.spanMonths} months confirms it has not changed.`;
 
   } else if (isHighQ && !isHighPushback) {
     archetype = 'The Explorer';
     thinkerType = 'The Explorer';
-    summaryFn = () => `Questions are the product here — ${q}% of messages contain them, which is the signature of a mind that leads with curiosity rather than conclusion. At ${avg} words per message across ${m.totalConversations} conversations, this is someone who uses AI the way a good journalist uses a source: to find the question underneath the question. The low pushback rate (${p}%) isn't absence of opinion — it's the discipline of staying open long enough to actually learn something.`;
+    summaryFn = () => `Questions are the product here — ${q}% of messages contain them, which is the signature of a mind that leads with curiosity rather than conclusion. At ${avg} words per message across ${m.totalConversations} conversations, this is someone who uses AI the way a good journalist uses a source: to find the question underneath the question. The low pushback rate (${p}%) is not absence of opinion — it is the discipline of staying open long enough to actually learn something.`;
     signalsFn = () => [
       { name: 'Curiosity Depth', score: Math.min(95, q * 2 + 30), label: `${q}% of messages contain questions` },
       { name: 'Intellectual Openness', score: Math.min(90, 100 - p + 20), label: `${p}% pushback — genuinely open to new positions` },
@@ -1506,19 +1506,19 @@ function generateLocalProfile(m) {
     ];
     traitsFn = () => ['Question-led thinker','Curiosity before conclusion','Follows threads wherever they lead','Intellectually open','Wide domain range','Journalist instinct','Learns by asking','Comfortable not knowing yet'];
     careersFn = () => [
-      { title: 'Journalist / Investigator', why: `A ${q}% question rate is the cognitive fingerprint of someone who finds the story underneath the story. This profile asks the question after the obvious question — that's where the real information lives.`, score: 93, tags: ['Curiosity','Openness','Range'], unexpected: false },
+      { title: 'Journalist / Investigator', why: `A ${q}% question rate is the cognitive fingerprint of someone who finds the story underneath the story. This profile asks the question after the obvious question — that is where the real information lives.`, score: 93, tags: ['Curiosity','Openness','Range'], unexpected: false },
       { title: 'Product Researcher', why: `User research requires genuine curiosity and the discipline to not jump to conclusions. The explorer profile — high questions, low pushback — is exactly the mindset that produces accurate user insight.`, score: 88, tags: ['Curiosity','Openness'], unexpected: false },
       { title: 'Innovation Consultant', why: `Explorers find opportunities others have rationalised away. The wide-ranging, question-led pattern across ${m.spanMonths} months suggests someone comfortable at the edges of established thinking.`, score: 84, tags: ['Range','Agility'], unexpected: false },
-      { title: 'Venture Capitalist', why: `The best investors are curious before they're convinced. The explorer pattern — wide range, low reactivity, high question rate — maps to finding opportunity before it's obvious.`, score: 80, tags: ['Range','Openness'], unexpected: true }
+      { title: 'Venture Capitalist', why: `The best investors are curious before they are convinced. The explorer pattern — wide range, low reactivity, high question rate — maps to finding opportunity before it is obvious.`, score: 80, tags: ['Range','Openness'], unexpected: true }
     ];
-    quoteFn = () => `This person asks the question after the obvious question — and that's usually where the real answer is.`;
-    insightFn = () => `The ${q}% question rate might look like uncertainty. But combined with ${m.spanMonths} months of sustained engagement, it's the opposite — the discipline to stay curious long enough to actually understand something.`;
+    quoteFn = () => `This person asks the question after the obvious question — and that is usually where the real answer is.`;
+    insightFn = () => `The ${q}% question rate might look like uncertainty. But combined with ${m.spanMonths} months of sustained engagement, it is the opposite — the discipline to stay curious long enough to actually understand something.`;
 
   } else {
     // Default — The Synthesiser
     archetype = 'The Synthesiser';
     thinkerType = 'The Synthesiser';
-    summaryFn = () => `Balance is the signature here. At ${avg} words per message, ${p}% pushback, and ${q}% questions across ${m.totalConversations} conversations, this is a profile that doesn't optimise for any single cognitive mode — it moves between them. The synthesiser doesn't go deep on one axis; they go deep on the space between axes. After ${m.spanMonths} months of sustained engagement, the pattern is someone who connects things others keep separate.`;
+    summaryFn = () => `Balance is the signature here. At ${avg} words per message, ${p}% pushback, and ${q}% questions across ${m.totalConversations} conversations, this is a profile that does not optimise for any single cognitive mode — it moves between them. The synthesiser does not go deep on one axis; they go deep on the space between axes. After ${m.spanMonths} months of sustained engagement, the pattern is someone who connects things others keep separate.`;
     signalsFn = () => [
       { name: 'Synthetic Intelligence', score: Math.min(90, d + 10), label: 'connects across domains naturally' },
       { name: 'Cognitive Balance', score: Math.min(88, 50 + Math.abs(50 - p)), label: `${p}% pushback — selective, not reflexive` },
@@ -1570,9 +1570,9 @@ function computeCultureMap(metadata, profile) {
       right: 'Intense & All-In',
       pos: Math.min(95, Math.max(5, Math.round((p * 0.5) + (deep * 0.3) + (long * 0.2)))),
       verdict: (v) => v < 35
-        ? `<strong>Cool & Unbothered</strong> — You don't spiral. You process, decide, and move on.`
+        ? `<strong>Cool & Unbothered</strong> — You you do not spiral. You process, decide, and move on.`
         : v > 65
-        ? `<strong>Intense & All-In</strong> — When something catches you, you don't let go easily.`
+        ? `<strong>Intense & All-In</strong> — When something catches you, you do not let go easily.`
         : `<strong>Balanced</strong> — Measured by default, intense when it matters.`
     },
     {
