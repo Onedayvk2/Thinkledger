@@ -744,6 +744,56 @@
     nav, .share-row, #uploadState, #analyzingState { display: none !important; }
     #resultsState { display: block !important; }
   }
+
+  /* ── CULTURE MAP ── */
+  .culture-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 10px; padding: 28px 32px; margin-bottom: 16px;
+  }
+  .culture-intro {
+    font-size: 12px; color: var(--mid); margin-bottom: 24px; line-height: 1.6;
+  }
+  .culture-dim { margin-bottom: 22px; }
+  .culture-dim:last-child { margin-bottom: 0; }
+  .culture-labels {
+    display: flex; justify-content: space-between;
+    font-size: 11px; font-weight: 500; margin-bottom: 6px;
+  }
+  .culture-label-l { color: var(--mid); }
+  .culture-label-r { color: var(--mid); }
+  .culture-label-l.active { color: var(--accent); font-weight: 600; }
+  .culture-label-r.active { color: var(--accent); font-weight: 600; }
+  .culture-track {
+    height: 4px; background: var(--border); border-radius: 2px;
+    position: relative; margin-bottom: 6px;
+  }
+  .culture-fill {
+    position: absolute; top: 0; height: 100%;
+    background: var(--accent); border-radius: 2px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1) 0.4s;
+    width: 0;
+  }
+  .culture-dot {
+    position: absolute; top: 50%; transform: translate(-50%, -50%);
+    width: 14px; height: 14px; background: var(--accent);
+    border: 2px solid var(--white); border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    transition: left 1.2s cubic-bezier(0.4,0,0.2,1) 0.4s;
+    left: 50%;
+  }
+  .culture-verdict {
+    font-size: 11px; color: var(--mid); font-style: italic;
+  }
+  .culture-verdict strong { color: var(--ink); font-style: normal; }
+  .culture-env { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .culture-env-title { font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); margin-bottom: 14px; }
+  .env-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .env-col h5 { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+  .env-col.thrives h5 { color: var(--accent); }
+  .env-col.drains h5 { color: #c0392b; }
+  .env-item { font-size: 12px; color: var(--mid); padding: 5px 0; border-bottom: 1px solid var(--border); line-height: 1.4; }
+  .env-item:last-child { border-bottom: none; }
+  @media(max-width:600px){ .env-cols { grid-template-columns: 1fr; } .culture-card { padding: 20px 18px; } }
 </style>
 </head>
 <body>
@@ -908,6 +958,14 @@
       <div class="traits-list" id="traitsList"></div>
     </div>
 
+
+    <!-- CULTURE MAP -->
+    <div class="culture-card" id="cultureCard">
+      <div class="section-title">Culture & Energy Map</div>
+      <div class="culture-intro">How you show up in a room. Derived from conversation behaviour — not self-reported.</div>
+      <div id="cultureDims"></div>
+      <div class="culture-env" id="cultureEnv"></div>
+    </div>
     <!-- HIDDEN INSIGHT -->
     <div class="callout insight">
       <div class="c-icon">💡</div>
@@ -1336,6 +1394,136 @@ function generateLocalProfile(m) {
 }
 
 // ── RENDER RESULTS ──
+
+// ── CULTURE MAP ──
+function computeCultureMap(metadata, profile) {
+  // Each dimension is a value 0-100 where 0 = left label, 100 = right label
+  const p = metadata.pushbackRatio || 0;
+  const q = metadata.questionRatio || 0;
+  const avg = metadata.avgWordsPerMessage || 0;
+  const depth = metadata.depthScore || 50;
+  const night = metadata.nightPct || 0;
+  const deep = metadata.deepDiveRatio || 0;
+  const long = metadata.longMessagePct || 0;
+  const span = metadata.spanMonths || 0;
+
+  const dims = [
+    {
+      left: 'Cool & Unbothered',
+      right: 'Intense & All-In',
+      pos: Math.min(95, Math.max(5, Math.round((p * 0.5) + (deep * 0.3) + (long * 0.2)))),
+      verdict: (v) => v < 35
+        ? `<strong>Cool & Unbothered</strong> — You don't spiral. You process, decide, and move on.`
+        : v > 65
+        ? `<strong>Intense & All-In</strong> — When something catches you, you don't let go easily.`
+        : `<strong>Balanced</strong> — Measured by default, intense when it matters.`
+    },
+    {
+      left: 'Big Picture',
+      right: 'Deep in the Weeds',
+      pos: Math.min(95, Math.max(5, Math.round((depth * 0.4) + (avg * 0.4) + (deep * 0.2)))),
+      verdict: (v) => v < 35
+        ? `<strong>Big Picture</strong> — You think in systems and strategy, not granular detail.`
+        : v > 65
+        ? `<strong>Deep in the Weeds</strong> — You're not satisfied until you understand the mechanics.`
+        : `<strong>Fluent in both</strong> — You can zoom in and out. Rare and valuable.`
+    },
+    {
+      left: 'Solo Thinker',
+      right: 'Room Energiser',
+      pos: Math.min(95, Math.max(5, Math.round(100 - (night * 0.6) - (long * 0.2) + (q * 0.3)))),
+      verdict: (v) => v < 35
+        ? `<strong>Solo Thinker</strong> — Your best ideas arrive alone. You think before you speak.`
+        : v > 65
+        ? `<strong>Room Energiser</strong> — You think out loud. You make rooms sharper.`
+        : `<strong>Selective collaborator</strong> — You choose when to go deep alone vs when to open it up.`
+    },
+    {
+      left: 'Challenger',
+      right: 'Builder',
+      pos: Math.min(95, Math.max(5, Math.round(100 - (p * 0.7) - (q * 0.2)))),
+      verdict: (v) => v < 35
+        ? `<strong>Challenger</strong> — You question the brief before you answer it. You make things better.`
+        : v > 65
+        ? `<strong>Builder</strong> — You take the goal and execute. Momentum over debate.`
+        : `<strong>Strategic challenger</strong> — You challenge what matters, build what works.`
+    },
+    {
+      left: 'Slow Burn',
+      right: 'Fast Fire',
+      pos: Math.min(95, Math.max(5, Math.round(100 - (span * 1.5) + (q * 0.3) + (p * 0.2)))),
+      verdict: (v) => v < 35
+        ? `<strong>Slow Burn</strong> — You let ideas develop. Patience is a competitive advantage for you.`
+        : v > 65
+        ? `<strong>Fast Fire</strong> — You iterate quickly. Speed is how you learn.`
+        : `<strong>Adaptable pace</strong> — You match the energy of the situation.`
+    }
+  ];
+
+  // Culture environments derived from overall profile
+  const isIntense = dims[0].pos > 55;
+  const isDeep = dims[1].pos > 55;
+  const isSolo = dims[2].pos < 45;
+  const isChallenger = dims[3].pos < 45;
+  const isFast = dims[4].pos > 55;
+
+  const thrives = [];
+  const drains = [];
+
+  if (isChallenger) { thrives.push('Roles with creative latitude'); drains.push('Heavy process and bureaucracy'); }
+  if (isIntense) { thrives.push('High-stakes, high-ownership work'); drains.push('Roles without real responsibility'); }
+  if (isSolo) { thrives.push('Deep work environments'); drains.push('Constant meetings and interruptions'); }
+  if (isDeep) { thrives.push('Complex problem domains'); drains.push('Surface-level, repetitive tasks'); }
+  if (isFast) { thrives.push('Fast-moving startups'); drains.push('Slow institutional decision-making'); }
+  if (!isFast) { thrives.push('Research and strategy roles'); drains.push('Pressure to ship before thinking'); }
+  if (!isSolo) { thrives.push('Collaborative, energetic teams'); drains.push('Isolated, heads-down roles'); }
+
+  return { dims, thrives: thrives.slice(0,3), drains: drains.slice(0,3) };
+}
+
+function renderCultureMap(metadata, profile) {
+  const { dims, thrives, drains } = computeCultureMap(metadata, profile);
+  const dimsEl = document.getElementById('cultureDims');
+  const envEl = document.getElementById('cultureEnv');
+
+  dimsEl.innerHTML = dims.map((d, i) => {
+    const isLeft = d.pos < 45;
+    const isRight = d.pos > 55;
+    return `
+    <div class="culture-dim">
+      <div class="culture-labels">
+        <span class="culture-label-l ${isLeft ? 'active' : ''}">${d.left}</span>
+        <span class="culture-label-r ${isRight ? 'active' : ''}">${d.right}</span>
+      </div>
+      <div class="culture-track">
+        <div class="culture-fill" data-pos="${d.pos}" style="width:0;left:${d.pos <= 50 ? d.pos : 50}%;right:${d.pos > 50 ? (100-d.pos) : 50}%"></div>
+        <div class="culture-dot" data-pos="${d.pos}" style="left:50%"></div>
+      </div>
+      <div class="culture-verdict">${d.verdict(d.pos)}</div>
+    </div>`;
+  }).join('');
+
+  envEl.innerHTML = `
+    <div class="culture-env-title">Where you thrive vs where you drain</div>
+    <div class="env-cols">
+      <div class="env-col thrives">
+        <h5>✓ Thrives in</h5>
+        ${thrives.map(t => `<div class="env-item">${t}</div>`).join('')}
+      </div>
+      <div class="env-col drains">
+        <h5>✗ Drained by</h5>
+        ${drains.map(t => `<div class="env-item">${t}</div>`).join('')}
+      </div>
+    </div>`;
+
+  // Animate dots after render
+  setTimeout(() => {
+    document.querySelectorAll('.culture-dot').forEach(dot => {
+      dot.style.left = dot.dataset.pos + '%';
+    });
+  }, 400);
+}
+
 function renderResults(profile, metadata) {
   document.getElementById('analyzingState').style.display = 'none';
   document.getElementById('resultsState').style.display = 'block';
@@ -1423,6 +1611,9 @@ function renderResults(profile, metadata) {
   // Traits
   const tl = document.getElementById('traitsList');
   tl.innerHTML = (profile.traits||[]).map(t => `<span class="trait">${t}</span>`).join('');
+
+  // Culture Map
+  renderCultureMap(metadata, profile);
 
   // Insight
   document.getElementById('insightText').textContent = profile.hiddenInsight || '';
