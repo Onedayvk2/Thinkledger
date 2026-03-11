@@ -2393,13 +2393,37 @@ function saveProfile() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ profile: _currentProfile, metadata: _currentMetadata })
   })
-  .then(r => {
-    if (!r.ok) return r.json().then(e => { throw new Error(e.error || `HTTP ${r.status}`); });
-    return r.json();
-  })
-  .then(data => {
+  .then(async r => {
+    // Read raw text first — never assume JSON
+    const raw = await r.text();
     btn._saving = false;
     btn.style.opacity = '';
+
+    if (!r.ok) {
+      // Server returned an error — show exactly what it said
+      let msg = `Server error ${r.status}`;
+      try {
+        const j = JSON.parse(raw);
+        msg = j.error || msg;
+      } catch(e) {
+        // Server returned HTML or plain text — show first 200 chars
+        msg = 'Server error ' + r.status + ': ' + raw.slice(0, 200);
+      }
+      btn.textContent = orig;
+      alert('Save failed: ' + msg);
+      return;
+    }
+
+    // Parse success response
+    let data;
+    try {
+      data = JSON.parse(raw);
+    } catch(e) {
+      btn.textContent = orig;
+      alert('Save returned invalid response: ' + raw.slice(0, 200));
+      return;
+    }
+
     if (data.id) {
       const url = `${window.location.origin}/profile/${data.id}`;
       document.getElementById('shareUrl').value = url;
@@ -2409,22 +2433,16 @@ function saveProfile() {
       btn.style.background = 'var(--accent)';
       setTimeout(() => banner.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
     } else {
-      btn._saving = false;
       btn.textContent = orig;
-      btn.style.opacity = '';
-      alert('Save returned no ID — ' + (data.error || 'unknown error'));
+      alert('Save failed: ' + (data.error || 'No ID returned — ' + raw.slice(0, 200)));
     }
   })
   .catch(err => {
+    // fetch() itself threw — network level failure
     btn._saving = false;
     btn.textContent = orig;
     btn.style.opacity = '';
-    const msg = err.message || 'Unknown error';
-    if (msg.includes('Storage not configured')) {
-      alert('Storage not configured on the server. Add UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN to Vercel environment variables.');
-    } else {
-      alert('Save failed: ' + msg + '\n\nIf this keeps happening, check Vercel dashboard for error logs.');
-    }
+    alert('Network error — could not reach /api/save\n\nError: ' + err.message + '\n\nCheck that:\n1. vercel.json lists /api/save route\n2. save.js is in the /api/ folder in GitHub\n3. Vercel deployed successfully (check vercel.com dashboard)');
   });
 }
 
