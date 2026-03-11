@@ -1016,9 +1016,17 @@
     </div>
 
     <!-- SHARE -->
+    <!-- OPTIONAL NAME FIELD -->
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:11px;font-weight:500;color:var(--mid);letter-spacing:0.5px;margin-bottom:6px;">Your name <span style="font-weight:400;color:#b8b0a8">(optional — shown on your public profile)</span></label>
+      <input id="userRealName" type="text" placeholder="e.g. Alex Chen" maxlength="60"
+        style="width:100%;max-width:320px;padding:9px 12px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--white);outline:none;"
+        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+    </div>
+
     <div class="share-row">
       <button class="btn p" id="saveBtn" onclick="saveProfile()">Save & get shareable link</button>
-      <button class="btn s" onclick="downloadPDF()">Download PDF</button>
+      <button class="btn s" onclick="openPDFPicker()">Download PDF</button>
       <button class="btn s" onclick="resetTool()">Start Over</button>
     </div>
 
@@ -1046,6 +1054,71 @@
       <div style="font-size:11px;color:var(--mid)">Instagram and TikTok: download the image card and post as a photo. LinkedIn and X: opens a pre-filled post with your profile link.</div>
     </div>
     <canvas id="shareCanvas" style="display:none"></canvas>
+
+    <!-- PDF SECTION PICKER MODAL -->
+    <div id="pdfModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:12px;padding:32px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:6px;color:var(--ink)">Choose what to include</div>
+        <div style="font-size:12px;color:var(--mid);margin-bottom:24px">Uncheck anything you want to leave out</div>
+
+        <div id="pdfSections" style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_summary" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Summary</div>
+              <div style="font-size:11px;color:var(--mid)">The core paragraph describing this thinking style</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_culture" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Culture Map</div>
+              <div style="font-size:11px;color:var(--mid)">7 cognitive dimensions with verdicts</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_signals" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Cognitive Signals</div>
+              <div style="font-size:11px;color:var(--mid)">6 scored signals with growth notes and manager guidance</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_traits" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Thinking Traits</div>
+              <div style="font-size:11px;color:var(--mid)">8 observable behavioural patterns</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_careers" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Career Fits</div>
+              <div style="font-size:11px;color:var(--mid)">4 roles including the unexpected pick</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_employer" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Employer Quote</div>
+              <div style="font-size:11px;color:var(--mid)">What a hiring manager would say about this profile</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_insight" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Hidden Signal</div>
+              <div style="font-size:11px;color:var(--mid)">The thing the data reveals that's hard to articulate</div>
+            </div>
+          </label>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <button onclick="generatePDF()" style="flex:1;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;">Generate PDF</button>
+          <button onclick="closePDFPicker()" style="padding:12px 20px;background:var(--paper);color:var(--mid);border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;">Cancel</button>
+        </div>
+      </div>
+    </div>
 
   </div>
 </div>
@@ -2308,10 +2381,15 @@ function saveProfile() {
   btn.textContent = 'Saving...';
   btn.disabled = true;
 
+  const realName = (document.getElementById('userRealName')?.value || '').trim();
+  const profileToSave = realName
+    ? { ..._currentProfile, realName }
+    : _currentProfile;
+
   fetch('/api/save', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ profile: _currentProfile, metadata: _currentMetadata })
+    body: JSON.stringify({ profile: profileToSave, metadata: _currentMetadata })
   })
   .then(r => r.json())
   .then(data => {
@@ -2347,16 +2425,80 @@ function shareLinkedIn() {
   window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url), '_blank', 'width=600,height=600');
 }
 
-function downloadPDF() {
+function openPDFPicker() {
+  if (!_currentProfile) return;
+  const modal = document.getElementById('pdfModal');
+  modal.style.display = 'flex';
+}
+
+function closePDFPicker() {
+  document.getElementById('pdfModal').style.display = 'none';
+}
+
+function generatePDF() {
+  closePDFPicker();
   if (!_currentProfile) return;
   const p = _currentProfile;
   const m = _currentMetadata || {};
+
+  const inc = {
+    summary:  document.getElementById('pdf_summary').checked,
+    culture:  document.getElementById('pdf_culture').checked,
+    signals:  document.getElementById('pdf_signals').checked,
+    traits:   document.getElementById('pdf_traits').checked,
+    careers:  document.getElementById('pdf_careers').checked,
+    employer: document.getElementById('pdf_employer').checked,
+    insight:  document.getElementById('pdf_insight').checked,
+  };
 
   const parts = [];
   if (m.totalConversations) parts.push(m.totalConversations + ' conversations');
   if (m.userMessages) parts.push(m.userMessages.toLocaleString() + ' messages');
   if (m.spanMonths) parts.push(m.spanMonths + ' months');
   const metaLine = parts.join(' · ');
+
+  // Culture map — recompute from signals (same formula as app)
+  function computeCultureDims(m) {
+    const pr  = m.pushbackRatio||0, q=m.questionRatio||0, avg=m.avgWordsPerMessage||0;
+    const dep = m.depthScore||50, ngt=m.nightPct||0, dv=m.deepDiveRatio||0;
+    const lng = m.longMessagePct||0, spn=m.spanMonths||1;
+    const vol = Math.min(100,(m.userMessages||0)/15);
+    const cl  = v => Math.min(95,Math.max(5,Math.round(v)));
+    return [
+      {left:'Solo Processor',      right:'Social Thinker',          pos:cl((ngt*0.5)+((100-q)*0.3)+(avg*0.2)),
+       verdict: v => v<35?'Solo Processor — arrives with conclusions':v>65?'Social Thinker — builds ideas in conversation':'Context-switcher — shifts between both modes'},
+      {left:'Needs Clarity First', right:'Moves Into Fog',          pos:cl((dv*0.5)+(q*0.3)+((100-avg)*0.2)),
+       verdict: v => v<35?'Needs Clarity First — defines before touching':v>65?'Moves Into Fog — fog is the workspace':'Adaptive — tolerates ambiguity when needed'},
+      {left:'Seeks Confirmation',  right:'Seeks Friction',          pos:cl((pr*0.6)+(dv*0.4)),
+       verdict: v => v<35?'Seeks Confirmation — alignment over challenge':v>65?'Seeks Friction — ideas must survive pressure':'Selective challenger — pushes back when it matters'},
+      {left:'Present-Focused',     right:'Long-Game Thinker',       pos:cl((spn*3)+(ngt*0.4)+(dep*0.3)),
+       verdict: v => v<35?'Present-Focused — execution over anticipation':v>65?'Long-Game Thinker — thinks in years not quarters':'Balanced horizon — holds near and far simultaneously'},
+      {left:'Breadth Collector',   right:'Depth Miner',             pos:cl((avg*0.4)+(lng*0.4)+((100-q)*0.2)),
+       verdict: v => v<35?'Breadth Collector — wide not deep, synthesises fast':v>65?'Depth Miner — drills until the mechanics are understood':'Range with depth — scans wide, commits when earned'},
+      {left:'Needs Space to Think',right:'Sharpens Under Pressure', pos:cl(((100-ngt)*0.4)+(vol*0.3)+((100-avg)*0.3)),
+       verdict: v => v<35?'Needs Space to Think — pressure compresses quality':v>65?'Sharpens Under Pressure — deadlines produce clarity':'Situational — adapts pace to the work'},
+      {left:'Shows the Working',   right:'Delivers the Answer',     pos:cl(((100-avg)*0.4)+((100-dv)*0.3)+((100-lng)*0.3)),
+       verdict: v => v<35?'Shows the Working — process is visible and shared':v>65?'Delivers the Answer — leads with the conclusion':'Context-aware — calibrates how much process to show'},
+    ];
+  }
+
+  const cultureDims = computeCultureDims(m);
+  const cultureHtml = cultureDims.map(d => {
+    const pct = d.pos;
+    const label = pct < 40 ? d.left : pct > 60 ? d.right : 'Balanced';
+    const barLeft  = pct <= 50 ? pct : 50;
+    const barWidth = pct <= 50 ? (50 - pct) : (pct - 50);
+    const barRight = pct > 50 ? (100 - pct) : 50;
+    return `<div class="c-dim">
+      <div class="c-labels"><span class="${pct<40?'c-active':''}">${d.left}</span><span class="${pct>60?'c-active':''}">${d.right}</span></div>
+      <div class="c-track">
+        <div class="c-centre"></div>
+        <div class="c-fill" style="left:${barLeft}%;width:${barWidth}%;${pct>50?'':'right:'+barRight+'%;left:auto;'}"></div>
+        <div class="c-dot" style="left:${pct}%"></div>
+      </div>
+      <div class="c-verdict">${d.verdict(pct)}</div>
+    </div>`;
+  }).join('');
 
   const signalsHtml = (p.signals || []).map(s => `
     <div class="sig">
@@ -2378,6 +2520,15 @@ function downloadPDF() {
       </div>
     </div>`).join('');
 
+  const sections = [];
+  if (inc.summary)  sections.push(`<div class="section-label">Who this person is as a thinker</div><div class="summary">${p.summary || ''}</div>`);
+  if (inc.culture)  sections.push(`<div class="section-label">How this mind works</div><div class="culture-dims">${cultureHtml}</div>${p.cultureNarrative ? `<div class="culture-narr">${p.cultureNarrative}</div>` : ''}`);
+  if (inc.signals)  sections.push(`<div class="section-label">Cognitive Signals</div><div class="signals">${signalsHtml}</div>`);
+  if (inc.traits)   sections.push(`<div class="section-label">Thinking Traits</div><div class="traits">${traitsHtml}</div>`);
+  if (inc.careers)  sections.push(`<div class="section-label">Career Fits</div><div class="careers">${careersHtml}</div>`);
+  if (inc.employer) sections.push(`<div class="section-label">What an employer reads</div><div class="employer-quote">"${p.employerQuote || ''}"</div>`);
+  if (inc.insight)  sections.push(`<div class="insight"><div class="insight-label">A Hidden Signal</div><div class="insight-text">${p.hiddenInsight || ''}</div></div>`);
+
   const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -2385,42 +2536,47 @@ function downloadPDF() {
 <title>${p.profileName || 'ThinkLedger Profile'}</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Geist', sans-serif; background: #fff; color: #0f0f0f; font-size: 13px; line-height: 1.6; padding: 48px; max-width: 720px; margin: 0 auto; }
-  .brand { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #b8a890; margin-bottom: 32px; }
-  .profile-name { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 600; letter-spacing: -1px; color: #0a0a08; line-height: 1.05; margin-bottom: 6px; }
-  .profile-type { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: #9a9490; margin-bottom: 4px; }
-  .meta { font-size: 11px; color: #b8a890; letter-spacing: 0.5px; margin-bottom: 36px; padding-bottom: 24px; border-bottom: 1px solid #e8e4de; }
-  .section-label { font-size: 9px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: #b8a890; margin: 28px 0 14px; }
-  .summary { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-style: italic; line-height: 1.75; color: #2a2a28; margin-bottom: 8px; }
-  .signals { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
-  .sig { padding: 12px; border: 1px solid #ede9e3; border-radius: 4px; }
-  .sig-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
-  .sig-name { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-  .sig-score { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #1a3a2a; }
-  .bar-track { height: 2px; background: #ede9e3; border-radius: 1px; margin-bottom: 6px; }
-  .bar-fill { height: 100%; background: #1a3a2a; border-radius: 1px; }
-  .sig-obs { font-size: 10px; color: #9a9490; }
-  .sig-growth { font-size: 10px; color: #2a2a28; margin-top: 6px; border-top: 1px solid #ede9e3; padding-top: 6px; line-height: 1.5; }
-  .sig-manager { font-size: 10px; color: #9a9490; font-style: italic; margin-top: 5px; border-top: 1px solid #ede9e3; padding-top: 5px; }
-  .traits { display: flex; flex-wrap: wrap; gap: 6px; }
-  .trait { padding: 4px 10px; background: #f7f5f0; border: 1px solid #ede9e3; border-radius: 2px; font-size: 11px; }
-  .career-role { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid #ede9e3; }
-  .career-role:last-child { border-bottom: none; }
-  .role-num { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: #1a3a2a; width: 24px; flex-shrink: 0; line-height: 1.2; }
-  .role-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
-  .role-why { font-size: 11px; color: #9a9490; line-height: 1.55; }
-  .unexpected { font-size: 9px; color: #b8962e; font-weight: 500; letter-spacing: 0.5px; margin-left: 6px; }
-  .employer-quote { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; line-height: 1.65; border-left: 2px solid #1a3a2a; padding-left: 14px; color: #2a2a28; margin: 8px 0; }
-  .insight { background: #faf5e8; border: 1px solid #e8d9a0; border-radius: 6px; padding: 14px 18px; margin-top: 8px; }
-  .insight-label { font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #b8962e; margin-bottom: 4px; }
-  .insight-text { font-size: 11px; line-height: 1.6; }
-  .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #ede9e3; font-size: 9px; color: #c8c4be; letter-spacing: 1px; text-transform: uppercase; display: flex; justify-content: space-between; }
-  ${p.cultureNarrative ? `.culture { font-size: 12px; color: #6b6760; line-height: 1.75; font-style: italic; background: #f7f5f0; border-radius: 4px; padding: 14px 18px; border: 1px solid #ede9e3; margin-top: 8px; }` : ''}
-  @media print {
-    body { padding: 0; }
-    @page { margin: 28px 36px; size: A4; }
-  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Geist',sans-serif;background:#fff;color:#0f0f0f;font-size:13px;line-height:1.6;padding:48px;max-width:720px;margin:0 auto}
+  .brand{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#b8a890;margin-bottom:32px}
+  .profile-name{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:600;letter-spacing:-1px;color:#0a0a08;line-height:1.05;margin-bottom:6px}
+  .profile-type{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#9a9490;margin-bottom:4px}
+  .meta{font-size:11px;color:#b8a890;letter-spacing:0.5px;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid #e8e4de}
+  .section-label{font-size:9px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#b8a890;margin:28px 0 14px}
+  .summary{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;line-height:1.75;color:#2a2a28;margin-bottom:8px}
+  .c-dim{margin-bottom:18px}
+  .c-labels{display:flex;justify-content:space-between;font-size:10px;font-weight:500;margin-bottom:5px;color:#b8a890}
+  .c-active{color:#1a3a2a;font-weight:600}
+  .c-track{height:4px;background:#ede9e3;border-radius:2px;position:relative;margin-bottom:5px}
+  .c-centre{position:absolute;top:-2px;left:50%;width:1px;height:8px;background:#e8e4de}
+  .c-fill{position:absolute;top:0;height:100%;background:#1a3a2a;border-radius:2px}
+  .c-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;background:#1a3a2a;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.15)}
+  .c-verdict{font-size:10px;color:#9a9490;font-style:italic}
+  .culture-narr{font-size:12px;color:#6b6760;line-height:1.75;font-style:italic;background:#f7f5f0;border-radius:4px;padding:14px 18px;border:1px solid #ede9e3;margin-top:14px}
+  .signals{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
+  .sig{padding:12px;border:1px solid #ede9e3;border-radius:4px}
+  .sig-top{display:flex;justify-content:space-between;margin-bottom:6px}
+  .sig-name{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+  .sig-score{font-family:'Cormorant Garamond',serif;font-size:22px;color:#1a3a2a}
+  .bar-track{height:2px;background:#ede9e3;border-radius:1px;margin-bottom:6px}
+  .bar-fill{height:100%;background:#1a3a2a;border-radius:1px}
+  .sig-obs{font-size:10px;color:#9a9490}
+  .sig-growth{font-size:10px;color:#2a2a28;margin-top:6px;border-top:1px solid #ede9e3;padding-top:6px;line-height:1.5}
+  .sig-manager{font-size:10px;color:#9a9490;font-style:italic;margin-top:5px;border-top:1px solid #ede9e3;padding-top:5px}
+  .traits{display:flex;flex-wrap:wrap;gap:6px}
+  .trait{padding:4px 10px;background:#f7f5f0;border:1px solid #ede9e3;border-radius:2px;font-size:11px}
+  .career-role{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #ede9e3}
+  .career-role:last-child{border-bottom:none}
+  .role-num{font-family:'Cormorant Garamond',serif;font-size:24px;color:#1a3a2a;width:24px;flex-shrink:0;line-height:1.2}
+  .role-title{font-size:13px;font-weight:500;margin-bottom:3px}
+  .role-why{font-size:11px;color:#9a9490;line-height:1.55}
+  .unexpected{font-size:9px;color:#b8962e;font-weight:500;letter-spacing:0.5px;margin-left:6px}
+  .employer-quote{font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;line-height:1.65;border-left:2px solid #1a3a2a;padding-left:14px;color:#2a2a28;margin:8px 0}
+  .insight{background:#faf5e8;border:1px solid #e8d9a0;border-radius:6px;padding:14px 18px;margin-top:8px}
+  .insight-label{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#b8962e;margin-bottom:4px}
+  .insight-text{font-size:11px;line-height:1.6}
+  .footer{margin-top:40px;padding-top:16px;border-top:1px solid #ede9e3;font-size:9px;color:#c8c4be;letter-spacing:1px;text-transform:uppercase;display:flex;justify-content:space-between}
+  @media print{body{padding:0}@page{margin:28px 36px;size:A4}}
 </style>
 </head>
 <body>
@@ -2428,29 +2584,7 @@ function downloadPDF() {
   <div class="profile-name">${p.profileName || 'Thinker Profile'}</div>
   <div class="profile-type">${p.thinkerType || ''}</div>
   <div class="meta">${metaLine} · Integrity ${m.integrityScore || '—'}/100 · Peak hour ${m.peakHours || '—'}</div>
-
-  <div class="section-label">Who this person is as a thinker</div>
-  <div class="summary">${p.summary || ''}</div>
-
-  <div class="section-label">Cognitive Signals</div>
-  <div class="signals">${signalsHtml}</div>
-
-  <div class="section-label">Thinking Traits</div>
-  <div class="traits">${traitsHtml}</div>
-
-  <div class="section-label">Where This Profile Belongs</div>
-  <div class="careers">${careersHtml}</div>
-
-  ${p.cultureNarrative ? `<div class="section-label">Where this profile does its best work</div><div class="culture">${p.cultureNarrative}</div>` : ''}
-
-  <div class="section-label">What an employer reads</div>
-  <div class="employer-quote">"${p.employerQuote || ''}"</div>
-
-  <div class="insight">
-    <div class="insight-label">A Hidden Signal</div>
-    <div class="insight-text">${p.hiddenInsight || ''}</div>
-  </div>
-
+  ${sections.join('')}
   <div class="footer">
     <span>ThinkLedger — thinkledger.vercel.app</span>
     <span>No conversation content was read or stored</span>
@@ -2462,9 +2596,7 @@ function downloadPDF() {
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const win = window.open(url, '_blank');
-  if (!win) {
-    alert('Please allow popups for this site, then click Download PDF again.');
-  }
+  if (!win) alert('Please allow popups for this site, then click Download PDF again.');
 }
 
 function shareTwitter() {
@@ -2598,6 +2730,8 @@ function resetTool() {
   document.getElementById('filesList').style.display = 'none';
   document.getElementById('filesListInner').innerHTML = '';
   document.getElementById('savedBanner').style.display = 'none';
+  const nameField = document.getElementById('userRealName');
+  if (nameField) nameField.value = '';
   _pendingFiles = [];
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }

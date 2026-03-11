@@ -15,6 +15,7 @@ export default async function handler(req, res) {
   const payload = {
     id,
     profileName:      profile.profileName      || '',
+    realName:         profile.realName         || '',
     thinkerType:      profile.thinkerType      || '',
     summary:          profile.summary          || '',
     signals:          profile.signals          || [],
@@ -29,6 +30,9 @@ export default async function handler(req, res) {
       spanMonths:         metadata.spanMonths         || 0,
       integrityScore:     metadata.integrityScore     || 0,
       avgWordsPerMessage: metadata.avgWordsPerMessage || 0,
+      depthScore:         metadata.depthScore         || 50,
+      deepDiveRatio:      metadata.deepDiveRatio      || 0,
+      longMessagePct:     metadata.longMessagePct     || 0,
       peakHours:          metadata.peakHours          || '',
       nightPct:           metadata.nightPct           || 0,
       pushbackRatio:      metadata.pushbackRatio      || 0,

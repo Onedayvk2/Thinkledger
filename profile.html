@@ -85,6 +85,19 @@
   .cta-sub{font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:20px}
   .cta-btn{display:inline-block;padding:12px 32px;background:var(--white);color:var(--accent);border-radius:4px;font-size:14px;font-weight:500;text-decoration:none}
   .meta-line{font-size:12px;color:var(--mid);margin-bottom:20px}
+  .culture-dim{margin-bottom:22px}
+  .culture-dim:last-child{margin-bottom:0}
+  .culture-labels{display:flex;justify-content:space-between;font-size:11px;font-weight:500;margin-bottom:6px}
+  .culture-label-l{color:var(--mid)}
+  .culture-label-r{color:var(--mid)}
+  .culture-label-l.active{color:var(--accent);font-weight:600}
+  .culture-label-r.active{color:var(--accent);font-weight:600}
+  .culture-track{height:4px;background:var(--border);border-radius:2px;position:relative;margin-bottom:6px}
+  .culture-fill{position:absolute;top:0;height:100%;background:var(--accent);border-radius:2px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1) 0.4s;width:0}
+  .culture-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;background:var(--accent);border:2px solid var(--white);border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.18);transition:left 1.2s cubic-bezier(0.4,0,0.2,1) 0.4s;left:50%}
+  .culture-verdict{font-size:11px;color:var(--mid);font-style:italic}
+  .culture-verdict strong{color:var(--ink);font-style:normal}
+  .culture-narrative{font-size:13px;color:var(--mid);line-height:1.75;font-style:italic;margin-top:12px;padding:16px 20px;background:var(--paper);border-radius:6px;border:1px solid var(--border)}
   @media(max-width:600px){nav{padding:16px 20px}.page{padding:32px 16px 80px}.profile-header{padding:24px 22px;flex-direction:column;gap:16px}.profile-body{padding:24px 22px}.signals{grid-template-columns:1fr}}
 </style>
 </head>
@@ -102,20 +115,28 @@
   </div>
   <div id="profileState">
     <div class="profile-header">
-      <div><div class="profile-name" id="pName">—</div><div class="profile-type" id="pType">—</div></div>
+      <div>
+        <div style="display:none;font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:0.5px;margin-bottom:4px" id="pByline">—</div>
+        <div class="profile-name" id="pName">—</div>
+        <div class="profile-type" id="pType">—</div>
+      </div>
       <div><div class="badge-score" id="pIntegrity">—</div><div class="badge-label">Integrity</div></div>
     </div>
     <div class="profile-body">
       <div class="meta-line" id="pMeta"></div>
       <div class="section-label">Who this person is as a thinker</div>
       <div class="summary-text" id="pSummary">—</div>
-      <div class="section-label">Cognitive Signals</div>
+
+      <div class="section-label" style="margin-top:24px">How this mind works</div>
+      <div id="pCultureDims"></div>
+      <div id="pCultureNarrative"></div>
+
+      <div class="section-label" style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border)">Cognitive Signals</div>
       <div class="signals" id="pSignals"></div>
       <div class="section-label">Thinking Traits</div>
       <div class="traits" id="pTraits"></div>
-      <div class="section-label">Where This Profile Belongs</div>
+      <div class="section-label">Career Fits</div>
       <div id="pCareers"></div>
-      <div id="pCultureNarrative"></div>
       <div class="section-label" style="margin-top:20px">What an employer reads</div>
       <div class="employer-quote" id="pQuote">—</div>
       <div class="employer-note">Derived from conversation structure only. No content was read or stored.</div>
@@ -144,40 +165,129 @@
       .then(data => { if (data.error || !data.profile) { showError(); return; } renderProfile(data.profile); })
       .catch(showError);
   }
+
   function showError() {
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('errorState').style.display = 'block';
   }
+
+  // Recompute culture map from raw metadata signals — same formula as app.html
+  function computeCultureMap(m) {
+    const p   = m.pushbackRatio     || 0;
+    const q   = m.questionRatio     || 0;
+    const avg = m.avgWordsPerMessage || 0;
+    const dep = m.depthScore        || 50;
+    const ngt = m.nightPct          || 0;
+    const dv  = m.deepDiveRatio     || 0;
+    const lng = m.longMessagePct    || 0;
+    const spn = m.spanMonths        || 1;
+    const vol = Math.min(100, (m.userMessages || 0) / 15);
+    const clamp = v => Math.min(95, Math.max(5, Math.round(v)));
+
+    return [
+      { id:'thinkingMode',        left:'Solo Processor',     right:'Social Thinker',
+        pos: clamp((ngt*0.5)+((100-q)*0.3)+(avg*0.2)),
+        verdict: v => v<35 ? '<strong>Solo Processor</strong> — Arrives with conclusions. Thinking happens before the room sees it.'
+                   : v>65 ? '<strong>Social Thinker</strong> — Builds ideas in conversation. The room is part of the process.'
+                           : '<strong>Context-switcher</strong> — Shifts between both modes depending on what the problem needs.' },
+      { id:'ambiguityResponse',   left:'Needs Clarity First', right:'Moves Into Fog',
+        pos: clamp((dv*0.5)+(q*0.3)+((100-avg)*0.2)),
+        verdict: v => v<35 ? '<strong>Needs Clarity First</strong> — Defines the problem before touching it.'
+                   : v>65 ? '<strong>Moves Into Fog</strong> — Thinks before the map is complete. Fog is the workspace.'
+                           : '<strong>Adaptive</strong> — Tolerates ambiguity when needed, prefers clarity when available.' },
+      { id:'feedbackOrientation', left:'Seeks Confirmation',  right:'Seeks Friction',
+        pos: clamp((p*0.6)+(dv*0.4)),
+        verdict: v => v<35 ? '<strong>Seeks Confirmation</strong> — Uses AI to refine what is already thought. Alignment over challenge.'
+                   : v>65 ? '<strong>Seeks Friction</strong> — Uses AI as a sparring partner. Ideas that survive pressure are trusted more.'
+                           : '<strong>Selective challenger</strong> — Pushes back when it genuinely matters, not as a reflex.' },
+      { id:'timeHorizon',         left:'Present-Focused',     right:'Long-Game Thinker',
+        pos: clamp((spn*3)+(ngt*0.4)+(dep*0.3)),
+        verdict: v => v<35 ? '<strong>Present-Focused</strong> — Cognitive energy goes into what is in front. Execution over anticipation.'
+                   : v>65 ? '<strong>Long-Game Thinker</strong> — Thinks in years, not quarters. The long game is the natural habitat.'
+                           : '<strong>Balanced horizon</strong> — Holds near and far simultaneously.' },
+      { id:'knowledgeMode',       left:'Breadth Collector',   right:'Depth Miner',
+        pos: clamp((avg*0.4)+(lng*0.4)+((100-q)*0.2)),
+        verdict: v => v<35 ? '<strong>Breadth Collector</strong> — Wide not deep. Collects signals and synthesises fast.'
+                   : v>65 ? '<strong>Depth Miner</strong> — Drills. One topic at a time until the mechanics are understood.'
+                           : '<strong>Range with depth</strong> — Scans wide but commits to depth when something earns it.' },
+      { id:'pressureResponse',    left:'Needs Space to Think', right:'Sharpens Under Pressure',
+        pos: clamp(((100-ngt)*0.4)+(vol*0.3)+((100-avg)*0.3)),
+        verdict: v => v<35 ? '<strong>Needs Space to Think</strong> — Best thinking happens with time. Pressure compresses the process.'
+                   : v>65 ? '<strong>Sharpens Under Pressure</strong> — Deadlines focus. Constraints produce the clearest thinking.'
+                           : '<strong>Situational</strong> — Adapts pace to what the work demands.' },
+      { id:'communicationRegister', left:'Shows the Working', right:'Delivers the Answer',
+        pos: clamp(((100-avg)*0.4)+((100-dv)*0.3)+((100-lng)*0.3)),
+        verdict: v => v<35 ? '<strong>Shows the Working</strong> — Thinks out loud. Process is visible. People understand the how.'
+                   : v>65 ? '<strong>Delivers the Answer</strong> — Leads with the conclusion. Communication is compressed and confident.'
+                           : '<strong>Context-aware</strong> — Calibrates how much process to show based on who needs to understand it.' }
+    ];
+  }
+
   function renderProfile(p) {
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('profileState').style.display = 'block';
 
     const name     = p.profileName || 'Thinker Profile';
-    const type     = p.thinkerType || '';
     const summary1 = (p.summary || '').split('.')[0] + '.';
     const pageUrl  = window.location.href;
 
-    // Page title
     document.title = name + ' — ThinkLedger';
-
-    // Update OG tags for social sharing
-    document.getElementById('ogTitle').setAttribute('content', name + ' — ThinkLedger');
+    const ogName = p.realName ? p.realName + ' · ' + name : name;
+    document.getElementById('ogTitle').setAttribute('content', ogName + ' — ThinkLedger');
     document.getElementById('ogDescription').setAttribute('content', summary1);
     document.getElementById('ogUrl').setAttribute('content', pageUrl);
     document.getElementById('twTitle').setAttribute('content', name + ' — ThinkLedger');
     document.getElementById('twDescription').setAttribute('content', summary1);
+
     document.getElementById('pName').textContent = name;
-    document.getElementById('pType').textContent = type;
+    document.getElementById('pType').textContent = p.thinkerType || '';
+
+    // Real name byline — shown only if user added it
+    const bylineEl = document.getElementById('pByline');
+    if (bylineEl) {
+      if (p.realName) {
+        bylineEl.textContent = p.realName;
+        bylineEl.style.display = 'block';
+      } else {
+        bylineEl.style.display = 'none';
+      }
+    }
     document.getElementById('pIntegrity').textContent = p.meta?.integrityScore || '—';
     document.getElementById('pSummary').textContent = p.summary || '';
     document.getElementById('pQuote').textContent = '"' + (p.employerQuote || '') + '"';
     document.getElementById('pInsight').textContent = p.hiddenInsight || '';
+
     const m = p.meta || {};
     const parts = [];
     if (m.totalConversations) parts.push(m.totalConversations + ' conversations');
     if (m.userMessages) parts.push(m.userMessages.toLocaleString() + ' messages');
     if (m.spanMonths) parts.push(m.spanMonths + ' months');
     document.getElementById('pMeta').textContent = parts.join('  ·  ');
+
+    // ── Culture Map ── recomputed from saved metadata signals
+    const dims = computeCultureMap(m);
+    document.getElementById('pCultureDims').innerHTML = dims.map(d => {
+      const isLeft  = d.pos < 40;
+      const isRight = d.pos > 60;
+      return `<div class="culture-dim">
+        <div class="culture-labels">
+          <span class="culture-label-l ${isLeft  ? 'active' : ''}">${d.left}</span>
+          <span class="culture-label-r ${isRight ? 'active' : ''}">${d.right}</span>
+        </div>
+        <div class="culture-track">
+          <div class="culture-fill" data-pos="${d.pos}" style="width:0;left:${d.pos<=50?d.pos:50}%;right:${d.pos>50?(100-d.pos):50}%"></div>
+          <div class="culture-dot"  data-pos="${d.pos}" style="left:50%"></div>
+        </div>
+        <div class="culture-verdict">${d.verdict(d.pos)}</div>
+      </div>`;
+    }).join('');
+
+    if (p.cultureNarrative) {
+      document.getElementById('pCultureNarrative').innerHTML =
+        '<div class="culture-narrative" style="margin-top:16px">' + p.cultureNarrative + '</div>';
+    }
+
+    // ── Signals ──
     document.getElementById('pSignals').innerHTML = (p.signals||[]).map(s => `
       <div class="sig">
         <div class="sig-top"><span class="sig-name">${s.name}</span><span class="sig-score">${s.score}</span></div>
@@ -185,24 +295,37 @@
         <div class="sig-obs">${s.label||''}</div>
         ${s.growth ? `<div class="sig-growth"><div class="sig-growth-lbl">Growth edge</div>${s.growth}</div>` : ''}
         ${s.managerNote ? `<div class="sig-manager"><div class="sig-manager-lbl">For your manager</div>${s.managerNote}</div>` : ''}
-      </div>`
-    ).join('');
-    document.getElementById('pTraits').innerHTML = (p.traits||[]).map(t => '<span class="trait">'+t+'</span>').join('');
+      </div>`).join('');
+
+    document.getElementById('pTraits').innerHTML = (p.traits||[]).map(t =>
+      '<span class="trait">'+t+'</span>').join('');
+
     document.getElementById('pCareers').innerHTML = (p.careerFits||[]).map((r,i) => `
       <div class="career-role">
         <div class="role-num${i<3?' top':''}">${i+1}</div>
         <div>
-          <div class="role-title">${r.title}${r.unexpected ? ' <span style="font-size:10px;color:var(--gold);font-weight:500;letter-spacing:.5px">UNEXPECTED</span>' : ''}</div>
+          <div class="role-title">${r.title}${r.unexpected?'&nbsp;<span style="font-size:10px;color:var(--gold);font-weight:500">UNEXPECTED</span>':''}</div>
           <div class="role-why">${r.why}</div>
         </div>
-      </div>`
-    ).join('');
-    if (p.cultureNarrative) {
-      document.getElementById('pCultureNarrative').innerHTML =
-        '<div class="section-label" style="margin-top:24px">Where this profile does its best work</div>' +
-        '<div class="culture-narrative">' + p.cultureNarrative + '</div>';
-    }
-    setTimeout(() => { document.querySelectorAll('.bar-f').forEach(b => { b.style.width = b.dataset.score + '%'; }); }, 200);
+      </div>`).join('');
+
+    // Animate bars and culture dots
+    setTimeout(() => {
+      document.querySelectorAll('.bar-f').forEach(b => { b.style.width = b.dataset.score + '%'; });
+      document.querySelectorAll('.culture-dot').forEach(dot => { dot.style.left = dot.dataset.pos + '%'; });
+      document.querySelectorAll('.culture-fill').forEach(fill => {
+        const pos = parseFloat(fill.dataset.pos);
+        if (pos <= 50) {
+          fill.style.left  = pos + '%';
+          fill.style.right = '50%';
+          fill.style.width = (50 - pos) + '%';
+        } else {
+          fill.style.left  = '50%';
+          fill.style.right = (100 - pos) + '%';
+          fill.style.width = (pos - 50) + '%';
+        }
+      });
+    }, 300);
   }
 </script>
 </body>
