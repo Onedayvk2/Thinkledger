@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'API not configured' });
 
-  const { metadata } = req.body;
+  const { metadata, dimScores } = req.body;
   if (!metadata) return res.status(400).json({ error: 'No metadata provided' });
 
   const m = metadata;
@@ -166,6 +166,30 @@ export default async function handler(req, res) {
       signalNames: ['Anticipatory Thinking', 'Long-Horizon Vision', 'Independent Conviction', 'Conceptual Originality', 'Night Cognition', 'Pattern Foresight'],
       careerDomain: 'founding, venture, creative direction, research, cultural strategy',
       score: (isNightOwl ? 3 : 0) + (isDeep ? 2 : 0) + (isLowPushback ? 1 : 0) + (isHighDeepDive ? 2 : 0) + (!isHighVolume ? 1 : 0) + (isHighVocab ? 2 : 0) + (isVeryLongSpan ? 1 : 0)
+    },
+    {
+      name: 'The Persuader',
+      group: 'Builder',
+      description: 'Uses AI to sharpen arguments they will deploy on people, not on AI. High pushback is rehearsal, not debate. Short decisive messages, high volume, daytime. They are not arguing with the AI — they are pressure-testing ideas before the room.',
+      signalNames: ['Argument Precision', 'Position Stress-Testing', 'Rhetorical Clarity', 'Conviction Velocity', 'Objection Mapping', 'Persuasion Architecture'],
+      careerDomain: 'sales, negotiation, law, advocacy, fundraising, policy',
+      score: (isHighPushback ? 3 : 0) + (isHighVolume ? 2 : 0) + (isShortMessages ? 2 : 0) + (!isNightOwl ? 2 : 0) + (isLowQuestions ? 1 : 0)
+    },
+    {
+      name: 'The Expert',
+      group: 'Thinker',
+      description: 'Deep domain authority. Does not ask questions — directs. Treats AI as a capable junior, not a teacher. Long precise messages that assume shared context. Low question ratio is not incuriosity — it is confidence. They already know the landscape; they need execution.',
+      signalNames: ['Domain Authority', 'Directive Precision', 'Knowledge Density', 'Context Economy', 'Instructional Clarity', 'Expertise Depth'],
+      careerDomain: 'senior technical roles, specialist consulting, research leadership, clinical, legal',
+      score: (isLowQuestions ? 4 : 0) + (isLongMessages ? 2 : 0) + (isLowPushback ? 2 : 0) + (isLongSpan ? 2 : 0) + (isHighVocab ? 2 : 0) + (!isNightOwl ? 1 : 0)
+    },
+    {
+      name: 'The Translator',
+      group: 'Connector',
+      description: 'Converts complex thinking for different audiences. High vocabulary, high deep-dive rate, multi-platform. Not just synthesising — rendering. Makes hard things legible without making them simple. The person everyone sends the draft to before it goes out.',
+      signalNames: ['Conceptual Translation', 'Audience Modelling', 'Complexity Reduction', 'Vocabulary Range', 'Register Fluency', 'Clarity Architecture'],
+      careerDomain: 'editorial, communications, science writing, product marketing, policy translation, executive comms',
+      score: (isHighVocab ? 3 : 0) + (isHighDeepDive ? 2 : 0) + (isMultiPlatform ? 2 : 0) + (isDeep ? 1 : 0) + (!isShortMessages ? 1 : 0) + (isMedPushback ? 1 : 0)
     }
   ];
 
@@ -224,6 +248,15 @@ TERTIARY SIGNAL: ${tertiary.name} (weaker but present)
 
 PUSHBACK INTERPRETATION: ${pushbackContext}
 
+CULTURE DIMENSION SCORES (0=left pole, 100=right pole — use these to write cultureNarrative):
+- Thinking Mode: ${dimScores?.thinkingMode ?? 50} → ${(dimScores?.thinkingMode??50) < 40 ? 'Solo Processor' : (dimScores?.thinkingMode??50) > 60 ? 'Social Thinker' : 'Balanced'}
+- Ambiguity Response: ${dimScores?.ambiguityResponse ?? 50} → ${(dimScores?.ambiguityResponse??50) < 40 ? 'Needs Clarity First' : (dimScores?.ambiguityResponse??50) > 60 ? 'Moves Into Fog' : 'Adaptive'}
+- Feedback Orientation: ${dimScores?.feedbackOrientation ?? 50} → ${(dimScores?.feedbackOrientation??50) < 40 ? 'Seeks Confirmation' : (dimScores?.feedbackOrientation??50) > 60 ? 'Seeks Friction' : 'Selective challenger'}
+- Time Horizon: ${dimScores?.timeHorizon ?? 50} → ${(dimScores?.timeHorizon??50) < 40 ? 'Present-Focused' : (dimScores?.timeHorizon??50) > 60 ? 'Long-Game Thinker' : 'Balanced horizon'}
+- Knowledge Mode: ${dimScores?.knowledgeMode ?? 50} → ${(dimScores?.knowledgeMode??50) < 40 ? 'Breadth Collector' : (dimScores?.knowledgeMode??50) > 60 ? 'Depth Miner' : 'Range with depth'}
+- Pressure Response: ${dimScores?.pressureResponse ?? 50} → ${(dimScores?.pressureResponse??50) < 40 ? 'Needs Space to Think' : (dimScores?.pressureResponse??50) > 60 ? 'Sharpens Under Pressure' : 'Situational'}
+- Communication Register: ${dimScores?.communicationRegister ?? 50} → ${(dimScores?.communicationRegister??50) < 40 ? 'Shows the Working' : (dimScores?.communicationRegister??50) > 60 ? 'Delivers the Answer' : 'Context-aware'}
+
 
 DEEP PSYCHOLOGICAL VOCABULARY — drawn from cognitive psychology, neuroscience, and behavioural science.
 Use 3-4 terms from the ASSIGNED ARCHETYPE's list naturally in the profile.
@@ -246,6 +279,9 @@ THE MENTOR: generativity · protégé effect · explanatory depth · pedagogical
 THE OPERATOR: implementation intentions · action identification level · throughput orientation · cognitive pragmatism · decisional efficiency · output anchoring · friction intolerance · execution intelligence
 THE VISIONARY: transient hypofrontality · Type T cognition · temporal asymmetry · signal detection advantage · pre-consensus thinking · conviction without validation · predictive cognition · intellectual courage
 THE CRAFTSMAN: mastery orientation · deliberate practice · quality threshold · craft consciousness · revision instinct · standard-setting · output pride · refinement drive
+THE PERSUADER: epistemic combat readiness · argument stress-testing · rhetorical preloading · objection anticipation · position hardening · persuasion architecture · conviction rehearsal · adversarial preparation
+THE EXPERT: domain schema depth · instructional cognition · knowledge chunking · context compression · directed inquiry · authority calibration · precision direction · expertise economy
+THE TRANSLATOR: register fluency · conceptual bridging · audience modelling · complexity reduction · semantic layering · clarity orientation · rendering intelligence · linguistic empathy
 
 RAW METRICS — use ALL of these, not just the obvious ones:
 - Total conversations: ${m.totalConversations}
@@ -264,6 +300,182 @@ RAW METRICS — use ALL of these, not just the obvious ones:
 - Platforms: ${platformCount}${isMultiPlatform ? ' — multi-platform user, patterns cross-verified across sources' : ' — single platform'}
 - Integrity score: ${m.integrityScore}/100
 
+  // ── INDEPENDENT CAREER SCORING ──
+  // 60 roles across 8 domains, scored directly from metadata signals
+  // Completely decoupled from archetype — same signals, different output layer
+
+  const ROLE_LIBRARY = [
+
+    // ── TECHNICAL & ENGINEERING ──
+    { title: 'Inference Infrastructure Engineer', domain: 'technical',
+      score: (isVeryShort?4:isShortMessages?2:0)+(isHighVolume?3:0)+(isLowPushback?2:0)+(isLowQuestions?2:0)+(!isNightOwl?1:0) },
+    { title: 'Staff Engineer (Systems)', domain: 'technical',
+      score: (isDeep?3:0)+(isLongMessages?2:0)+(isLowQuestions?3:0)+(isLowPushback?1:0)+(isHighVocab?1:0)+(isLongSpan?1:0) },
+    { title: 'Technical Founder (0-to-1)', domain: 'technical',
+      score: (isNightOwl?3:0)+(isHighVolume?2:0)+(isDeep?2:0)+(isLongSpan?2:0)+(isHighVocab?1:0)+(isHighPushback?1:0) },
+    { title: 'Head of Inference & ML Platform', domain: 'technical',
+      score: (isDeep?3:0)+(isLowQuestions?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isNightOwl?1:0) },
+    { title: 'Principal Security Engineer', domain: 'technical',
+      score: (isLowPushback?2:0)+(isDeep?2:0)+(isLowQuestions?3:0)+(isHighVocab?2:0)+(!isNightOwl?1:0) },
+    { title: 'Developer Advocate / Technical Evangelist', domain: 'technical',
+      score: (isHighQuestions?2:0)+(isShortMessages?2:0)+(isHighVolume?2:0)+(!isNightOwl?2:0)+(isMedPushback?1:0) },
+    { title: 'CTO (Series A–B)', domain: 'technical',
+      score: (isNightOwl?2:0)+(isDeep?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(isLowPushback?1:0) },
+    { title: 'Founding Engineer', domain: 'technical',
+      score: (isVeryShort?3:isShortMessages?1:0)+(isHighVolume?3:0)+(isNightOwl?2:0)+(isHighPushback?1:0)+(isLongSpan?1:0) },
+
+    // ── RESEARCH & ANALYSIS ──
+    { title: 'Quantitative Research Analyst (HF/AM)', domain: 'research',
+      score: (isLowPushback?3:0)+(isDeep?2:0)+(isLowQuestions?3:0)+(!isNightOwl?1:0)+(isLongSpan?1:0)+(isHighVocab?1:0) },
+    { title: 'Intelligence Analyst (Government/Defence)', domain: 'research',
+      score: (isLowPushback?2:0)+(isDeep?3:0)+(isLowQuestions?2:0)+(isLongSpan?2:0)+(!isNightOwl?1:0) },
+    { title: 'UX Research Lead', domain: 'research',
+      score: (isHighQuestions?3:0)+(isLowPushback?3:0)+(!isHighVolume?1:0)+(!isLongMessages?1:0)+(isMedPushback?1:0) },
+    { title: 'Epidemiologist / Clinical Researcher', domain: 'research',
+      score: (isDeep?3:0)+(isLowPushback?2:0)+(isLongMessages?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0) },
+    { title: 'Competitive Intelligence Lead', domain: 'research',
+      score: (isDeep?2:0)+(isHighQuestions?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    { title: 'Director of People Analytics', domain: 'research',
+      score: (isLowPushback?2:0)+(isDeep?2:0)+(!isNightOwl?2:0)+(isMedQuestions?2:0)+(isLongSpan?1:0) },
+    { title: 'Independent Research Scientist', domain: 'research',
+      score: (isNightOwl?2:0)+(isDeep?3:0)+(isHighVocab?2:0)+(isHighDeepDive?2:0)+(!isHighVolume?1:0) },
+    { title: 'Head of Market Research', domain: 'research',
+      score: (isHighQuestions?2:0)+(isDeep?2:0)+(!isNightOwl?2:0)+(isMedPushback?1:0)+(isLongSpan?1:0) },
+
+    // ── STRATEGY & ADVISORY ──
+    { title: 'Management Consultant (McKinsey/BCG tier)', domain: 'strategy',
+      score: (isNightOwl?2:0)+(isDeep?3:0)+(isLongSpan?2:0)+(!isHighVolume?1:0)+(isHighVocab?2:0)+(isLowPushback?1:0) },
+    { title: 'Chief of Staff (Hypergrowth Company)', domain: 'strategy',
+      score: (isLongSpan?3:0)+(isDeep?1:0)+(isLowPushback?2:0)+(isMedPushback?1:0)+(isMedQuestions?2:0)+(!isNightOwl?1:0) },
+    { title: 'Corporate Development Director (M&A)', domain: 'strategy',
+      score: (isHighPushback?2:0)+(isDeep?2:0)+(isLowQuestions?2:0)+(isLongSpan?2:0)+(isHighVocab?2:0) },
+    { title: 'Venture Capital Analyst (Pre-Seed/Seed)', domain: 'strategy',
+      score: (isNightOwl?2:0)+(isHighQuestions?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongSpan?1:0)+(isMedPushback?1:0) },
+    { title: 'Strategic Finance Lead', domain: 'strategy',
+      score: (isDeep?2:0)+(isLowPushback?3:0)+(isLowQuestions?2:0)+(!isNightOwl?2:0)+(isHighVocab?1:0) },
+    { title: 'Think Tank Director / Policy Strategist', domain: 'strategy',
+      score: (isNightOwl?2:0)+(isDeep?3:0)+(isHighVocab?3:0)+(isLongSpan?2:0)+(isLowPushback?1:0) },
+    { title: 'Chief Strategy Officer', domain: 'strategy',
+      score: (isNightOwl?3:0)+(isDeep?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(isLowPushback?1:0) },
+    { title: 'Foresight & Scenario Planning Lead', domain: 'strategy',
+      score: (isNightOwl?3:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isHighDeepDive?2:0)+(isLongSpan?2:0) },
+
+    // ── COMMERCIAL & SALES ──
+    { title: 'Enterprise Account Executive (Complex Sales)', domain: 'commercial',
+      score: (isHighPushback?3:0)+(isHighVolume?2:0)+(isShortMessages?2:0)+(!isNightOwl?2:0)+(isLowQuestions?1:0) },
+    { title: 'Chief Revenue Officer', domain: 'commercial',
+      score: (isHighPushback?3:0)+(isHighVolume?2:0)+(!isNightOwl?2:0)+(isLongSpan?2:0)+(isLowPushback?0:1) },
+    { title: 'VC-Backed Fundraising Lead', domain: 'commercial',
+      score: (isHighPushback?3:0)+(isDeep?2:0)+(isNightOwl?1:0)+(isHighVocab?2:0)+(isLongSpan?1:0) },
+    { title: 'Head of Partnerships (Platform/Ecosystem)', domain: 'commercial',
+      score: (isHighQuestions?2:0)+(isShortMessages?2:0)+(!isNightOwl?2:0)+(isMedPushback?2:0)+(isHighVolume?1:0) },
+    { title: 'Growth Lead (PLG/B2C)', domain: 'commercial',
+      score: (isHighVolume?3:0)+(isShortMessages?2:0)+(!isNightOwl?2:0)+(isHighQuestions?1:0)+(isLowPushback?1:0) },
+    { title: 'Founder (Pre-Seed, Commercial Thesis)', domain: 'commercial',
+      score: (isHighPushback?2:0)+(isHighVolume?2:0)+(isNightOwl?2:0)+(isHighVocab?1:0)+(isLongSpan?1:0) },
+    { title: 'Business Development Director', domain: 'commercial',
+      score: (isHighQuestions?3:0)+(isShortMessages?2:0)+(!isNightOwl?1:0)+(isMedPushback?2:0)+(isHighVolume?1:0) },
+    { title: 'Category Manager (Consumer/Retail)', domain: 'commercial',
+      score: (isLowPushback?2:0)+(!isNightOwl?2:0)+(isHighVolume?2:0)+(isShortMessages?2:0)+(isLowQuestions?1:0) },
+
+    // ── LEGAL & POLICY ──
+    { title: 'Litigation Partner (Commercial Law)', domain: 'legal',
+      score: (isHighPushback?4:0)+(isDeep?2:0)+(isLowQuestions?2:0)+(isLongMessages?2:0)+(isHighVocab?1:0) },
+    { title: 'Regulatory Affairs Director', domain: 'legal',
+      score: (isDeep?2:0)+(isLowPushback?2:0)+(isLongMessages?2:0)+(isHighVocab?3:0)+(isLongSpan?2:0) },
+    { title: 'Chief Privacy / AI Governance Officer', domain: 'legal',
+      score: (isDeep?3:0)+(isHighVocab?3:0)+(isLongSpan?2:0)+(isLowPushback?1:0)+(isNightOwl?1:0) },
+    { title: 'Policy Lead (Tech / AI / Health)', domain: 'legal',
+      score: (isDeep?2:0)+(isLongMessages?2:0)+(isHighVocab?3:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    { title: 'Transactional Lawyer (M&A / VC)', domain: 'legal',
+      score: (isHighPushback?2:0)+(isDeep?2:0)+(isLowQuestions?2:0)+(isHighVocab?2:0)+(!isNightOwl?2:0) },
+    { title: 'Public Interest Lawyer / Advocate', domain: 'legal',
+      score: (isHighPushback?3:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isHighDeepDive?1:0) },
+    { title: 'Compliance & Ethics Lead', domain: 'legal',
+      score: (isLowPushback?3:0)+(isDeep?2:0)+(isHighVocab?2:0)+(!isNightOwl?2:0)+(isLongSpan?1:0) },
+    { title: 'Parliamentary / Legislative Advisor', domain: 'legal',
+      score: (isDeep?2:0)+(isHighVocab?3:0)+(isLongMessages?2:0)+(isMedPushback?2:0)+(isLongSpan?1:0) },
+
+    // ── CREATIVE & EDITORIAL ──
+    { title: 'Editorial Director (Long-Form / Magazine)', domain: 'creative',
+      score: (isHighVocab?3:0)+(isHighDeepDive?2:0)+(isLongMessages?2:0)+(isMultiPlatform?2:0)+(isNightOwl?1:0) },
+    { title: 'Science Communicator / Journalist', domain: 'creative',
+      score: (isHighVocab?3:0)+(isHighDeepDive?2:0)+(isLowPushback?2:0)+(!isHighVolume?1:0)+(isHighQuestions?1:0) },
+    { title: 'Narrative Designer (Games / Interactive)', domain: 'creative',
+      score: (isNightOwl?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongMessages?2:0)+(isLowPushback?2:0) },
+    { title: 'Creative Director (Brand / Campaign)', domain: 'creative',
+      score: (isNightOwl?2:0)+(isHighVocab?2:0)+(isDeep?2:0)+(isHighDeepDive?2:0)+(isMedPushback?1:0) },
+    { title: 'Speechwriter / Executive Ghostwriter', domain: 'creative',
+      score: (isDeep?2:0)+(isHighVocab?3:0)+(isLongMessages?2:0)+(isLowPushback?2:0)+(isLongSpan?1:0) },
+    { title: 'Head of Content Strategy', domain: 'creative',
+      score: (isHighVocab?2:0)+(isHighDeepDive?2:0)+(isMedPushback?2:0)+(!isNightOwl?1:0)+(isLongSpan?2:0) },
+    { title: 'Staff Writer / Culture Critic', domain: 'creative',
+      score: (isNightOwl?2:0)+(isHighVocab?3:0)+(isLongMessages?2:0)+(isHighPushback?2:0)+(!isHighVolume?1:0) },
+    { title: 'Documentary Researcher / Producer', domain: 'creative',
+      score: (isHighQuestions?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+
+    // ── LEADERSHIP & OPERATIONS ──
+    { title: 'Founder / CEO (Venture-Backed)', domain: 'leadership',
+      score: (isNightOwl?3:0)+(isDeep?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(isMultiPlatform?1:0)+(isHighPushback?1:0) },
+    { title: 'COO (Scaling Startup)', domain: 'leadership',
+      score: (isHighVolume?3:0)+(isShortMessages?2:0)+(!isNightOwl?2:0)+(isLowPushback?2:0)+(isLongSpan?1:0) },
+    { title: 'General Manager (P&L Ownership)', domain: 'leadership',
+      score: (isHighVolume?2:0)+(!isNightOwl?2:0)+(isLowPushback?2:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    { title: 'VP of Product', domain: 'leadership',
+      score: (isDeep?2:0)+(isHighQuestions?2:0)+(isMedPushback?2:0)+(isLongSpan?2:0)+(!isNightOwl?1:0) },
+    { title: 'Head of Operations (Series B+)', domain: 'leadership',
+      score: (isHighVolume?3:0)+(isShortMessages?3:0)+(!isNightOwl?1:0)+(isLowPushback?2:0)+(isLowQuestions?1:0) },
+    { title: 'Chief People Officer / CHRO', domain: 'leadership',
+      score: (isLowPushback?3:0)+(isDeep?1:0)+(!isNightOwl?2:0)+(isMedQuestions?2:0)+(isLongSpan?2:0) },
+    { title: 'Managing Director (Consulting/Professional Services)', domain: 'leadership',
+      score: (isDeep?2:0)+(isLowPushback?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(!isNightOwl?1:0) },
+    { title: 'Venture Partner (Early-Stage Fund)', domain: 'leadership',
+      score: (isNightOwl?3:0)+(isHighVocab?2:0)+(!isHighVolume?2:0)+(isLongSpan?2:0)+(isDeep?1:0) },
+
+    // ── EDUCATION & COACHING ──
+    { title: 'Executive Coach (C-Suite)', domain: 'education',
+      score: (isLowPushback?3:0)+(isDeep?2:0)+(isLongSpan?2:0)+(!isNightOwl?2:0)+(isMedQuestions?1:0) },
+    { title: 'Head of Learning & Development', domain: 'education',
+      score: (isLongMessages?3:0)+(isLowPushback?2:0)+(!isNightOwl?2:0)+(isHighDeepDive?2:0)+(isMedQuestions?1:0) },
+    { title: 'Professor / Research Academic', domain: 'education',
+      score: (isVeryDeep?4:isLongMessages?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isNightOwl?2:0)+(isHighDeepDive?1:0) },
+    { title: 'Curriculum Designer (Professional / HE)', domain: 'education',
+      score: (isLongMessages?2:0)+(isLowPushback?2:0)+(isDeep?2:0)+(isMedQuestions?2:0)+(!isNightOwl?2:0) },
+    { title: 'Instructional Designer (Corporate)', domain: 'education',
+      score: (isLongMessages?2:0)+(isLowPushback?3:0)+(!isNightOwl?2:0)+(isMedQuestions?2:0)+(isLowPushback?1:0) },
+    { title: 'Organisational Psychologist', domain: 'education',
+      score: (isDeep?2:0)+(isLowPushback?3:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isMedQuestions?1:0) },
+    { title: 'Community College Dean / Academic Director', domain: 'education',
+      score: (isDeep?1:0)+(isLowPushback?2:0)+(!isNightOwl?3:0)+(isLongMessages?2:0)+(isLongSpan?2:0) },
+    { title: 'Learning Experience Designer (EdTech)', domain: 'education',
+      score: (isHighQuestions?2:0)+(isLowPushback?2:0)+(isDeep?1:0)+(!isNightOwl?2:0)+(isMedPushback?1:0)+(isLongMessages?1:0) }
+  ];
+
+  // ── Score, sort, pick top 4 with domain diversity for unexpected slot ──
+  const scoredRoles = ROLE_LIBRARY.map(r => ({ ...r, computed: r.score }))
+    .sort((a, b) => b.computed - a.computed);
+
+  // Top 3 from highest scores
+  const top3 = scoredRoles.slice(0, 3);
+  const top3Domains = new Set(top3.map(r => r.domain));
+
+  // 4th must be from a different domain than the top scorer's domain
+  const primaryDomain = top3[0].domain;
+  const unexpected = scoredRoles.find(r => r.domain !== primaryDomain && !top3.includes(r));
+
+  const selectedRoles = [
+    ...top3,
+    unexpected || scoredRoles[3]
+  ];
+
+  // Format for prompt injection — Claude writes the why text only
+  const rolesForPrompt = selectedRoles.map((r, i) => ({
+    title: r.title,
+    domain: r.domain,
+    signalScore: r.computed,
+    unexpected: i === 3
+  }));
+
 SUGGESTED signal names for this archetype: ${primary.signalNames.join(', ')}
 You may use these or derive better ones from the data. They must be specific to the archetype.
 
@@ -274,22 +486,29 @@ Return ONLY valid JSON. No markdown. No preamble. No trailing commas. No explana
   "thinkerType": "${primary.name}${secondary.score >= primary.score - 2 ? ' · ' + secondary.name + ' tendency' : ''}",
   "summary": "4 sentences. First: the core truth about this mind in one sharp sentence. Second: the evidence — cite specific numbers. Third: the tension or surprise — something unexpected about this combination. Fourth: the implication — what this means for how they should work or be worked with. NO generic statements.",
   "signals": [
-    {"name": "USE the archetype-specific signal names above — not generic ones", "score": number 40-97, "label": "one specific observation from the actual data numbers"},
-    {"name": "signal 2", "score": number, "label": "observation grounded in data"},
-    {"name": "signal 3", "score": number, "label": "observation"},
-    {"name": "signal 4", "score": number, "label": "observation"},
-    {"name": "signal 5", "score": number, "label": "observation"},
-    {"name": "signal 6", "score": number, "label": "observation"}
+    {
+      "name": "USE the archetype-specific signal names above — not generic ones",
+      "score": "number 40-97",
+      "label": "one specific observation grounded in the actual data numbers",
+      "growth": "1-2 sentences of honest, specific personal growth guidance for THIS signal at THIS score. Not generic. Reference the actual number. Example: 'At 36% pushback over 16 months, the pattern is consistent — but consistency at this level can mean missing friction that would sharpen the thinking. Once a month, argue the opposite position before committing.'",
+      "managerNote": "1 sentence telling a manager exactly how to work with this signal. Concrete and actionable. Example: 'Give this person a clear brief and get out of the way — micromanagement will cost you their best thinking and their trust.'"
+    },
+    {"name": "signal 2", "score": "number", "label": "observation", "growth": "personal guidance", "managerNote": "manager instruction"},
+    {"name": "signal 3", "score": "number", "label": "observation", "growth": "personal guidance", "managerNote": "manager instruction"},
+    {"name": "signal 4", "score": "number", "label": "observation", "growth": "personal guidance", "managerNote": "manager instruction"},
+    {"name": "signal 5", "score": "number", "label": "observation", "growth": "personal guidance", "managerNote": "manager instruction"},
+    {"name": "signal 6", "score": "number", "label": "observation", "growth": "personal guidance", "managerNote": "manager instruction"}
   ],
   "traits": ["8 behavioural observations specific to ${primary.name} + these numbers. Format: verb phrase or specific behaviour. GOOD: 'resolves ambiguity through iteration not debate', 'asks one precise question instead of three vague ones', 'moves at 1am when everyone else has gone quiet'. BAD: 'analytical', 'strategic', 'curious', 'driven'. Every trait must be something a colleague could observe."],
   "careerFits": [
-    {"title": "Specific role title", "why": "2 sentences connecting THIS data to THIS role. Not generic.", "score": number 75-97, "tags": ["tag1", "tag2"], "unexpected": false},
-    {"title": "Role 2", "why": "2 sentences", "score": number, "tags": ["tag1", "tag2"], "unexpected": false},
-    {"title": "Role 3", "why": "2 sentences", "score": number, "tags": ["tag1", "tag2"], "unexpected": false},
-    {"title": "One genuinely unexpected role — not an obvious fit but logically derivable from the signals", "why": "explain the non-obvious connection", "score": number 70-85, "tags": ["tag1"], "unexpected": true}
+    {"title": "${rolesForPrompt[0]?.title}", "why": "2 sentences connecting THIS person's specific metrics to why this role fits. Reference actual numbers. Not generic.", "score": ${Math.min(97, Math.max(78, rolesForPrompt[0]?.signalScore * 8 + 50))}, "tags": ["derive 2 tags from the signals that make this fit"], "unexpected": false},
+    {"title": "${rolesForPrompt[1]?.title}", "why": "2 sentences", "score": ${Math.min(94, Math.max(75, rolesForPrompt[1]?.signalScore * 7 + 45))}, "tags": ["tag1", "tag2"], "unexpected": false},
+    {"title": "${rolesForPrompt[2]?.title}", "why": "2 sentences", "score": ${Math.min(91, Math.max(72, rolesForPrompt[2]?.signalScore * 7 + 40))}, "tags": ["tag1", "tag2"], "unexpected": false},
+    {"title": "${rolesForPrompt[3]?.title}", "why": "explain the non-obvious connection — why do this person's signals lead here despite it being outside their primary domain", "score": ${Math.min(86, Math.max(68, rolesForPrompt[3]?.signalScore * 6 + 38))}, "tags": ["tag1"], "unexpected": true}
   ],
   "employerQuote": "One sentence an employer would say after reviewing this profile. Specific. Surprising. Makes them want to meet this person.",
-  "hiddenInsight": "One honest observation this person probably has not articulated about themselves. The thing the data reveals that they might recognise as true but have never said out loud."
+  "hiddenInsight": "One honest observation this person probably has not articulated about themselves. The thing the data reveals that they might recognise as true but have never said out loud.",
+  "cultureNarrative": "One paragraph — 3 to 5 sentences. Where this person does their best work and what environment brings out their worst. Must be grounded in the 7 culture dimension scores above, not generic. Include a specific observation about their ideal manager or team dynamic. No bullet points. Write like a sharp talent advisor briefing a founder before a hire."
 }`;
 
   try {
@@ -302,7 +521,7 @@ Return ONLY valid JSON. No markdown. No preamble. No trailing commas. No explana
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
+        max_tokens: 3000,
         messages: [{ role: 'user', content: prompt }]
       })
     });
