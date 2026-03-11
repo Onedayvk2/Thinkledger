@@ -1,13 +1,18 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "api/generate.js": { "maxDuration": 60 },
+    "api/save.js":     { "maxDuration": 15 },
+    "api/profile.js":  { "maxDuration": 15 }
+  },
   "routes": [
     { "src": "/api/generate", "dest": "/api/generate.js" },
-    { "src": "/api/save", "dest": "/api/save.js" },
-    { "src": "/api/profile", "dest": "/api/profile.js" },
+    { "src": "/api/save",     "dest": "/api/save.js" },
+    { "src": "/api/profile",  "dest": "/api/profile.js" },
     { "src": "/profile/([^/]+)", "dest": "/profile.html" },
-    { "src": "/app", "dest": "/app.html" },
+    { "src": "/app",  "dest": "/app.html" },
     { "src": "/demo", "dest": "/demo.html" },
-    { "src": "/", "dest": "/index.html" }
+    { "src": "/",     "dest": "/index.html" }
   ]
 }
