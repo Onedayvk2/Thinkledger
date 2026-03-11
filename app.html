@@ -1017,33 +1017,55 @@
 
     <!-- SHARE -->
     <div class="share-row">
-      <button class="btn p" id="saveBtn" onclick="saveProfile()">Save & get shareable link</button>
-      <button class="btn s" onclick="window.print()">Download PDF</button>
+      <button class="btn p" id="saveBtn" onclick="saveProfile()">Save & share profile</button>
       <button class="btn s" onclick="resetTool()">Start Over</button>
     </div>
 
     <!-- SAVE RESULT -->
-    <div id="savedBanner" style="display:none;margin-top:16px;background:var(--accent-light);border:1px solid #b8d4c0;border-radius:10px;padding:20px 24px;">
-      <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:12px;">✓ Profile saved — share it anywhere</div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;">
-        <input id="shareUrl" readonly style="flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:var(--white);font-family:'DM Sans',sans-serif;color:var(--ink);">
-        <button class="btn p" style="padding:9px 18px;white-space:nowrap;font-size:12px" onclick="copyShareUrl()">Copy link</button>
+    <div id="savedBanner" style="display:none;margin-top:16px;background:var(--accent-light);border:1px solid #b8d4c0;border-radius:10px;padding:24px;">
+
+      <div style="font-size:13px;color:var(--accent);font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Profile saved — share it anywhere
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
-        <button onclick="shareLinkedIn()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#0077b5;color:#fff;border:none;border-radius:5px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+
+      <!-- URL row -->
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:20px;">
+        <input id="shareUrl" readonly style="flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:var(--white);font-family:'DM Sans',sans-serif;color:var(--ink);">
+        <button id="copyLinkBtn" class="btn p" style="padding:10px 18px;white-space:nowrap;font-size:12px" onclick="copyShareUrl()">Copy link</button>
+      </div>
+
+      <!-- Section: share to social -->
+      <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mid);margin-bottom:10px;">Share to social</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+        <button onclick="shareLinkedIn()" style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:#0077b5;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-          LinkedIn
+          Post to LinkedIn
         </button>
-        <button onclick="shareTwitter()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:#000;color:#fff;border:none;border-radius:5px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+        <button onclick="shareTwitter()" style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:#000;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.735-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          X / Twitter
-        </button>
-        <button onclick="downloadImageCard()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border:none;border-radius:5px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-          Instagram / TikTok card
+          Post to X
         </button>
       </div>
-      <div style="font-size:11px;color:var(--mid)">Instagram and TikTok: download the image card and post as a photo. LinkedIn and X: opens a pre-filled post with your profile link.</div>
+
+      <!-- Section: image cards -->
+      <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mid);margin-bottom:10px;">Download image card</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button onclick="downloadImageCard('square')" style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          Instagram (1:1 square)
+        </button>
+        <button onclick="downloadImageCard('story')" style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:#010101;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+          <svg width="11" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.2 8.2 0 004.79 1.54V6.78a4.85 4.85 0 01-1.02-.09z"/></svg>
+          TikTok / Story (9:16)
+        </button>
+        <button onclick="downloadImageCard('linkedin')" style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:#004182;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn image (1.91:1)
+        </button>
+      </div>
+
+      <div style="font-size:11px;color:var(--mid);line-height:1.6;">Save the image and post directly to Instagram, TikTok Stories, or LinkedIn. The link to your full profile is embedded in the card.</div>
     </div>
     <canvas id="shareCanvas" style="display:none"></canvas>
 
@@ -1999,7 +2021,7 @@ function generateLocalProfile(m) {
   const scoredCareers = scoreCareerRoles(m);
   const careerFits = scoredCareers.map((r, i) => ({
     title: r.title,
-    why: `Signal score ${r.score} from ${m.userMessages} messages across ${spn} months — the data maps to this role.`,
+    why: `${m.userMessages} messages across ${spn} months produced a signal pattern that aligns with this role. The combination of ${p > 28 ? 'high pushback (' + p + '%)' : p < 12 ? 'low pushback (' + p + '%)' : 'moderate pushback (' + p + '%)'}, ${avg > 55 ? 'deep message length (' + avg + ' words)' : 'concise messaging (' + avg + ' words)'}, and ${night > 30 ? 'night-heavy usage' : 'daytime-dominant usage'} maps to the cognitive demands of this domain.`,
     score: Math.min(97, Math.max(68, r.score * 7 + 45)),
     tags: [r.domain],
     unexpected: i === 3
@@ -2037,81 +2059,101 @@ function computeCultureMap(metadata) {
 
   const dims = [
     {
+      // HIGH night + LOW questions + HIGH avg words = Solo Processor (low score)
+      // LOW night + HIGH questions + LOW avg words = Social Thinker (high score)
       id: 'thinkingMode',
       left: 'Solo Processor',
       right: 'Social Thinker',
-      pos: clamp((ngt * 0.5) + ((100 - q) * 0.3) + (avg * 0.2)),
+      pos: clamp(((100 - ngt) * 0.4) + (q * 0.4) + ((100 - avg) * 0.2)),
       verdict: (v) => v < 35
-        ? `<strong>Solo Processor</strong> — You arrive with conclusions. Thinking happens before the room sees it.`
+        ? `<strong>Solo Processor</strong> — Your best thinking happens before the room sees it. You arrive with conclusions already stress-tested in private.`
         : v > 65
-        ? `<strong>Social Thinker</strong> — You build ideas in conversation. The room is part of your process.`
-        : `<strong>Context-switcher</strong> — You shift between both modes depending on what the problem needs.`
+        ? `<strong>Social Thinker</strong> — You build ideas in conversation. The room is not just the audience — it is part of the process.`
+        : `<strong>Context-switcher</strong> — You move between modes. Solo when the problem needs depth, social when it needs momentum.`
     },
     {
+      // HIGH deep-dive + HIGH questions = Moves Into Fog (high score)
+      // LOW deep-dive + LOW questions + HIGH avg = Needs Clarity First (low score)
       id: 'ambiguityResponse',
       left: 'Needs Clarity First',
       right: 'Moves Into Fog',
       pos: clamp((dv * 0.5) + (q * 0.3) + ((100 - avg) * 0.2)),
       verdict: (v) => v < 35
-        ? `<strong>Needs Clarity First</strong> — You define the problem before you touch it. Ambiguity is something you resolve, not inhabit.`
+        ? `<strong>Needs Clarity First</strong> — You define the problem before you touch it. Ambiguity is a cost you minimise, not a texture you enjoy.`
         : v > 65
-        ? `<strong>Moves Into Fog</strong> — You think before the map is complete. Fog is not a blocker — it is where you do your best work.`
-        : `<strong>Adaptive</strong> — You tolerate ambiguity when needed but prefer clear parameters when available.`
+        ? `<strong>Moves Into Fog</strong> — You start before the map is complete. Uncertainty is not a blocker — it is where you do your sharpest thinking.`
+        : `<strong>Pragmatically adaptive</strong> — You tolerate ambiguity when the problem demands it, but you close open loops fast.`
     },
     {
+      // This dimension measures HOW you use AI feedback — not how you behave with people.
+      // HIGH pushback + HIGH deep-dive = genuinely invites friction (Seeks Friction)
+      // HIGH pushback + LOW deep-dive = pushes back to confirm existing view (Seeks Confirmation — position-defending)
+      // LOW pushback = absorbs and refines (Seeks Confirmation — trust-based)
       id: 'feedbackOrientation',
       left: 'Seeks Confirmation',
       right: 'Seeks Friction',
-      pos: clamp((p * 0.6) + (dv * 0.4)),
-      verdict: (v) => v < 35
-        ? `<strong>Seeks Confirmation</strong> — You use AI to refine what you already think. Alignment over challenge.`
-        : v > 65
-        ? `<strong>Seeks Friction</strong> — You use AI as a sparring partner. You trust ideas that survive pressure more than ones that do not.`
-        : `<strong>Selective challenger</strong> — You push back when it genuinely matters, not as a reflex.`
+      pos: clamp((p * 0.45) + (dv * 0.55)),
+      verdict: (v) => {
+        if (v < 30)
+          return `<strong>Confirmation-oriented</strong> — You use AI to refine and execute what you already believe. The AI confirms, you decide. This is efficiency, not passivity.`;
+        if (v < 50)
+          return `<strong>Position-defender</strong> — You push back when the AI diverges from your thinking — and your position usually holds. The friction is a quality filter, not openness to being wrong. That is a strength with a blind spot.`;
+        if (v < 70)
+          return `<strong>Selective friction-seeker</strong> — You invite challenge when the stakes are high enough to justify it. You are comfortable being wrong, but you do not manufacture doubt unnecessarily.`;
+        return `<strong>Seeks Friction</strong> — You deliberately use AI to stress-test ideas before committing. You trust conclusions more when they have survived a challenge. Being wrong early is preferable to being wrong late.`;
+      }
     },
     {
+      // LONG span + HIGH night + HIGH depth = Long-Game (high score)
+      // SHORT span + LOW night + LOW depth = Present-Focused (low score)
       id: 'timeHorizon',
       left: 'Present-Focused',
       right: 'Long-Game Thinker',
-      pos: clamp((spn * 3) + (ngt * 0.4) + (dep * 0.3)),
+      pos: clamp(Math.min(95, (spn * 3.5) + (ngt * 0.3) + (dep * 0.2))),
       verdict: (v) => v < 35
-        ? `<strong>Present-Focused</strong> — Your cognitive energy goes into what is in front of you. Execution over anticipation.`
+        ? `<strong>Present-Focused</strong> — Your cognitive energy concentrates on what is in front of you. You execute well under short horizons.`
         : v > 65
-        ? `<strong>Long-Game Thinker</strong> — You think in years, not quarters. The long game is where your attention naturally goes.`
-        : `<strong>Balanced horizon</strong> — You hold near and far simultaneously — tactical when needed, strategic when possible.`
+        ? `<strong>Long-Game Thinker</strong> — You think in years. The long game is not a strategy for you — it is a natural orientation.`
+        : `<strong>Dual horizon</strong> — You hold near-term execution and long-term vision simultaneously. You know when to zoom in and when to pull back.`
     },
     {
+      // HIGH avg words + HIGH long message pct = Depth Miner (high score)
+      // LOW avg words + HIGH question ratio = Breadth Collector (low score)
       id: 'knowledgeMode',
       left: 'Breadth Collector',
       right: 'Depth Miner',
-      pos: clamp((avg * 0.4) + (lng * 0.4) + ((100 - q) * 0.2)),
+      pos: clamp((avg * 0.45) + (lng * 0.35) + ((100 - q) * 0.2)),
       verdict: (v) => v < 35
-        ? `<strong>Breadth Collector</strong> — Wide not deep. You collect signals from everywhere and synthesise fast.`
+        ? `<strong>Breadth Collector</strong> — You scan wide. You collect signals across domains and synthesise fast. Depth arrives when a topic earns it.`
         : v > 65
-        ? `<strong>Depth Miner</strong> — You drill. One topic at a time, until you understand the mechanics, not just the surface.`
-        : `<strong>Range with depth</strong> — You scan wide but commit to depth when something earns it.`
+        ? `<strong>Depth Miner</strong> — You drill. You are not satisfied until you understand the mechanics, not just the surface. One topic at a time, fully.`
+        : `<strong>Range with depth</strong> — You move across domains but commit fully when something earns your attention. Both modes are genuine.`
     },
     {
+      // DAYTIME + HIGH volume + SHORT messages = Sharpens Under Pressure (high score)
+      // NIGHT + LOW volume + LONG messages = Needs Space to Think (low score)
       id: 'pressureResponse',
       left: 'Needs Space to Think',
       right: 'Sharpens Under Pressure',
-      pos: clamp(((100 - ngt) * 0.4) + (vol * 0.3) + ((100 - avg) * 0.3)),
+      pos: clamp(((100 - ngt) * 0.4) + (Math.min(100, vol) * 0.3) + ((100 - Math.min(100, avg)) * 0.3)),
       verdict: (v) => v < 35
-        ? `<strong>Needs Space to Think</strong> — Your best thinking happens with time. Pressure compresses your process in ways that cost quality.`
+        ? `<strong>Needs Space to Think</strong> — Your best thinking requires time and low interference. Pressure compresses the process in ways that cost you quality.`
         : v > 65
-        ? `<strong>Sharpens Under Pressure</strong> — Deadlines focus you. Constraints produce your clearest thinking.`
-        : `<strong>Situational</strong> — You adapt your pace to what the work demands.`
+        ? `<strong>Sharpens Under Pressure</strong> — Constraints focus you. Deadlines produce your clearest thinking, not your most rushed.`
+        : `<strong>Situationally adaptive</strong> — You can perform under pressure, but you do your best work when you have room to think. You know the difference.`
     },
     {
+      // SHORT messages + LOW deep-dive + LOW long pct = Delivers the Answer (high score)
+      // LONG messages + HIGH deep-dive + HIGH long pct = Shows the Working (low score)
       id: 'communicationRegister',
       left: 'Shows the Working',
       right: 'Delivers the Answer',
-      pos: clamp(((100 - avg) * 0.4) + ((100 - dv) * 0.3) + ((100 - lng) * 0.3)),
+      pos: clamp(((100 - Math.min(100, avg)) * 0.4) + ((100 - dv) * 0.3) + ((100 - lng) * 0.3)),
       verdict: (v) => v < 35
-        ? `<strong>Shows the Working</strong> — You think out loud. Your process is visible. People understand not just what you concluded but how.`
+        ? `<strong>Shows the Working</strong> — You think out loud. Your process is visible. People understand not just what you concluded but how you got there — which builds trust.`
         : v > 65
-        ? `<strong>Delivers the Answer</strong> — You lead with the conclusion. Your communication is compressed and confident.`
-        : `<strong>Context-aware</strong> — You calibrate how much process to show based on who needs to understand it.`
+        ? `<strong>Delivers the Answer</strong> — You lead with conclusions. Your communication is compressed and confident. You trust people to ask if they need the reasoning.`
+        : `<strong>Register-aware</strong> — You calibrate how much process to show. With experts, you skip the working. With stakeholders, you bring it.`
     }
   ];
 
@@ -2305,8 +2347,11 @@ let _currentMetadata = null;
 function saveProfile() {
   if (!_currentProfile || !_currentMetadata) return;
   const btn = document.getElementById('saveBtn');
-  btn.textContent = 'Saving...';
-  btn.disabled = true;
+  if (btn._saving) return; // prevent double-click
+  btn._saving = true;
+  const orig = btn.textContent;
+  btn.textContent = 'Saving…';
+  btn.style.opacity = '0.75';
 
   fetch('/api/save', {
     method: 'POST',
@@ -2315,27 +2360,43 @@ function saveProfile() {
   })
   .then(r => r.json())
   .then(data => {
+    btn._saving = false;
+    btn.style.opacity = '';
     if (data.id) {
       const url = `${window.location.origin}/profile/${data.id}`;
       document.getElementById('shareUrl').value = url;
-      document.getElementById('savedBanner').style.display = 'block';
+      const banner = document.getElementById('savedBanner');
+      banner.style.display = 'block';
       btn.textContent = '✓ Saved';
-      btn.style.background = '#2d7a4f';
+      btn.style.background = 'var(--accent)';
+      // Smooth scroll to share options
+      setTimeout(() => banner.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
     } else {
-      btn.textContent = 'Save & get shareable link';
-      btn.disabled = false;
+      btn._saving = false;
+      btn.textContent = orig;
+      btn.style.opacity = '';
+      alert('Could not save — please try again.');
     }
   })
   .catch(() => {
-    btn.textContent = 'Save & get shareable link';
-    btn.disabled = false;
+    btn._saving = false;
+    btn.textContent = orig;
+    btn.style.opacity = '';
+    alert('Connection error. Check your internet and try again.');
   });
 }
 
 function copyShareUrl() {
   const url = document.getElementById('shareUrl').value;
+  const btn = document.getElementById('copyLinkBtn');
   navigator.clipboard.writeText(url).then(() => {
-    const btn = event.target;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => btn.textContent = 'Copy link', 2000);
+  }).catch(() => {
+    // Fallback for older browsers
+    const el = document.getElementById('shareUrl');
+    el.select();
+    document.execCommand('copy');
     btn.textContent = 'Copied ✓';
     setTimeout(() => btn.textContent = 'Copy link', 2000);
   });
@@ -2343,123 +2404,227 @@ function copyShareUrl() {
 
 function shareLinkedIn() {
   const url = document.getElementById('shareUrl').value;
-  const text = encodeURIComponent('I just got my cognitive profile from ThinkLedger — built from how I actually use AI, not what I said.');
-  window.open('https://www.linkedin.com/shareArticle?mini=true&url=' + encodeURIComponent(url) + '&title=' + text, '_blank', 'width=600,height=500');
+  if (!url) { alert('Save your profile first.'); return; }
+  // LinkedIn's official share URL — works as a proper share dialog
+  window.open(
+    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    '_blank', 'width=700,height=600,noopener,noreferrer'
+  );
 }
 
 function shareTwitter() {
   const url = document.getElementById('shareUrl').value;
+  if (!url) { alert('Save your profile first.'); return; }
   const p = _currentProfile || {};
   const archetype = p.thinkerType || 'a thinker';
-  const text = encodeURIComponent('AI can fake your CV. It cannot fake 12 months of how you actually think. I just got my cognitive profile — ' + archetype + '. Built from metadata only, no content read.');
-  window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + encodeURIComponent(url), '_blank', 'width=600,height=400');
+  const text = encodeURIComponent(`AI can fake your CV. It cannot fake 12+ months of how you actually think.\n\nMy cognitive profile: ${archetype}. Built from metadata only — no content read.`);
+  window.open(
+    `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`,
+    '_blank', 'width=600,height=400,noopener,noreferrer'
+  );
 }
 
-function downloadImageCard() {
+// ── IMAGE CARD GENERATOR ──
+// format: 'square' (1080x1080 Instagram), 'story' (1080x1920 TikTok/Story), 'linkedin' (1200x627)
+async function downloadImageCard(format) {
+  const shareUrl = document.getElementById('shareUrl').value;
+  if (!shareUrl) { alert('Save your profile first to get a shareable link.'); return; }
+
   const p = _currentProfile || {};
   const m = _currentMetadata || {};
+
+  // Wait for fonts before drawing
+  await document.fonts.ready;
+
   const canvas = document.getElementById('shareCanvas');
   const ctx = canvas.getContext('2d');
 
-  // Square card 1080x1080 for Instagram
-  canvas.width = 1080;
-  canvas.height = 1080;
+  const configs = {
+    square:   { w: 1080, h: 1080, filename: 'thinkledger-instagram.png' },
+    story:    { w: 1080, h: 1920, filename: 'thinkledger-story.png' },
+    linkedin: { w: 1200, h: 627,  filename: 'thinkledger-linkedin.png' }
+  };
+  const cfg = configs[format] || configs.square;
+  canvas.width  = cfg.w;
+  canvas.height = cfg.h;
 
-  // Background
-  ctx.fillStyle = '#0a0a08';
-  ctx.fillRect(0, 0, 1080, 1080);
+  const W   = cfg.w;
+  const H   = cfg.h;
+  const PAD = Math.round(W * 0.074);
 
-  // Gold accent bar top
-  ctx.fillStyle = '#c9a84c';
-  ctx.fillRect(0, 0, 1080, 6);
+  // Font stacks safe for canvas
+  const SERIF = 'Georgia, "Times New Roman", Times, serif';
+  const SANS  = '"Helvetica Neue", Arial, Helvetica, sans-serif';
 
-  // ThinkLedger wordmark
-  ctx.fillStyle = '#c9a84c';
-  ctx.font = '500 28px Georgia, serif';
-  ctx.fillText('ThinkLedger', 80, 90);
-
-  // Profile name — large
-  ctx.fillStyle = '#f2ede4';
-  ctx.font = 'italic bold 78px Georgia, serif';
-  const profileName = p.profileName || 'Thinker Profile';
-  // Word wrap if long
-  const words = profileName.split(' ');
-  let line = '';
-  let y = 240;
-  for (let w of words) {
-    const test = line + (line ? ' ' : '') + w;
-    if (ctx.measureText(test).width > 900 && line) {
-      ctx.fillText(line, 80, y);
-      line = w;
-      y += 90;
-    } else { line = test; }
+  // ── HELPERS ──
+  function wrapText(text, x, y, maxWidth, lineHeight, maxLines) {
+    const words = (text || '').split(' ');
+    let line = '', linesDrawn = 0;
+    for (let i = 0; i < words.length; i++) {
+      const test = line + (line ? ' ' : '') + words[i];
+      if (ctx.measureText(test).width > maxWidth && line) {
+        ctx.fillText(line, x, y);
+        line = words[i];
+        y += lineHeight;
+        linesDrawn++;
+        if (maxLines && linesDrawn >= maxLines - 1) {
+          const remaining = words.slice(i + 1).join(' ');
+          if (remaining) line += '…';
+          break;
+        }
+      } else { line = test; }
+    }
+    if (line) { ctx.fillText(line, x, y); y += lineHeight; }
+    return y;
   }
-  ctx.fillText(line, 80, y);
 
-  // Archetype
+  // ── BACKGROUND ──
+  ctx.fillStyle = '#0a0a08';
+  ctx.fillRect(0, 0, W, H);
+
+  // Dot grid texture
+  ctx.fillStyle = 'rgba(201,168,76,0.035)';
+  for (let gx = PAD; gx < W - PAD; gx += 56) {
+    for (let gy = PAD * 1.5; gy < H - PAD; gy += 56) {
+      ctx.beginPath(); ctx.arc(gx, gy, 1.5, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  // Gold accent lines
   ctx.fillStyle = '#c9a84c';
-  ctx.font = '400 32px Georgia, serif';
-  ctx.fillText(p.thinkerType || '', 80, y + 60);
+  ctx.fillRect(0, 0, W, Math.round(H * 0.007));           // top bar
+  ctx.fillRect(PAD, Math.round(H * 0.1), 2, Math.round(H * 0.12)); // left rule
 
-  // Divider
-  ctx.strokeStyle = '#2a2a28';
+  // ── THINKLEDGER WORDMARK ──
+  ctx.fillStyle = '#c9a84c';
+  ctx.font = `600 ${Math.round(W * 0.025)}px ${SANS}`;
+  ctx.letterSpacing = '2px';
+  ctx.fillText('THINKLEDGER', PAD + 14, Math.round(H * 0.088));
+  ctx.letterSpacing = '0px';
+
+  // ── ARCHETYPE LABEL ──
+  const archY = Math.round(H * 0.16);
+  ctx.fillStyle = 'rgba(201,168,76,0.6)';
+  ctx.font = `400 ${Math.round(W * 0.021)}px ${SANS}`;
+  ctx.fillText((p.thinkerType || '').toUpperCase(), PAD + 14, archY);
+
+  // ── PROFILE NAME — large serif headline ──
+  const nameFontSize = format === 'linkedin' ? Math.round(W * 0.063) : Math.round(W * 0.08);
+  ctx.fillStyle = '#f2ede4';
+  ctx.font = `italic ${nameFontSize}px ${SERIF}`;
+  const nameText = p.profileName || p.thinkerType || 'Thinker Profile';
+  const nameY    = Math.round(H * 0.23);
+  const nameEndY = wrapText(nameText, PAD + 14, nameY, W - PAD * 2.2, Math.round(nameFontSize * 1.2), 3);
+
+  // ── GOLD DIVIDER ──
+  const divY = nameEndY + Math.round(H * 0.022);
+  ctx.strokeStyle = 'rgba(201,168,76,0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(PAD + 14, divY); ctx.lineTo(W - PAD, divY); ctx.stroke();
+
+  // ── SUMMARY — first sentence ──
+  const summaryRaw = (p.summary || '').split('.')[0] + '.';
+  const sumFontSize = Math.round(W * (format === 'linkedin' ? 0.024 : 0.027));
+  const sumY = divY + Math.round(H * 0.038);
+  ctx.fillStyle = '#7a7470';
+  ctx.font = `300 italic ${sumFontSize}px ${SERIF}`;
+  const sumLines = format === 'linkedin' ? 2 : 4;
+  const sumEndY  = wrapText(summaryRaw, PAD + 14, sumY, W - PAD * 2.2, Math.round(sumFontSize * 1.6), sumLines);
+
+  // ── TRAITS (story only) ──
+  if (format === 'story' && p.traits && p.traits.length) {
+    const traitFontSize = Math.round(W * 0.023);
+    const traitStartY = sumEndY + Math.round(H * 0.035);
+    ctx.fillStyle = 'rgba(242,237,228,0.45)';
+    ctx.font = `400 ${traitFontSize}px ${SANS}`;
+    p.traits.slice(0, 5).forEach((t, i) => {
+      ctx.fillText('— ' + t, PAD + 14, traitStartY + i * Math.round(traitFontSize * 1.75));
+    });
+  }
+
+  // ── STATS BOX ──
+  const statBoxY = format === 'story'
+    ? Math.round(H * 0.70)
+    : format === 'linkedin'
+    ? Math.round(H * 0.60)
+    : Math.round(H * 0.66);
+
+  const statBoxH = Math.round(H * 0.14);
+  const colW     = Math.round((W - PAD * 2) / 4);
+
+  // Box
+  ctx.fillStyle = 'rgba(20,20,18,0.95)';
+  ctx.beginPath();
+  if (ctx.roundRect) {
+    ctx.roundRect(PAD, statBoxY, W - PAD * 2, statBoxH, 10);
+  } else {
+    ctx.rect(PAD, statBoxY, W - PAD * 2, statBoxH);
+  }
+  ctx.fill();
+
+  // Gold border on stats box
+  ctx.strokeStyle = 'rgba(201,168,76,0.15)';
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(80, y + 100);
-  ctx.lineTo(1000, y + 100);
+  if (ctx.roundRect) {
+    ctx.roundRect(PAD, statBoxY, W - PAD * 2, statBoxH, 10);
+  } else {
+    ctx.rect(PAD, statBoxY, W - PAD * 2, statBoxH);
+  }
   ctx.stroke();
 
-  // Summary (first sentence only)
-  const summary = (p.summary || '').split('.')[0] + '.';
-  ctx.fillStyle = '#a09a90';
-  ctx.font = '300 26px Georgia, serif';
-  const sumWords = summary.split(' ');
-  let sLine = '';
-  let sy = y + 160;
-  for (let w of sumWords) {
-    const test = sLine + (line ? ' ' : '') + w;
-    if (ctx.measureText(test).width > 920 && sLine) {
-      ctx.fillText(sLine, 80, sy);
-      sLine = w;
-      sy += 38;
-      if (sy > y + 340) { ctx.fillText(sLine + '...', 80, sy); sLine = null; break; }
-    } else { sLine = test; }
-  }
-  if (sLine) ctx.fillText(sLine, 80, sy);
-
-  // Key stats row
   const stats = [
-    { label: 'Messages', value: (m.userMessages || 0).toLocaleString() },
-    { label: 'Months', value: m.spanMonths || '—' },
+    { label: 'Messages',  value: (m.userMessages || 0).toLocaleString() },
+    { label: 'Months',    value: String(m.spanMonths || '—') },
     { label: 'Peak hour', value: m.peakHours || '—' },
-    { label: 'Pushback', value: (m.pushbackRatio || 0) + '%' }
+    { label: 'Pushback',  value: (m.pushbackRatio || 0) + '%' }
   ];
-  const statY = 820;
-  ctx.fillStyle = '#1a1a18';
-  ctx.fillRect(80, statY - 50, 920, 120);
+
+  const valFontSize = Math.round(W * 0.036);
+  const lblFontSize = Math.round(W * 0.018);
+
   stats.forEach((s, i) => {
-    const x = 80 + i * 230 + 20;
+    const sx   = PAD + i * colW + Math.round(colW * 0.12);
+    const valY = statBoxY + Math.round(statBoxH * 0.46);
+    const lblY = statBoxY + Math.round(statBoxH * 0.78);
     ctx.fillStyle = '#c9a84c';
-    ctx.font = 'bold 34px Georgia, serif';
-    ctx.fillText(s.value, x, statY + 10);
-    ctx.fillStyle = '#605a50';
-    ctx.font = '400 20px sans-serif';
-    ctx.fillText(s.label, x, statY + 40);
+    ctx.font = `bold ${valFontSize}px ${SERIF}`;
+    ctx.fillText(s.value, sx, valY);
+    ctx.fillStyle = '#4a4640';
+    ctx.font = `400 ${lblFontSize}px ${SANS}`;
+    ctx.fillText(s.label.toUpperCase(), sx, lblY);
   });
 
-  // URL strip bottom
-  const shareUrl = document.getElementById('shareUrl').value;
-  ctx.fillStyle = '#141412';
-  ctx.fillRect(0, 1020, 1080, 60);
-  ctx.fillStyle = '#605a50';
-  ctx.font = '400 22px sans-serif';
-  ctx.fillText(shareUrl, 80, 1057);
+  // ── BOTTOM STRIP — URL ──
+  const stripH = Math.round(H * 0.065);
+  const stripY = H - stripH;
+  ctx.fillStyle = '#050503';
+  ctx.fillRect(0, stripY, W, stripH);
 
-  // Download
+  // Privacy note
+  ctx.fillStyle = 'rgba(201,168,76,0.4)';
+  ctx.font = `400 ${Math.round(W * 0.016)}px ${SANS}`;
+  ctx.fillText('No content read · structural metadata only', PAD + 14, stripY + Math.round(stripH * 0.38));
+
+  ctx.fillStyle = '#3a3630';
+  ctx.font = `400 ${Math.round(W * 0.018)}px ${SANS}`;
+  ctx.fillText(shareUrl, PAD + 14, stripY + Math.round(stripH * 0.72));
+
+  // ── DOWNLOAD ──
+  const dataUrl = canvas.toDataURL('image/png');
+
+  // iOS Safari: open in new tab (can't programmatically download)
+  if (/iP(ad|hone|od)/i.test(navigator.userAgent)) {
+    window.open(dataUrl, '_blank');
+    return;
+  }
+
   const link = document.createElement('a');
-  link.download = 'thinkledger-profile.png';
-  link.href = canvas.toDataURL('image/png');
+  link.download = cfg.filename;
+  link.href = dataUrl;
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
 }
 
 function copyLink() {

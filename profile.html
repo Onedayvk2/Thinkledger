@@ -4,6 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ThinkLedger Profile</title>
+
+<!-- Open Graph — LinkedIn, Facebook, WhatsApp -->
+<meta property="og:type"        content="profile" />
+<meta property="og:site_name"   content="ThinkLedger" />
+<meta property="og:title"       id="ogTitle"       content="A cognitive profile on ThinkLedger" />
+<meta property="og:description" id="ogDescription" content="Cognitive profile built from AI conversation behaviour — not a CV." />
+<meta property="og:url"         id="ogUrl"         content="https://thinkledger.vercel.app" />
+<meta property="og:image"       content="https://thinkledger.vercel.app/og-card.png" />
+<meta property="og:image:width"  content="1200" />
+<meta property="og:image:height" content="627" />
+
+<!-- Twitter / X card -->
+<meta name="twitter:card"        content="summary_large_image" />
+<meta name="twitter:site"        content="@thinkledger" />
+<meta name="twitter:title"       id="twTitle"       content="A cognitive profile on ThinkLedger" />
+<meta name="twitter:description" id="twDescription" content="Cognitive profile built from AI conversation behaviour — not a CV." />
+<meta name="twitter:image"       content="https://thinkledger.vercel.app/og-card.png" />
+<!-- Open Graph — LinkedIn, Twitter, WhatsApp previews -->
+<meta property="og:title" content="My ThinkLedger Cognitive Profile">
+<meta property="og:description" content="See how I actually think — built from 12+ months of AI conversation metadata. No content read. Only structure, timing, and behaviour.">
+<meta property="og:image" content="https://thinkledger.vercel.app/og-image.png">
+<meta property="og:url" content="https://thinkledger.vercel.app">
+<meta property="og:type" content="profile">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="My ThinkLedger Cognitive Profile">
+<meta name="twitter:description" content="AI can fake your CV. It cannot fake 12 months of how you actually think.">
+<meta name="twitter:image" content="https://thinkledger.vercel.app/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
   :root { --ink:#0f0f0f;--paper:#f7f5f0;--mid:#6b6760;--accent:#1a3a2a;--accent-light:#e8ede9;--border:#e0ddd8;--white:#ffffff;--gold:#b8962e;--gold-light:#faf5e8; }
@@ -34,6 +61,11 @@
   .bar-t{height:2px;background:var(--border);border-radius:1px;overflow:hidden;margin-bottom:4px}
   .bar-f{height:100%;background:var(--accent);border-radius:1px;width:0;transition:width 1.2s ease 0.3s}
   .sig-obs{font-size:11px;color:var(--mid)}
+  .sig-growth{font-size:11px;color:var(--ink);line-height:1.55;border-top:1px solid var(--border);padding-top:8px;margin-top:6px}
+  .sig-growth-lbl{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+  .sig-manager{font-size:11px;color:var(--mid);font-style:italic;line-height:1.5;border-top:1px solid var(--border);padding-top:7px;margin-top:7px}
+  .sig-manager-lbl{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:3px;font-style:normal}
+  .culture-narrative{font-size:13px;color:var(--mid);line-height:1.75;font-style:italic;margin-top:12px;padding:16px 20px;background:var(--paper);border-radius:6px;border:1px solid var(--border)}
   .traits{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;padding-top:8px;border-top:1px solid var(--border);padding-bottom:24px;border-bottom:1px solid var(--border)}
   .trait{padding:5px 12px;background:var(--paper);border:1px solid var(--border);border-radius:2px;font-size:12px}
   .career-role{padding:16px 0;border-bottom:1px solid var(--border);display:flex;gap:14px}
@@ -83,6 +115,7 @@
       <div class="traits" id="pTraits"></div>
       <div class="section-label">Where This Profile Belongs</div>
       <div id="pCareers"></div>
+      <div id="pCultureNarrative"></div>
       <div class="section-label" style="margin-top:20px">What an employer reads</div>
       <div class="employer-quote" id="pQuote">—</div>
       <div class="employer-note">Derived from conversation structure only. No content was read or stored.</div>
@@ -118,9 +151,23 @@
   function renderProfile(p) {
     document.getElementById('loadingState').style.display = 'none';
     document.getElementById('profileState').style.display = 'block';
-    document.title = (p.profileName || 'Profile') + ' — ThinkLedger';
-    document.getElementById('pName').textContent = p.profileName || 'Thinker Profile';
-    document.getElementById('pType').textContent = p.thinkerType || '';
+
+    const name     = p.profileName || 'Thinker Profile';
+    const type     = p.thinkerType || '';
+    const summary1 = (p.summary || '').split('.')[0] + '.';
+    const pageUrl  = window.location.href;
+
+    // Page title
+    document.title = name + ' — ThinkLedger';
+
+    // Update OG tags for social sharing
+    document.getElementById('ogTitle').setAttribute('content', name + ' — ThinkLedger');
+    document.getElementById('ogDescription').setAttribute('content', summary1);
+    document.getElementById('ogUrl').setAttribute('content', pageUrl);
+    document.getElementById('twTitle').setAttribute('content', name + ' — ThinkLedger');
+    document.getElementById('twDescription').setAttribute('content', summary1);
+    document.getElementById('pName').textContent = name;
+    document.getElementById('pType').textContent = type;
     document.getElementById('pIntegrity').textContent = p.meta?.integrityScore || '—';
     document.getElementById('pSummary').textContent = p.summary || '';
     document.getElementById('pQuote').textContent = '"' + (p.employerQuote || '') + '"';
@@ -131,13 +178,30 @@
     if (m.userMessages) parts.push(m.userMessages.toLocaleString() + ' messages');
     if (m.spanMonths) parts.push(m.spanMonths + ' months');
     document.getElementById('pMeta').textContent = parts.join('  ·  ');
-    document.getElementById('pSignals').innerHTML = (p.signals||[]).map(s =>
-      '<div class="sig"><div class="sig-top"><span class="sig-name">'+s.name+'</span><span class="sig-score">'+s.score+'</span></div><div class="bar-t"><div class="bar-f" data-score="'+s.score+'"></div></div><div class="sig-obs">'+s.label+'</div></div>'
+    document.getElementById('pSignals').innerHTML = (p.signals||[]).map(s => `
+      <div class="sig">
+        <div class="sig-top"><span class="sig-name">${s.name}</span><span class="sig-score">${s.score}</span></div>
+        <div class="bar-t"><div class="bar-f" data-score="${s.score}"></div></div>
+        <div class="sig-obs">${s.label||''}</div>
+        ${s.growth ? `<div class="sig-growth"><div class="sig-growth-lbl">Growth edge</div>${s.growth}</div>` : ''}
+        ${s.managerNote ? `<div class="sig-manager"><div class="sig-manager-lbl">For your manager</div>${s.managerNote}</div>` : ''}
+      </div>`
     ).join('');
     document.getElementById('pTraits').innerHTML = (p.traits||[]).map(t => '<span class="trait">'+t+'</span>').join('');
-    document.getElementById('pCareers').innerHTML = (p.careerFits||[]).map((r,i) =>
-      '<div class="career-role"><div class="role-num'+(i<3?' top':'')+'">'+( i+1)+'</div><div><div class="role-title">'+r.title+'</div><div class="role-why">'+r.why+'</div></div></div>'
+    document.getElementById('pCareers').innerHTML = (p.careerFits||[]).map((r,i) => `
+      <div class="career-role">
+        <div class="role-num${i<3?' top':''}">${i+1}</div>
+        <div>
+          <div class="role-title">${r.title}${r.unexpected ? ' <span style="font-size:10px;color:var(--gold);font-weight:500;letter-spacing:.5px">UNEXPECTED</span>' : ''}</div>
+          <div class="role-why">${r.why}</div>
+        </div>
+      </div>`
     ).join('');
+    if (p.cultureNarrative) {
+      document.getElementById('pCultureNarrative').innerHTML =
+        '<div class="section-label" style="margin-top:24px">Where this profile does its best work</div>' +
+        '<div class="culture-narrative">' + p.cultureNarrative + '</div>';
+    }
     setTimeout(() => { document.querySelectorAll('.bar-f').forEach(b => { b.style.width = b.dataset.score + '%'; }); }, 200);
   }
 </script>
