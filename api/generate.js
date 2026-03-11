@@ -205,7 +205,7 @@ export default async function handler(req, res) {
     ? `HIGH pushback (${m.pushbackRatio}%) — This person uses AI as a sparring partner. They test ideas by challenging them. Disagreement is their quality filter.`
     : `MODERATE pushback (${m.pushbackRatio}%) — Selective challenger. Pushes back when it genuinely matters, not as a reflex.`;
 
-  let prompt = `You are generating a ThinkLedger cognitive profile. This is a precise cognitive fingerprint — like a blood test for how someone thinks, derived entirely from the structure of their AI conversations, not the content.
+  const prompt = `You are generating a ThinkLedger cognitive profile. This is a precise cognitive fingerprint — like a blood test for how someone thinks, derived entirely from the structure of their AI conversations, not the content.
 
 CRITICAL RULES — violate any of these and the profile fails:
 1. MATCH VOCABULARY TO ARCHETYPE — each archetype has its own precise vocabulary drawn from cognitive psychology research. Use 3-4 terms from the assigned archetype's pool, woven naturally into prose — never listed. Banned universally: "collaborative", "dynamic", "innovative", "problem solver", "self-starter", "synergy", "team player", "results-driven", "passionate about", "dedicated to"
@@ -299,7 +299,6 @@ RAW METRICS — use ALL of these, not just the obvious ones:
 - Messages per conversation avg: ${Math.round(m.userMessages / Math.max(m.totalConversations, 1))} (session depth — ${Math.round(m.userMessages / Math.max(m.totalConversations, 1)) > 15 ? 'long sessions, goes deep' : Math.round(m.userMessages / Math.max(m.totalConversations, 1)) < 5 ? 'short sessions, task-focused' : 'moderate sessions'})
 - Platforms: ${platformCount}${isMultiPlatform ? ' — multi-platform user, patterns cross-verified across sources' : ' — single platform'}
 - Integrity score: ${m.integrityScore}/100
-`;
 
   // ── INDEPENDENT CAREER SCORING ──
   // 60 roles across 8 domains, scored directly from metadata signals
@@ -477,7 +476,6 @@ RAW METRICS — use ALL of these, not just the obvious ones:
     unexpected: i === 3
   }));
 
-  prompt += `
 SUGGESTED signal names for this archetype: ${primary.signalNames.join(', ')}
 You may use these or derive better ones from the data. They must be specific to the archetype.
 
