@@ -3,1094 +3,648 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ThinkLedger — The CV is Dead</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Söhne:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
+<title>ThinkLedger — In a world where AI can do the work, the only thing left to hire is the human's taste, their persistence, and their ability to connect dots.</title>
+<meta name="description" content="Upload your AI chat history. See how you actually think. Not what you produced — how your mind works.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --black: #080808;
-    --off-black: #111111;
-    --dark: #1a1a1a;
-    --mid: #2e2e2e;
-    --border: #2a2a2a;
-    --muted: #666666;
-    --light: #999999;
-    --paper: #f0ede6;
-    --white: #ffffff;
-    --green: #1a3a2a;
-    --green-bright: #2d6a47;
-    --green-glow: rgba(45,106,71,0.15);
-    --gold: #c9a84c;
-    --gold-dim: #8a6e30;
-    --red: #c0392b;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Lato', sans-serif;
-    background: var(--black);
-    color: var(--white);
-    font-size: 15px;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* GRAIN OVERLAY */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 52px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(8,8,8,0.92);
-    backdrop-filter: blur(12px);
-  }
-
-  .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    letter-spacing: -0.3px;
-    color: var(--white);
-  }
-
-  .logo span { color: var(--gold); }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-  }
-
-  .nav-link {
-    font-size: 12px;
-    font-weight: 400;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .nav-link:hover { color: var(--white); }
-
-  .nav-cta {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 8px 20px;
-    background: var(--white);
-    color: var(--black);
-    border-radius: 2px;
-    text-decoration: none;
-    letter-spacing: 0.3px;
-    transition: opacity 0.2s;
-  }
-
-  .nav-cta:hover { opacity: 0.85; }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 120px 52px 80px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero::after {
-    content: '';
-    position: absolute;
-    top: -200px; right: -200px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, var(--green-glow) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .hero-issue {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: var(--gold);
-    margin-bottom: 36px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.1s forwards;
-  }
-
-  .hero-issue::before {
-    content: '';
-    display: block;
-    width: 32px; height: 1px;
-    background: var(--gold);
-  }
-
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(52px, 7vw, 96px);
-    line-height: 1.0;
-    letter-spacing: -2px;
-    color: var(--white);
-    max-width: 900px;
-    margin-bottom: 32px;
-    opacity: 0;
-    animation: fadeUp 0.7s ease 0.2s forwards;
-  }
-
-  h1 em {
-    font-style: italic;
-    color: var(--gold);
-  }
-
-  h1 s {
-    text-decoration: line-through;
-    color: var(--muted);
-    text-decoration-color: var(--red);
-  }
-
-  .hero-sub {
-    font-size: 18px;
-    font-weight: 300;
-    color: var(--light);
-    max-width: 560px;
-    line-height: 1.75;
-    margin-bottom: 52px;
-    opacity: 0;
-    animation: fadeUp 0.7s ease 0.3s forwards;
-  }
-
-  .hero-actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 0.7s ease 0.4s forwards;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px 36px;
-    background: var(--white);
-    color: var(--black);
-    font-size: 14px;
-    font-weight: 500;
-    border-radius: 2px;
-    text-decoration: none;
-    letter-spacing: 0.2px;
-    transition: opacity 0.2s;
-  }
-
-  .btn-primary:hover { opacity: 0.88; }
-
-  .btn-secondary {
-    font-size: 13px;
-    color: var(--muted);
-    text-decoration: none;
-    letter-spacing: 0.3px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 2px;
-    transition: color 0.2s, border-color 0.2s;
-  }
-
-  .btn-secondary:hover { color: var(--white); border-color: var(--white); }
-
-  /* SCROLL INDICATOR */
-  .scroll-line {
-    position: absolute;
-    bottom: 40px; left: 52px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    font-family: 'IBM Plex Mono', monospace;
-    opacity: 0;
-    animation: fadeUp 0.7s ease 0.6s forwards;
-  }
-
-  .scroll-line::after {
-    content: '';
-    display: block;
-    width: 1px;
-    height: 48px;
-    background: linear-gradient(to bottom, var(--muted), transparent);
-  }
-
-  /* SECTION DIVIDER */
-  .divider {
-    width: 100%;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* PULL QUOTE SECTION */
-  .pull-section {
-    padding: 100px 52px;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 80px;
-    align-items: start;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .pull-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    padding-top: 6px;
-    position: sticky;
-    top: 100px;
-  }
-
-  .pull-content {}
-
-  .pull-quote {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(24px, 3vw, 38px);
-    line-height: 1.4;
-    letter-spacing: -0.5px;
-    color: var(--white);
-    margin-bottom: 32px;
-  }
-
-  .pull-quote em { font-style: italic; color: var(--gold); }
-
-  .pull-body {
-    font-size: 15px;
-    font-weight: 300;
-    color: var(--light);
-    line-height: 1.8;
-    max-width: 600px;
-  }
-
-  .pull-body p { margin-bottom: 20px; }
-  .pull-body p:last-child { margin-bottom: 0; }
-
-  /* INVERSION TABLE */
-  .inversion-section {
-    padding: 100px 52px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .section-eyebrow {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 48px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .section-eyebrow::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-    max-width: 200px;
-  }
-
-  .inversion-grid {
-    display: grid;
-    grid-template-columns: 1fr 60px 1fr;
-    gap: 0;
-    max-width: 800px;
-  }
-
-  .inv-header {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 0;
-  }
-
-  .inv-header.before { color: var(--red); }
-  .inv-header.after { color: var(--green-bright); }
-  .inv-header.mid { text-align: center; color: var(--border); }
-
-  .inv-row {
-    display: contents;
-  }
-
-  .inv-cell {
-    padding: 20px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  .inv-cell.before {
-    color: var(--muted);
-    text-decoration: line-through;
-    text-decoration-color: rgba(192,57,43,0.4);
-    padding-right: 24px;
-  }
-
-  .inv-cell.after {
-    color: var(--white);
-    padding-left: 24px;
-  }
-
-  .inv-cell.arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--border);
-    font-size: 18px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  /* HOW IT WORKS */
-  .how-section {
-    padding: 100px 52px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 48px;
-  }
-
-  .step {
-    background: var(--off-black);
-    padding: 40px 36px;
-    position: relative;
-  }
-
-  .step-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 64px;
-    color: var(--border);
-    line-height: 1;
-    margin-bottom: 24px;
-    letter-spacing: -3px;
-  }
-
-  .step-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 20px;
-    color: var(--white);
-    margin-bottom: 12px;
-    letter-spacing: -0.3px;
-  }
-
-  .step-body {
-    font-size: 13px;
-    font-weight: 300;
-    color: var(--light);
-    line-height: 1.7;
-  }
-
-  .step-tag {
-    display: inline-block;
-    margin-top: 16px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    color: var(--green-bright);
-    border: 1px solid var(--green);
-    padding: 3px 10px;
-    border-radius: 2px;
-  }
-
-  /* PROFILE PREVIEW */
-  .preview-section {
-    padding: 100px 52px;
-    border-bottom: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-  }
-
-  .preview-text {}
-
-  .preview-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(28px, 3vw, 42px);
-    line-height: 1.2;
-    letter-spacing: -1px;
-    color: var(--white);
-    margin-bottom: 20px;
-  }
-
-  .preview-title em { font-style: italic; color: var(--gold); }
-
-  .preview-body {
-    font-size: 15px;
-    font-weight: 300;
-    color: var(--light);
-    line-height: 1.8;
-    margin-bottom: 32px;
-  }
-
-  /* MOCK PROFILE CARD */
-  .mock-card {
-    background: var(--off-black);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .mock-header {
-    background: var(--green);
-    padding: 24px 28px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .mock-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    color: var(--white);
-    letter-spacing: -0.5px;
-  }
-
-  .mock-type {
-    font-size: 11px;
-    color: rgba(255,255,255,0.6);
-    font-style: italic;
-    text-align: right;
-  }
-
-  .mock-body { padding: 24px 28px; }
-
-  .mock-signal {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  .mock-signal-name {
-    font-size: 11px;
-    color: var(--light);
-    width: 140px;
-    flex-shrink: 0;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .mock-bar-track {
-    flex: 1;
-    height: 2px;
-    background: var(--border);
-    border-radius: 1px;
-    overflow: hidden;
-  }
-
-  .mock-bar-fill {
-    height: 100%;
-    background: var(--green-bright);
-    border-radius: 1px;
-    width: 0;
-    transition: width 1.4s ease 1s;
-  }
-
-  .mock-score {
-    font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    color: var(--white);
-    width: 28px;
-    text-align: right;
-  }
-
-  .mock-integrity {
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 11px;
-    color: var(--green-bright);
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .mock-integrity::before {
-    content: '●';
-    font-size: 8px;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  /* INTEGRITY EXPLAINER */
-  .integrity-section {
-    padding: 100px 52px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .integrity-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--border);
-    margin-top: 48px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .integrity-item {
-    background: var(--off-black);
-    padding: 32px 28px;
-  }
-
-  .integrity-icon {
-    font-size: 24px;
-    margin-bottom: 16px;
-  }
-
-  .integrity-item-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
-    color: var(--white);
-    margin-bottom: 8px;
-    letter-spacing: -0.2px;
-  }
-
-  .integrity-item-body {
-    font-size: 12px;
-    font-weight: 300;
-    color: var(--muted);
-    line-height: 1.65;
-  }
-
-  /* MANIFESTO */
-  .manifesto-section {
-    padding: 120px 52px;
-    border-bottom: 1px solid var(--border);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .manifesto-section::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 800px; height: 800px;
-    background: radial-gradient(circle, var(--green-glow) 0%, transparent 65%);
-    pointer-events: none;
-  }
-
-  .manifesto-text {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(28px, 4vw, 52px);
-    line-height: 1.35;
-    letter-spacing: -1px;
-    color: var(--white);
-    max-width: 800px;
-    margin: 0 auto 48px;
-    position: relative;
-  }
-
-  .manifesto-text em { font-style: italic; color: var(--gold); }
-
-  .manifesto-sub {
-    font-size: 16px;
-    font-weight: 300;
-    color: var(--muted);
-    max-width: 480px;
-    margin: 0 auto 52px;
-    line-height: 1.7;
-    position: relative;
-  }
-
-  /* CTA SECTION */
-  .cta-section {
-    padding: 100px 52px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .cta-left {}
-
-  .cta-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(32px, 3.5vw, 52px);
-    line-height: 1.15;
-    letter-spacing: -1.5px;
-    color: var(--white);
-    margin-bottom: 20px;
-  }
-
-  .cta-title em { font-style: italic; color: var(--gold); }
-
-  .cta-body {
-    font-size: 15px;
-    font-weight: 300;
-    color: var(--light);
-    line-height: 1.75;
-    margin-bottom: 36px;
-  }
-
-  .cta-right {
-    background: var(--off-black);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 40px;
-  }
-
-  .cta-form-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 24px;
-    display: block;
-  }
-
-  .upload-zone {
-    border: 1.5px dashed var(--border);
-    border-radius: 6px;
-    padding: 40px 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    margin-bottom: 16px;
-  }
-
-  .upload-zone:hover {
-    border-color: var(--green-bright);
-    background: var(--green-glow);
-  }
-
-  .upload-zone-icon { font-size: 28px; margin-bottom: 12px; }
-
-  .upload-zone-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    color: var(--white);
-    margin-bottom: 6px;
-  }
-
-  .upload-zone-sub {
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 20px;
-  }
-
-  .upload-btn {
-    display: inline-block;
-    padding: 10px 24px;
-    background: var(--white);
-    color: var(--black);
-    font-size: 13px;
-    font-weight: 500;
-    border-radius: 2px;
-    cursor: pointer;
-    border: none;
-    font-family: 'Lato', sans-serif;
-    transition: opacity 0.15s;
-  }
-
-  .upload-btn:hover { opacity: 0.85; }
-
-  .privacy-line {
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  /* FOOTER */
-  footer {
-    padding: 40px 52px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    color: var(--muted);
-  }
-
-  .footer-logo span { color: var(--gold-dim); }
-
-  .footer-copy {
-    font-size: 11px;
-    color: var(--muted);
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .footer-tagline {
-    font-size: 12px;
-    color: var(--muted);
-    font-style: italic;
-    font-family: 'Playfair Display', serif;
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
-  }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* RESPONSIVE */
-  @media(max-width: 900px) {
-    nav { padding: 16px 24px; }
-    .nav-links { display: none; }
-    .hero { padding: 100px 24px 60px; }
-    .pull-section { grid-template-columns: 1fr; gap: 24px; padding: 60px 24px; }
-    .pull-label { position: static; }
-    .inversion-section { padding: 60px 24px; }
-    .how-section { padding: 60px 24px; }
-    .steps { grid-template-columns: 1fr; }
-    .preview-section { grid-template-columns: 1fr; padding: 60px 24px; }
-    .integrity-section { padding: 60px 24px; }
-    .integrity-grid { grid-template-columns: 1fr 1fr; }
-    .manifesto-section { padding: 80px 24px; }
-    .cta-section { grid-template-columns: 1fr; padding: 60px 24px; }
-    footer { padding: 32px 24px; flex-direction: column; gap: 12px; text-align: center; }
-    .inversion-grid { max-width: 100%; }
-  }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black: #0a0a08;
+  --ink: #111110;
+  --cream: #f2ede4;
+  --cream-dim: #c8c2b6;
+  --gold: #c9a84c;
+  --gold-dim: #7a6229;
+  --mid: #4a4843;
+  --border: rgba(242,237,228,0.1);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Geist', system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--cream);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 48px;
+  mix-blend-mode: normal;
+}
+
+.logo {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--cream);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.logo span { color: var(--gold); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.nav-link {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--cream-dim);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+
+.nav-link:hover { color: var(--cream); }
+
+.nav-cta {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--black);
+  background: var(--cream);
+  text-decoration: none;
+  padding: 9px 20px;
+  border-radius: 2px;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-cta:hover { background: var(--gold); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border);
+}
+
+.hero-eyebrow {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.2s;
+}
+
+.hero-headline {
+  font-family: var(--serif);
+  font-size: clamp(42px, 6vw, 88px);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--cream);
+  max-width: 14ch;
+  margin-bottom: 40px;
+}
+
+.hero-headline .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: wordIn 0.5s ease forwards;
+}
+
+.hero-headline em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.hero-sub {
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--cream-dim);
+  max-width: 48ch;
+  line-height: 1.7;
+  margin-bottom: 52px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 1.2s;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 1.5s;
+}
+
+.btn-primary {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--black);
+  background: var(--cream);
+  text-decoration: none;
+  padding: 14px 32px;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover { background: var(--gold); }
+
+.btn-ghost {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--cream-dim);
+  text-decoration: none;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--gold-dim);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.btn-ghost:hover { color: var(--cream); border-color: var(--gold); }
+
+.hero-stat-row {
+  position: absolute;
+  bottom: 48px;
+  left: 48px;
+  right: 48px;
+  display: flex;
+  gap: 48px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 1.8s;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hero-stat-num {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--cream);
+  line-height: 1;
+}
+
+.hero-stat-label {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+
+/* ── MIRROR SECTION ── */
+.mirror {
+  padding: 120px 48px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+}
+
+.mirror-question {
+  font-family: var(--serif);
+  font-size: clamp(26px, 3.5vw, 48px);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--cream);
+  margin-bottom: 32px;
+}
+
+.mirror-question em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.mirror-sub {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--cream-dim);
+  max-width: 52ch;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+/* ── PROFILE PREVIEW ── */
+.preview-section {
+  padding: 0 48px 120px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.preview-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.preview-card {
+  background: #111110;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.preview-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.preview-name {
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.preview-archetype {
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 300;
+  color: var(--cream);
+  margin-bottom: 20px;
+  line-height: 1.1;
+}
+
+.preview-summary {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--cream-dim);
+  line-height: 1.8;
+  margin-bottom: 36px;
+  border-left: 1px solid var(--gold-dim);
+  padding-left: 20px;
+}
+
+.preview-signals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.preview-signal {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preview-signal-name {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+
+.preview-signal-bar {
+  height: 2px;
+  background: rgba(242,237,228,0.08);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.preview-signal-fill {
+  height: 100%;
+  background: var(--gold);
+  border-radius: 1px;
+  transform-origin: left;
+  animation: barGrow 1.2s ease forwards;
+  transform: scaleX(0);
+}
+
+.preview-signal-score {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--cream);
+}
+
+.preview-cta {
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--mid);
+}
+
+.preview-cta a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.preview-cta a:hover { text-decoration: underline; }
+
+/* ── UPLOAD CTA ── */
+.upload-cta {
+  padding: 120px 48px;
+  text-align: center;
+  position: relative;
+}
+
+.upload-cta::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 48px; right: 48px;
+  height: 1px;
+  background: var(--border);
+}
+
+.upload-headline {
+  font-family: var(--serif);
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: 300;
+  color: var(--cream);
+  margin-bottom: 20px;
+  line-height: 1.15;
+}
+
+.upload-sub {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--cream-dim);
+  max-width: 44ch;
+  margin: 0 auto 44px;
+  line-height: 1.8;
+}
+
+.privacy-line {
+  margin-top: 20px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--mid);
+  letter-spacing: 0.04em;
+}
+
+.privacy-line span {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+  margin: 0 8px;
+  vertical-align: middle;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 32px 48px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-logo {
+  font-family: var(--serif);
+  font-size: 16px;
+  color: var(--mid);
+  text-decoration: none;
+}
+
+.footer-logo span { color: var(--gold-dim); }
+
+.footer-right {
+  font-size: 12px;
+  color: var(--mid);
+  letter-spacing: 0.04em;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(16px); }
+}
+
+@keyframes wordIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes barGrow {
+  to { transform: scaleX(1); }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  nav { padding: 20px 24px; }
+  .nav-right { gap: 16px; }
+  .hero { padding: 100px 24px 80px; }
+  .hero-stat-row { display: none; }
+  .mirror { padding: 80px 24px; }
+  .preview-section { padding: 0 24px 80px; }
+  .preview-card { padding: 32px 24px; }
+  .preview-signals { grid-template-columns: 1fr; }
+  .upload-cta { padding: 80px 24px; }
+  footer { padding: 24px; flex-direction: column; gap: 12px; text-align: center; }
+}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <div class="logo"><a href="/" style="text-decoration:none;color:inherit">Think<span>Ledger</span></a></div>
-  <div class="nav-links">
+  <a href="/" class="logo">Think<span>Ledger</span></a>
+  <div class="nav-right">
     <a href="/demo" class="nav-link">See a real profile</a>
-    <a href="/#how" class="nav-link">How it works</a>
-    <a href="/#integrity" class="nav-link">Why it works</a>
-    <a href="/app" class="nav-cta">Try it free</a>
+    <a href="/app" class="nav-cta">Generate yours</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-issue">Issue 001 &nbsp;·&nbsp; The Future of Hiring</div>
-  <h1>The <s>CV</s> is dead.<br>Long live <em>how you think.</em></h1>
-  <p class="hero-sub">AI broke the hiring filter overnight. Resumes are generated in seconds. Cover letters are indistinguishable. The credential is worthless. What remains is the one thing that can't be faked — a mind, working, over time.</p>
+  <div class="hero-eyebrow">Cognitive Profile · Private Beta</div>
+
+  <h1 class="hero-headline" id="headline">
+    <!-- words injected by JS -->
+  </h1>
+
+  <p class="hero-sub">
+    Upload your AI chat history. We read nothing. We measure everything — how long you think, when you push back, how deep you go, how fast you move. Your profile generates in under a minute.
+  </p>
+
   <div class="hero-actions">
-    <a href="/app" class="btn-primary">
-      Generate your profile
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </a>
-    <a href="/#how" class="btn-secondary">See how it works</a>
+    <a href="/app" class="btn-primary">Generate your profile</a>
+    <a href="/demo" class="btn-ghost">See Isla Ferreira's profile →</a>
   </div>
-  <div class="scroll-line">Scroll</div>
-</section>
 
-<!-- PULL QUOTE — THE PROBLEM -->
-<section class="pull-section" id="problem">
-  <div class="pull-label">The Problem</div>
-  <div class="pull-content">
-    <div class="pull-quote reveal">
-      "A hiring manager in 2026 receives 400 applications for one role. Maybe 5 are real humans who genuinely want the job. <em>They can't tell which 5.</em>"
+  <div class="hero-stat-row">
+    <div class="hero-stat">
+      <div class="hero-stat-num">16</div>
+      <div class="hero-stat-label">Cognitive archetypes</div>
     </div>
-    <div class="pull-body reveal">
-      <p>Every filter hiring used to separate signal from noise has been compromised simultaneously. CVs are keyword-matched by AI in minutes. Cover letters are indistinguishable from human writing. LinkedIn profiles are optimised, endorsed by strangers, and quantified with achievements nobody can verify.</p>
-      <p>The result isn't just inefficiency. It's a crisis of trust. Employers don't trust applications. Candidates don't trust the process. And the people most likely to be filtered out are exactly the ones who think differently — unconventional paths, genuine depth, real experience that doesn't fit a template.</p>
-      <p>The credential was designed for a world where what you studied and where you worked were hard to fake. That world ended in 2023.</p>
+    <div class="hero-stat">
+      <div class="hero-stat-num">0</div>
+      <div class="hero-stat-label">Words of your chats read</div>
     </div>
-  </div>
-</section>
-
-<!-- INVERSION TABLE -->
-<section class="inversion-section">
-  <div class="section-eyebrow">The Inversion</div>
-  <div class="inversion-grid">
-    <div class="inv-header before">Before AI</div>
-    <div class="inv-header mid">→</div>
-    <div class="inv-header after">After AI</div>
-
-    <div class="inv-cell before">Credentials were hard to fake</div>
-    <div class="inv-cell arrow">→</div>
-    <div class="inv-cell after">Credentials are trivially manufactured</div>
-
-    <div class="inv-cell before">Thinking was invisible</div>
-    <div class="inv-cell arrow">→</div>
-    <div class="inv-cell after">Thinking is finally measurable</div>
-
-    <div class="inv-cell before">A CV took weeks to craft</div>
-    <div class="inv-cell arrow">→</div>
-    <div class="inv-cell after">A CV takes 4 minutes to generate</div>
-
-    <div class="inv-cell before">Chat history was private and inaccessible</div>
-    <div class="inv-cell arrow">→</div>
-    <div class="inv-cell after">Chat history is a longitudinal record of your mind</div>
-
-    <div class="inv-cell before">You proved yourself with a piece of paper</div>
-    <div class="inv-cell arrow">→</div>
-    <div class="inv-cell after">You prove yourself with a pattern of thought</div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">&lt; 60s</div>
+      <div class="hero-stat-label">To generate your profile</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">4</div>
+      <div class="hero-stat-label">Platforms supported</div>
+    </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="how-section" id="how">
-  <div class="section-eyebrow">How ThinkLedger Works</div>
-  <div class="steps">
-
-    <div class="step reveal">
-      <div class="step-num">01</div>
-      <div class="step-title">Export your AI history</div>
-      <div class="step-body">Download your conversation export from ChatGPT or Claude — both allow this in settings. The file stays on your device. Nothing is uploaded to our servers.</div>
-      <div class="step-tag">Your data stays yours</div>
-    </div>
-
-    <div class="step reveal">
-      <div class="step-num">02</div>
-      <div class="step-title">We extract thinking, not content</div>
-      <div class="step-body">Our algorithm reads only structural signals — how you frame problems, how often you push back, how deep you go, when you think hardest. Not a single word of your actual conversations is read or stored.</div>
-      <div class="step-tag">Content-free analysis</div>
-    </div>
-
-    <div class="step reveal">
-      <div class="step-num">03</div>
-      <div class="step-title">Own your cognitive profile</div>
-      <div class="step-body">You receive a verified profile — your thinker type, cognitive signals, integrity score, and career fit assessment. Share it on your terms, with whoever you choose, whenever you choose.</div>
-      <div class="step-tag">Candidate-owned</div>
-    </div>
-
-  </div>
+<!-- MIRROR -->
+<section class="mirror">
+  <p class="mirror-question">
+    If you had this data from three years ago —<br>
+    what would it tell you about <em>the mistakes<br>you were making in how you think?</em>
+  </p>
+  <p class="mirror-sub">
+    Most people have been talking to AI for over a year. That history is a cognitive record no CV can replicate. ThinkLedger reads the structure of that record — not the content — and shows you what it reveals.
+  </p>
 </section>
 
 <!-- PROFILE PREVIEW -->
-<section class="preview-section">
-  <div class="preview-text reveal">
-    <div class="section-eyebrow" style="margin-bottom:24px">What you get</div>
-    <div class="preview-title">A profile that shows <em>who you actually are</em> as a thinker</div>
-    <div class="preview-body">Not who you claim to be. Not a snapshot from a 45-minute interview. A longitudinal cognitive portrait, built from months of real thinking, verified by the patterns in your data.</div>
-    <a href="/app" class="btn-primary" style="display:inline-flex">
-      Generate yours free
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </a>
+<div class="preview-section">
+  <div class="preview-label">Real profile · Isla Ferreira · 16 months of data</div>
+  <div class="preview-card">
+    <div class="preview-name">The Synthesiser</div>
+    <div class="preview-archetype">The Midnight Strategist</div>
+    <p class="preview-summary">
+      74% of messages sent after 10pm. This is not insomnia — it is a cognitive schedule. When the noise disappears, the thinking starts. Across 161 conversations over 16 months, the pattern is consistent: a mind that needs solitude to reach full depth, and reaches it reliably when it gets it.
+    </p>
+    <div class="preview-signals">
+      <div class="preview-signal">
+        <div class="preview-signal-name">Strategic Depth</div>
+        <div class="preview-signal-bar"><div class="preview-signal-fill" style="width:89%"></div></div>
+        <div class="preview-signal-score">89</div>
+      </div>
+      <div class="preview-signal">
+        <div class="preview-signal-name">Build Velocity</div>
+        <div class="preview-signal-bar"><div class="preview-signal-fill" style="width:86%"></div></div>
+        <div class="preview-signal-score">86</div>
+      </div>
+      <div class="preview-signal">
+        <div class="preview-signal-name">Remote Association</div>
+        <div class="preview-signal-bar"><div class="preview-signal-fill" style="width:81%"></div></div>
+        <div class="preview-signal-score">81</div>
+      </div>
+      <div class="preview-signal">
+        <div class="preview-signal-name">Integrity Score</div>
+        <div class="preview-signal-bar"><div class="preview-signal-fill" style="width:89%"></div></div>
+        <div class="preview-signal-score">89</div>
+      </div>
+    </div>
+    <div class="preview-cta">
+      This is a real profile from a real export. <a href="/demo">Read the full thing →</a>
+    </div>
   </div>
+</div>
 
-  <div class="mock-card reveal">
-    <div class="mock-header">
-      <div>
-        <div class="mock-name">Your Name</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px">16 months · 1,532 messages</div>
-      </div>
-      <div class="mock-type">
-        <div style="font-size:10px;opacity:0.5;margin-bottom:3px">THINKER TYPE</div>
-        Bridge Builder
-      </div>
-    </div>
-    <div class="mock-body">
-      <div class="mock-signal">
-        <div class="mock-signal-name">Critical Independence</div>
-        <div class="mock-bar-track"><div class="mock-bar-fill" data-w="91"></div></div>
-        <div class="mock-score">91</div>
-      </div>
-      <div class="mock-signal">
-        <div class="mock-signal-name">Depth of Engagement</div>
-        <div class="mock-bar-track"><div class="mock-bar-fill" data-w="95"></div></div>
-        <div class="mock-score">95</div>
-      </div>
-      <div class="mock-signal">
-        <div class="mock-signal-name">Human Intelligence</div>
-        <div class="mock-bar-track"><div class="mock-bar-fill" data-w="92"></div></div>
-        <div class="mock-score">92</div>
-      </div>
-      <div class="mock-signal">
-        <div class="mock-signal-name">Cognitive Stamina</div>
-        <div class="mock-bar-track"><div class="mock-bar-fill" data-w="88"></div></div>
-        <div class="mock-score">88</div>
-      </div>
-      <div class="mock-signal">
-        <div class="mock-signal-name">Cross-Domain Fluency</div>
-        <div class="mock-bar-track"><div class="mock-bar-fill" data-w="90"></div></div>
-        <div class="mock-score">90</div>
-      </div>
-      <div class="mock-integrity">
-        Profile Integrity: 89 · High Confidence · 16 months longitudinal
-      </div>
-    </div>
-  </div>
+<!-- UPLOAD CTA -->
+<section class="upload-cta">
+  <h2 class="upload-headline">Your mind has been<br><em style="font-style:italic;color:var(--gold)">thinking out loud.</em><br>Time to see what it says.</h2>
+  <p class="upload-sub">
+    Upload your Claude, ChatGPT, Gemini, or Grok export. No content is ever read or stored. Your profile is yours.
+  </p>
+  <a href="/app" class="btn-primary">Generate your profile</a>
+  <p class="privacy-line">
+    Content never read <span></span> Metadata only <span></span> Free to generate
+  </p>
 </section>
 
-<!-- INTEGRITY EXPLAINER -->
-<section class="integrity-section" id="integrity">
-  <div class="section-eyebrow">Why it can't be faked</div>
-  <div class="integrity-grid">
-    <div class="integrity-item reveal">
-      <div class="integrity-icon">📅</div>
-      <div class="integrity-item-title">Longitudinal span</div>
-      <div class="integrity-item-body">Profiles require a minimum of 6 months of data. A cognitive pattern built over time can't be manufactured in a week — the timestamps don't lie.</div>
-    </div>
-    <div class="integrity-item reveal">
-      <div class="integrity-icon">〰️</div>
-      <div class="integrity-item-title">Natural variance</div>
-      <div class="integrity-item-body">Real usage has gaps, bursts, quiet weeks, and late nights. Fabricated data is suspiciously uniform. The algorithm scores naturalness of pattern, not just volume.</div>
-    </div>
-    <div class="integrity-item reveal">
-      <div class="integrity-icon">🔢</div>
-      <div class="integrity-item-title">Volume threshold</div>
-      <div class="integrity-item-body">At 1,000+ messages across 6+ months, the sheer cost of fabrication exceeds any realistic benefit. Gaming this takes longer than just being yourself.</div>
-    </div>
-    <div class="integrity-item reveal">
-      <div class="integrity-icon">🔗</div>
-      <div class="integrity-item-title">Cross-platform verification</div>
-      <div class="integrity-item-body">Upload both ChatGPT and Claude exports. When two independent platforms tell the same cognitive story, the integrity score rises significantly.</div>
-    </div>
-  </div>
-</section>
-
-<!-- MANIFESTO -->
-<section class="manifesto-section">
-  <div class="manifesto-text reveal">
-    "The CV was invented in 1482. It has not fundamentally changed. It was designed for a world where credentials were hard to fake and thinking was <em>invisible.</em> That world is gone."
-  </div>
-  <p class="manifesto-sub reveal">ThinkLedger is built on a simple inversion: in the age of AI, what you think matters more than where you studied. And for the first time, we can prove it.</p>
-  <a href="/app" class="btn-primary reveal" style="display:inline-flex;gap:10px">
-    Generate your profile
-    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-  </a>
-</section>
-
-<!-- CTA / UPLOAD -->
-<section class="cta-section" id="upload">
-  <div class="cta-left reveal">
-    <div class="section-eyebrow" style="margin-bottom:24px">Get started</div>
-    <div class="cta-title">Your mind has been thinking for <em>years.</em><br>It's time it spoke for itself.</div>
-    <div class="cta-body">Upload your AI chat export. Get your cognitive profile in under 2 minutes. Free. No account required. Your conversations never leave your device.</div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)">
-        <span style="color:var(--green-bright)">✓</span> ChatGPT JSON export accepted
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)">
-        <span style="color:var(--green-bright)">✓</span> Claude export accepted
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)">
-        <span style="color:var(--green-bright)">✓</span> Processed locally — zero data uploaded
-      </div>
-    </div>
-  </div>
-
-  <div class="cta-right reveal">
-    <span class="cta-form-label">Upload your export</span>
-    <div class="upload-zone" onclick="document.getElementById('heroFileInput').click()">
-      <div class="upload-zone-icon">🧠</div>
-      <div class="upload-zone-title">Drop your chat export here</div>
-      <div class="upload-zone-sub">ChatGPT or Claude JSON · Processed in your browser</div>
-      <button class="upload-btn">Choose File</button>
-    </div>
-    <input type="file" id="heroFileInput" accept=".json,.zip" style="display:none" onchange="handleUpload(this)">
-    <div class="privacy-line">
-      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-      </svg>
-      Your conversations are never uploaded or stored
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer>
-  <div class="footer-logo">Think<span>Ledger</span></div>
-  <div class="footer-tagline">Your thinking, verified.</div>
-  <div class="footer-copy">© 2026 · Private Beta</div>
+  <a href="/" class="footer-logo">Think<span>Ledger</span></a>
+  <div class="footer-right">Your thinking, verified.</div>
 </footer>
 
 <script>
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => {
-          entry.target.classList.add('visible');
-        }, 80);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
+// Animate headline word by word
+const words = ["In", "a", "world", "where", "AI", "can", "do", "the", "work,", "the", "only", "thing", "left", "to", "hire", "is", "the", "human's", "taste,", "their", "persistence,", "and", "their", "ability", "to", "connect", "dots."];
+const headline = document.getElementById('headline');
+let delay = 0.4;
 
-  reveals.forEach(el => observer.observe(el));
-
-  // Animate mock profile bars when visible
-  const mockBars = document.querySelectorAll('.mock-bar-fill');
-  const mockObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        setTimeout(() => {
-          mockBars.forEach(bar => {
-            bar.style.width = bar.dataset.w + '%';
-          });
-        }, 600);
-        mockObserver.disconnect();
-      }
-    });
-  }, { threshold: 0.3 });
-
-  const mockCard = document.querySelector('.mock-card');
-  if (mockCard) mockObserver.observe(mockCard);
-
-  // File upload handler — redirects to the actual tool
-  function handleUpload(input) {
-    if (input.files[0]) {
-      alert('In the live version, this would process your file and generate your profile. For now, use the ThinkLedger profile tool directly.');
-    }
+words.forEach((word, i) => {
+  const span = document.createElement('span');
+  span.className = 'word';
+  span.textContent = word + '\u00a0';
+  span.style.animationDelay = delay + 's';
+  // Highlight key words
+  if (['taste,', 'persistence,', 'dots.', 'AI'].includes(word)) {
+    span.style.color = 'var(--gold)';
   }
+  headline.appendChild(span);
+  delay += 0.07;
+});
+
+// Intersection observer for signal bars
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.preview-signal-fill').forEach(bar => {
+        bar.style.animationPlayState = 'running';
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.preview-card').forEach(card => {
+  card.querySelectorAll('.preview-signal-fill').forEach(bar => {
+    bar.style.animationPlayState = 'paused';
+  });
+  observer.observe(card);
+});
 </script>
 
 </body>
