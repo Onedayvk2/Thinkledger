@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head><title>ThinkLedger Save Debug</title></head>
+<body style="font-family:monospace;padding:20px;background:#0a0a08;color:#f2ede4">
+<h2 style="color:#c9a84c">Save API Debug Tool</h2>
+<p style="color:#8a8278;margin-bottom:20px">Open this on thinkledger.vercel.app/debug-save.html — tests the save endpoint directly</p>
+
+<button id="btn" onclick="test()" style="background:#c9a84c;color:#000;border:none;padding:12px 24px;font-size:14px;cursor:pointer;border-radius:4px;font-weight:600">
+  Test /api/save
+</button>
+
+<pre id="out" style="margin-top:20px;background:#141412;padding:20px;border-radius:6px;white-space:pre-wrap;border:1px solid #333;min-height:100px;color:#c9a84c"></pre>
+
+<script>
+async function test() {
+  const out = document.getElementById('out');
+  out.textContent = 'Testing...\n';
+
+  const testPayload = {
+    profile: {
+      profileName: 'Debug Test',
+      thinkerType: 'The Challenger',
+      summary: 'This is a debug test profile.',
+      signals: [{ name: 'Test Signal', score: 85, label: 'test', growth: 'test growth', managerNote: 'test note' }],
+      traits: ['test trait'],
+      careerFits: [{ title: 'Test Role', why: 'test why', score: 90, tags: ['test'], unexpected: false }],
+      employerQuote: 'Test quote.',
+      hiddenInsight: 'Test insight.',
+      cultureNarrative: 'Test narrative.'
+    },
+    metadata: {
+      totalConversations: 130,
+      userMessages: 745,
+      spanMonths: 20,
+      integrityScore: 90,
+      avgWordsPerMessage: 60,
+      peakHours: '1am',
+      nightPct: 20,
+      pushbackRatio: 36,
+      questionRatio: 11,
+      firstDate: '2024-07-01',
+      lastDate: '2026-02-28',
+      monthChart: [],
+      hourCount: {}
+    }
+  };
+
+  try {
+    out.textContent += 'Sending POST to /api/save...\n';
+    const start = Date.now();
+
+    const r = await fetch('/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testPayload)
+    });
+
+    const elapsed = Date.now() - start;
+    out.textContent += `Response received in ${elapsed}ms\n`;
+    out.textContent += `HTTP Status: ${r.status} ${r.statusText}\n\n`;
+
+    const text = await r.text();
+    try {
+      const json = JSON.parse(text);
+      out.textContent += 'Response JSON:\n' + JSON.stringify(json, null, 2);
+
+      if (json.id) {
+        out.textContent += '\n\n✅ SUCCESS — Profile saved!\n';
+        out.textContent += `Profile URL: ${window.location.origin}/profile/${json.id}\n`;
+        out.style.color = '#4ade80';
+      } else if (json.error) {
+        out.textContent += '\n\n❌ API returned error: ' + json.error;
+        out.style.color = '#f87171';
+
+        if (json.error.includes('Storage not configured')) {
+          out.textContent += '\n\n⚠️  FIX: Add these to Vercel Environment Variables:\n';
+          out.textContent += '  UPSTASH_REDIS_REST_URL\n';
+          out.textContent += '  UPSTASH_REDIS_REST_TOKEN\n';
+          out.textContent += '\nGo to: vercel.com → your project → Settings → Environment Variables';
+        }
+      }
+    } catch(e) {
+      out.textContent += 'Raw response:\n' + text;
+    }
+
+  } catch(err) {
+    out.style.color = '#f87171';
+    out.textContent += '\n❌ FETCH FAILED — never reached server\n\n';
+    out.textContent += 'Error name: ' + err.name + '\n';
+    out.textContent += 'Error message: ' + err.message + '\n\n';
+
+    if (err.name === 'TypeError' && err.message.includes('fetch')) {
+      out.textContent += 'DIAGNOSIS: CORS or network block\n';
+      out.textContent += 'The browser is blocking the request before it leaves.\n';
+      out.textContent += 'Check: Browser console → Console tab for CORS errors\n';
+    }
+
+    out.textContent += '\nFull error:\n' + JSON.stringify({
+      name: err.name,
+      message: err.message,
+      stack: err.stack
+    }, null, 2);
+  }
+}
+</script>
+</body>
+</html>
