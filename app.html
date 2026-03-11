@@ -1414,20 +1414,52 @@ function startAnalysis(metadata) {
 // ── API CALL ──
 async function callAPI(metadata) {
   try {
-    // Compute culture dimensions locally and include scores for Claude to write the narrative
     const { dimScores } = computeCultureMap(metadata);
+
+    // Show a "this can take 20-30 seconds" message after 8 seconds
+    const slowTimer = setTimeout(() => {
+      const lbl = document.getElementById('analyzingLabel');
+      if (lbl) lbl.textContent = 'Almost there — generating your profile (this takes up to 30s)...';
+    }, 8000);
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 58000); // 58s client timeout
+
     const response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ metadata, dimScores })
+      body: JSON.stringify({ metadata, dimScores }),
+      signal: controller.signal
     });
 
-    if (!response.ok) throw new Error('API error');
+    clearTimeout(slowTimer);
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || `Server error ${response.status}`);
+    }
+
     const data = await response.json();
+    if (!data.profile) throw new Error('No profile returned');
     renderResults(data.profile, metadata);
+
   } catch(err) {
-    // Fallback to local generation if API unavailable
-    renderResults(generateLocalProfile(metadata), metadata);
+    clearTimeout(window._slowTimer);
+
+    // Show specific error to user
+    const lbl = document.getElementById('analyzingLabel');
+    const isTimeout = err.name === 'AbortError' || err.message?.includes('abort');
+    const msg = isTimeout
+      ? 'Profile generation timed out. Try again — it usually works on the second attempt.'
+      : 'Could not generate profile via API. Showing a preview instead.';
+
+    if (lbl) lbl.textContent = msg;
+
+    // Still show local fallback so user isn't stuck
+    setTimeout(() => {
+      renderResults(generateLocalProfile(metadata), metadata);
+    }, 1500);
   }
 }
 
@@ -2345,9 +2377,12 @@ let _currentProfile = null;
 let _currentMetadata = null;
 
 function saveProfile() {
-  if (!_currentProfile || !_currentMetadata) return;
+  if (!_currentProfile || !_currentMetadata) {
+    alert('No profile to save yet — generate your profile first.');
+    return;
+  }
   const btn = document.getElementById('saveBtn');
-  if (btn._saving) return; // prevent double-click
+  if (btn._saving) return;
   btn._saving = true;
   const orig = btn.textContent;
   btn.textContent = 'Saving…';
@@ -2358,7 +2393,10 @@ function saveProfile() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ profile: _currentProfile, metadata: _currentMetadata })
   })
-  .then(r => r.json())
+  .then(r => {
+    if (!r.ok) return r.json().then(e => { throw new Error(e.error || `HTTP ${r.status}`); });
+    return r.json();
+  })
   .then(data => {
     btn._saving = false;
     btn.style.opacity = '';
@@ -2369,20 +2407,24 @@ function saveProfile() {
       banner.style.display = 'block';
       btn.textContent = '✓ Saved';
       btn.style.background = 'var(--accent)';
-      // Smooth scroll to share options
       setTimeout(() => banner.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
     } else {
       btn._saving = false;
       btn.textContent = orig;
       btn.style.opacity = '';
-      alert('Could not save — please try again.');
+      alert('Save returned no ID — ' + (data.error || 'unknown error'));
     }
   })
-  .catch(() => {
+  .catch(err => {
     btn._saving = false;
     btn.textContent = orig;
     btn.style.opacity = '';
-    alert('Connection error. Check your internet and try again.');
+    const msg = err.message || 'Unknown error';
+    if (msg.includes('Storage not configured')) {
+      alert('Storage not configured on the server. Add UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN to Vercel environment variables.');
+    } else {
+      alert('Save failed: ' + msg + '\n\nIf this keeps happening, check Vercel dashboard for error logs.');
+    }
   });
 }
 
