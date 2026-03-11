@@ -523,7 +523,24 @@
     transition: width 1.2s cubic-bezier(0.4,0,0.2,1) 0.5s;
   }
 
-  .sig-obs { font-size: 11px; color: var(--mid); line-height: 1.5; }
+  .sig-obs { font-size: 11px; color: var(--mid); line-height: 1.5; margin-bottom: 10px; }
+
+  .sig-growth {
+    font-size: 11px; color: var(--ink); line-height: 1.55;
+    border-top: 1px solid var(--border); padding-top: 9px; margin-top: 2px;
+  }
+  .sig-growth-lbl {
+    font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 3px;
+  }
+  .sig-manager {
+    font-size: 11px; color: var(--mid); line-height: 1.5; font-style: italic;
+    border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px;
+  }
+  .sig-manager-lbl {
+    font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 3px; font-style: normal;
+  }
 
   /* CALLOUTS */
   .callout {
@@ -786,14 +803,9 @@
   }
   .culture-verdict strong { color: var(--ink); font-style: normal; }
   .culture-env { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
-  .culture-env-title { font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); margin-bottom: 14px; }
-  .env-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .env-col h5 { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
-  .env-col.thrives h5 { color: var(--accent); }
-  .env-col.drains h5 { color: #c0392b; }
-  .env-item { font-size: 12px; color: var(--mid); padding: 5px 0; border-bottom: 1px solid var(--border); line-height: 1.4; }
-  .env-item:last-child { border-bottom: none; }
-  @media(max-width:600px){ .env-cols { grid-template-columns: 1fr; } .culture-card { padding: 20px 18px; } }
+  .culture-env-title { font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); margin-bottom: 12px; }
+  .culture-narrative { font-size: 13px; color: var(--mid); line-height: 1.75; font-style: italic; }
+  @media(max-width:600px){ .culture-card { padding: 20px 18px; } }
 </style>
 </head>
 <body>
@@ -962,7 +974,7 @@
     <!-- CULTURE MAP -->
     <div class="culture-card" id="cultureCard">
       <div class="section-title">Culture & Energy Map</div>
-      <div class="culture-intro">How you show up in a room. Derived from conversation behaviour — not self-reported.</div>
+      <div class="culture-intro">Seven dimensions of how you show up — derived from conversation behaviour, not self-reported.</div>
       <div id="cultureDims"></div>
       <div class="culture-env" id="cultureEnv"></div>
     </div>
@@ -1365,10 +1377,12 @@ function startAnalysis(metadata) {
 // ── API CALL ──
 async function callAPI(metadata) {
   try {
+    // Compute culture dimensions locally and include scores for Claude to write the narrative
+    const { dimScores } = computeCultureMap(metadata);
     const response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ metadata })
+      body: JSON.stringify({ metadata, dimScores })
     });
 
     if (!response.ok) throw new Error('API error');
@@ -1380,298 +1394,750 @@ async function callAPI(metadata) {
   }
 }
 
+// ── SHARED CAREER ROLE LIBRARY — 60 roles, 8 domains, signal-scored ──
+function scoreCareerRoles(m) {
+  const p    = m.pushbackRatio        || 0;
+  const q    = m.questionRatio        || 0;
+  const avg  = m.avgWordsPerMessage   || 0;
+  const d    = m.depthScore           || 50;
+  const night= m.nightPct             || 0;
+  const deep = m.deepDiveRatio        || 0;
+  const lng  = m.longMessagePct       || 0;
+  const spn  = m.spanMonths           || 1;
+  const vol  = m.userMessages         || 0;
+  const vocab= m.vocabRichness        || 50;
+  const plat = m.platformCount        || 1;
+
+  const isNightOwl     = night > 30;
+  const isHighVolume   = vol > 500;
+  const isLowVolume    = vol < 100;
+  const isHighPushback = p > 28;
+  const isMedPushback  = p >= 12 && p <= 28;
+  const isLowPushback  = p < 12;
+  const isDeep         = d > 65 || avg > 55;
+  const isVeryDeep     = avg > 90;
+  const isHighQ        = q > 18;
+  const isMedQ         = q >= 8 && q <= 18;
+  const isLowQ         = q < 8;
+  const isLongSpan     = spn > 8;
+  const isShort        = avg < 30;
+  const isVeryShort    = avg < 18;
+  const isLong         = lng > 25;
+  const isHighDeep     = deep > 20;
+  const isHighVocab    = vocab > 70;
+  const isMultiPlatform= plat > 1;
+
+  const roles = [
+    // TECHNICAL
+    { title: 'Inference Infrastructure Engineer',       domain: 'technical',   score: (isVeryShort?4:isShort?2:0)+(isHighVolume?3:0)+(isLowPushback?2:0)+(isLowQ?2:0)+(!isNightOwl?1:0) },
+    { title: 'Staff Engineer (Systems)',                domain: 'technical',   score: (isDeep?3:0)+(isLong?2:0)+(isLowQ?3:0)+(isLowPushback?1:0)+(isHighVocab?1:0)+(isLongSpan?1:0) },
+    { title: 'Technical Founder (0-to-1)',              domain: 'technical',   score: (isNightOwl?3:0)+(isHighVolume?2:0)+(isDeep?2:0)+(isLongSpan?2:0)+(isHighVocab?1:0)+(isHighPushback?1:0) },
+    { title: 'Head of Inference & ML Platform',        domain: 'technical',   score: (isDeep?3:0)+(isLowQ?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isNightOwl?1:0) },
+    { title: 'Principal Security Engineer',            domain: 'technical',   score: (isLowPushback?2:0)+(isDeep?2:0)+(isLowQ?3:0)+(isHighVocab?2:0)+(!isNightOwl?1:0) },
+    { title: 'Developer Advocate / Technical Evangelist', domain: 'technical', score: (isHighQ?2:0)+(isShort?2:0)+(isHighVolume?2:0)+(!isNightOwl?2:0)+(isMedPushback?1:0) },
+    { title: 'CTO (Series A–B)',                       domain: 'technical',   score: (isNightOwl?2:0)+(isDeep?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(isLowPushback?1:0) },
+    { title: 'Founding Engineer',                      domain: 'technical',   score: (isVeryShort?3:isShort?1:0)+(isHighVolume?3:0)+(isNightOwl?2:0)+(isHighPushback?1:0)+(isLongSpan?1:0) },
+    // RESEARCH
+    { title: 'Quantitative Research Analyst (HF/AM)',  domain: 'research',    score: (isLowPushback?3:0)+(isDeep?2:0)+(isLowQ?3:0)+(!isNightOwl?1:0)+(isLongSpan?1:0)+(isHighVocab?1:0) },
+    { title: 'Intelligence Analyst (Government/Defence)', domain: 'research', score: (isLowPushback?2:0)+(isDeep?3:0)+(isLowQ?2:0)+(isLongSpan?2:0)+(!isNightOwl?1:0) },
+    { title: 'UX Research Lead',                       domain: 'research',    score: (isHighQ?3:0)+(isLowPushback?3:0)+(!isHighVolume?1:0)+(!isLong?1:0)+(isMedPushback?1:0) },
+    { title: 'Epidemiologist / Clinical Researcher',   domain: 'research',    score: (isDeep?3:0)+(isLowPushback?2:0)+(isLong?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0) },
+    { title: 'Competitive Intelligence Lead',          domain: 'research',    score: (isDeep?2:0)+(isHighQ?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    { title: 'Director of People Analytics',           domain: 'research',    score: (isLowPushback?2:0)+(isDeep?2:0)+(!isNightOwl?2:0)+(isMedQ?2:0)+(isLongSpan?1:0) },
+    { title: 'Independent Research Scientist',         domain: 'research',    score: (isNightOwl?2:0)+(isDeep?3:0)+(isHighVocab?2:0)+(isHighDeep?2:0)+(!isHighVolume?1:0) },
+    { title: 'Head of Market Research',                domain: 'research',    score: (isHighQ?2:0)+(isDeep?2:0)+(!isNightOwl?2:0)+(isMedPushback?1:0)+(isLongSpan?1:0) },
+    // STRATEGY
+    { title: 'Management Consultant (McKinsey/BCG tier)', domain: 'strategy', score: (isNightOwl?2:0)+(isDeep?3:0)+(isLongSpan?2:0)+(!isHighVolume?1:0)+(isHighVocab?2:0)+(isLowPushback?1:0) },
+    { title: 'Chief of Staff (Hypergrowth Company)',   domain: 'strategy',    score: (isLongSpan?3:0)+(isDeep?1:0)+(isLowPushback?2:0)+(isMedPushback?1:0)+(isMedQ?2:0)+(!isNightOwl?1:0) },
+    { title: 'Corporate Development Director (M&A)',   domain: 'strategy',    score: (isHighPushback?2:0)+(isDeep?2:0)+(isLowQ?2:0)+(isLongSpan?2:0)+(isHighVocab?2:0) },
+    { title: 'Venture Capital Analyst (Pre-Seed/Seed)', domain: 'strategy',   score: (isNightOwl?2:0)+(isHighQ?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongSpan?1:0)+(isMedPushback?1:0) },
+    { title: 'Strategic Finance Lead',                 domain: 'strategy',    score: (isDeep?2:0)+(isLowPushback?3:0)+(isLowQ?2:0)+(!isNightOwl?2:0)+(isHighVocab?1:0) },
+    { title: 'Think Tank Director / Policy Strategist', domain: 'strategy',   score: (isNightOwl?2:0)+(isDeep?3:0)+(isHighVocab?3:0)+(isLongSpan?2:0)+(isLowPushback?1:0) },
+    { title: 'Chief Strategy Officer',                 domain: 'strategy',    score: (isNightOwl?3:0)+(isDeep?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(isLowPushback?1:0) },
+    { title: 'Foresight & Scenario Planning Lead',     domain: 'strategy',    score: (isNightOwl?3:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isHighDeep?2:0)+(isLongSpan?2:0) },
+    // COMMERCIAL
+    { title: 'Enterprise Account Executive (Complex Sales)', domain: 'commercial', score: (isHighPushback?3:0)+(isHighVolume?2:0)+(isShort?2:0)+(!isNightOwl?2:0)+(isLowQ?1:0) },
+    { title: 'Chief Revenue Officer',                  domain: 'commercial',  score: (isHighPushback?3:0)+(isHighVolume?2:0)+(!isNightOwl?2:0)+(isLongSpan?2:0) },
+    { title: 'VC-Backed Fundraising Lead',             domain: 'commercial',  score: (isHighPushback?3:0)+(isDeep?2:0)+(isNightOwl?1:0)+(isHighVocab?2:0)+(isLongSpan?1:0) },
+    { title: 'Head of Partnerships (Platform/Ecosystem)', domain: 'commercial', score: (isHighQ?2:0)+(isShort?2:0)+(!isNightOwl?2:0)+(isMedPushback?2:0)+(isHighVolume?1:0) },
+    { title: 'Growth Lead (PLG/B2C)',                  domain: 'commercial',  score: (isHighVolume?3:0)+(isShort?2:0)+(!isNightOwl?2:0)+(isHighQ?1:0)+(isLowPushback?1:0) },
+    { title: 'Founder (Pre-Seed, Commercial Thesis)',  domain: 'commercial',  score: (isHighPushback?2:0)+(isHighVolume?2:0)+(isNightOwl?2:0)+(isHighVocab?1:0)+(isLongSpan?1:0) },
+    { title: 'Business Development Director',         domain: 'commercial',  score: (isHighQ?3:0)+(isShort?2:0)+(!isNightOwl?1:0)+(isMedPushback?2:0)+(isHighVolume?1:0) },
+    { title: 'Category Manager (Consumer/Retail)',     domain: 'commercial',  score: (isLowPushback?2:0)+(!isNightOwl?2:0)+(isHighVolume?2:0)+(isShort?2:0)+(isLowQ?1:0) },
+    // LEGAL
+    { title: 'Litigation Partner (Commercial Law)',    domain: 'legal',       score: (isHighPushback?4:0)+(isDeep?2:0)+(isLowQ?2:0)+(isLong?2:0)+(isHighVocab?1:0) },
+    { title: 'Regulatory Affairs Director',           domain: 'legal',       score: (isDeep?2:0)+(isLowPushback?2:0)+(isLong?2:0)+(isHighVocab?3:0)+(isLongSpan?2:0) },
+    { title: 'Chief Privacy / AI Governance Officer', domain: 'legal',       score: (isDeep?3:0)+(isHighVocab?3:0)+(isLongSpan?2:0)+(isLowPushback?1:0)+(isNightOwl?1:0) },
+    { title: 'Policy Lead (Tech / AI / Health)',      domain: 'legal',       score: (isDeep?2:0)+(isLong?2:0)+(isHighVocab?3:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    { title: 'Transactional Lawyer (M&A / VC)',       domain: 'legal',       score: (isHighPushback?2:0)+(isDeep?2:0)+(isLowQ?2:0)+(isHighVocab?2:0)+(!isNightOwl?2:0) },
+    { title: 'Public Interest Lawyer / Advocate',     domain: 'legal',       score: (isHighPushback?3:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isHighDeep?1:0) },
+    { title: 'Compliance & Ethics Lead',              domain: 'legal',       score: (isLowPushback?3:0)+(isDeep?2:0)+(isHighVocab?2:0)+(!isNightOwl?2:0)+(isLongSpan?1:0) },
+    { title: 'Parliamentary / Legislative Advisor',   domain: 'legal',       score: (isDeep?2:0)+(isHighVocab?3:0)+(isLong?2:0)+(isMedPushback?2:0)+(isLongSpan?1:0) },
+    // CREATIVE
+    { title: 'Editorial Director (Long-Form / Magazine)', domain: 'creative', score: (isHighVocab?3:0)+(isHighDeep?2:0)+(isLong?2:0)+(isMultiPlatform?2:0)+(isNightOwl?1:0) },
+    { title: 'Science Communicator / Journalist',     domain: 'creative',    score: (isHighVocab?3:0)+(isHighDeep?2:0)+(isLowPushback?2:0)+(!isHighVolume?1:0)+(isHighQ?1:0) },
+    { title: 'Narrative Designer (Games / Interactive)', domain: 'creative',  score: (isNightOwl?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLong?2:0)+(isLowPushback?2:0) },
+    { title: 'Creative Director (Brand / Campaign)',  domain: 'creative',    score: (isNightOwl?2:0)+(isHighVocab?2:0)+(isDeep?2:0)+(isHighDeep?2:0)+(isMedPushback?1:0) },
+    { title: 'Speechwriter / Executive Ghostwriter',  domain: 'creative',    score: (isDeep?2:0)+(isHighVocab?3:0)+(isLong?2:0)+(isLowPushback?2:0)+(isLongSpan?1:0) },
+    { title: 'Head of Content Strategy',              domain: 'creative',    score: (isHighVocab?2:0)+(isHighDeep?2:0)+(isMedPushback?2:0)+(!isNightOwl?1:0)+(isLongSpan?2:0) },
+    { title: 'Staff Writer / Culture Critic',         domain: 'creative',    score: (isNightOwl?2:0)+(isHighVocab?3:0)+(isLong?2:0)+(isHighPushback?2:0)+(!isHighVolume?1:0) },
+    { title: 'Documentary Researcher / Producer',     domain: 'creative',    score: (isHighQ?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    // LEADERSHIP
+    { title: 'Founder / CEO (Venture-Backed)',        domain: 'leadership',  score: (isNightOwl?3:0)+(isDeep?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(isMultiPlatform?1:0)+(isHighPushback?1:0) },
+    { title: 'COO (Scaling Startup)',                 domain: 'leadership',  score: (isHighVolume?3:0)+(isShort?2:0)+(!isNightOwl?2:0)+(isLowPushback?2:0)+(isLongSpan?1:0) },
+    { title: 'General Manager (P&L Ownership)',       domain: 'leadership',  score: (isHighVolume?2:0)+(!isNightOwl?2:0)+(isLowPushback?2:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    { title: 'VP of Product',                         domain: 'leadership',  score: (isDeep?2:0)+(isHighQ?2:0)+(isMedPushback?2:0)+(isLongSpan?2:0)+(!isNightOwl?1:0) },
+    { title: 'Head of Operations (Series B+)',        domain: 'leadership',  score: (isHighVolume?3:0)+(isShort?3:0)+(!isNightOwl?1:0)+(isLowPushback?2:0)+(isLowQ?1:0) },
+    { title: 'Chief People Officer / CHRO',           domain: 'leadership',  score: (isLowPushback?3:0)+(isDeep?1:0)+(!isNightOwl?2:0)+(isMedQ?2:0)+(isLongSpan?2:0) },
+    { title: 'Managing Director (Professional Services)', domain: 'leadership', score: (isDeep?2:0)+(isLowPushback?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(!isNightOwl?1:0) },
+    { title: 'Venture Partner (Early-Stage Fund)',    domain: 'leadership',  score: (isNightOwl?3:0)+(isHighVocab?2:0)+(!isHighVolume?2:0)+(isLongSpan?2:0)+(isDeep?1:0) },
+    // EDUCATION
+    { title: 'Executive Coach (C-Suite)',             domain: 'education',   score: (isLowPushback?3:0)+(isDeep?2:0)+(isLongSpan?2:0)+(!isNightOwl?2:0)+(isMedQ?1:0) },
+    { title: 'Head of Learning & Development',        domain: 'education',   score: (isLong?3:0)+(isLowPushback?2:0)+(!isNightOwl?2:0)+(isHighDeep?2:0)+(isMedQ?1:0) },
+    { title: 'Professor / Research Academic',         domain: 'education',   score: (isVeryDeep?4:isLong?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isNightOwl?2:0)+(isHighDeep?1:0) },
+    { title: 'Curriculum Designer (Professional/HE)', domain: 'education',   score: (isLong?2:0)+(isLowPushback?2:0)+(isDeep?2:0)+(isMedQ?2:0)+(!isNightOwl?2:0) },
+    { title: 'Organisational Psychologist',           domain: 'education',   score: (isDeep?2:0)+(isLowPushback?3:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isMedQ?1:0) },
+    { title: 'Learning Experience Designer (EdTech)', domain: 'education',   score: (isHighQ?2:0)+(isLowPushback?2:0)+(isDeep?1:0)+(!isNightOwl?2:0)+(isMedPushback?1:0)+(isLong?1:0) }
+  ];
+
+  // Sort by score, pick top 3
+  const sorted = [...roles].sort((a, b) => b.score - a.score);
+  const top3 = sorted.slice(0, 3);
+  const primaryDomain = top3[0].domain;
+
+  // 4th must be a different domain from the top scorer
+  const unexpected = sorted.find(r => r.domain !== primaryDomain && !top3.includes(r))
+    || sorted[3];
+
+  return [...top3, unexpected];
+}
+
 // ── LOCAL FALLBACK PROFILE ──
 function generateLocalProfile(m) {
-  const d = m.depthScore || 50;
-  const p = m.pushbackRatio || 0;
-  const q = m.questionRatio || 0;
-  const avg = m.avgWordsPerMessage || 0;
-  const night = m.nightPct || 0;
-  const deep = m.deepDiveRatio || 0;
-  const longPct = m.longMessagePct || 0;
+  const d    = m.depthScore           || 50;
+  const p    = m.pushbackRatio        || 0;
+  const q    = m.questionRatio        || 0;
+  const avg  = m.avgWordsPerMessage   || 0;
+  const night= m.nightPct             || 0;
+  const deep = m.deepDiveRatio        || 0;
+  const lng  = m.longMessagePct       || 0;
+  const spn  = m.spanMonths           || 1;
+  const vol  = m.userMessages         || 0;
+  const vocab= m.vocabRichness        || 50;
+  const plat = m.platformCount        || 1;
 
-  const isNightOwl = night > 30;
-  const isHighVolume = m.userMessages > 500;
-  const isLowPushback = p < 15;
-  const isHighPushback = p > 30;
-  const isDeep = d > 65 || avg > 60;
-  const isHighQ = q > 18;
-  const isShort = avg < 30;
-  const isVeryShort = avg < 18;
-  const isLong = longPct > 25;
-  const isHighDeep = deep > 20;
+  // ── Signal flags — mirror generate.js exactly ──
+  const isNightOwl       = night > 30;
+  const isHighVolume     = vol > 500;
+  const isVeryHighVolume = vol > 1200;
+  const isLowVolume      = vol < 100;
+  const isHighPushback   = p > 28;
+  const isMedPushback    = p >= 12 && p <= 28;
+  const isLowPushback    = p < 12;
+  const isDeep           = d > 65 || avg > 55;
+  const isVeryDeep       = avg > 90;
+  const isHighQ          = q > 18;
+  const isMedQ           = q >= 8 && q <= 18;
+  const isLowQ           = q < 8;
+  const isLongSpan       = spn > 8;
+  const isVeryLongSpan   = spn > 14;
+  const isShort          = avg < 30;
+  const isVeryShort      = avg < 18;
+  const isLong           = lng > 25;
+  const isHighDeep       = deep > 20;
+  const isHighVocab      = vocab > 70;
+  const isMultiPlatform  = plat > 1;
 
-  // Pick archetype
-  let archetype, thinkerType, summaryFn, signalsFn, traitsFn, careersFn, quoteFn, insightFn;
+  // ── Score all 19 archetypes ──
+  const scores = {
+    'The Debugger'      : (isVeryShort?4:isShort?2:0) + (isHighVolume?3:0) + (isLowPushback?1:0) + (isLowQ?2:0) + (!isNightOwl?1:0),
+    'The Architect'     : (isDeep?3:0) + (isLong?2:0) + (isLowPushback?2:0) + (isLongSpan?1:0) + (isLowQ?2:0) + (isHighVocab?1:0),
+    'The Craftsman'     : (isLong?2:0) + (isLongSpan?3:0) + (isLowPushback?1:0) + (!isHighVolume?2:0) + (isMedQ?1:0),
+    'The Operator'      : (isHighVolume?3:0) + (isShort?3:0) + (isLowPushback?1:0) + (isLowQ?2:0) + (!isNightOwl?1:0),
+    'The Strategist'    : (isNightOwl?4:0) + (isDeep?2:0) + (isLowPushback?1:0) + (isLongSpan?2:0) + (!isHighVolume?1:0),
+    'The Analyst'       : (isDeep?2:0) + (isLowPushback?3:0) + (isLowQ?2:0) + (isLong?1:0) + (!isNightOwl?1:0) + (isLongSpan?1:0),
+    'The Philosopher'   : (isVeryDeep?4:isLong?2:0) + (isDeep?2:0) + (isNightOwl?2:0) + (!isHighVolume?2:0) + (isHighDeep?2:0) + (isHighVocab?1:0),
+    'The Synthesiser'   : (isHighDeep?3:0) + (isDeep?1:0) + (isLongSpan?2:0) + (isMultiPlatform?3:0) + (isHighVocab?1:0) + (isMedPushback?1:0),
+    'The Challenger'    : (isHighPushback?5:0) + (isDeep?2:0) + (isHighQ?1:0) + (isHighVocab?1:0),
+    'The Explorer'      : (isHighQ?4:0) + (!isDeep?1:0) + (!isLowVolume?1:0) + (!isNightOwl?1:0) + (isMedPushback?1:0),
+    'The Maverick'      : (isHighPushback?3:0) + (isNightOwl?2:0) + (!isHighVolume?1:0) + (isHighVocab?1:0) + (!isLongSpan?1:0),
+    'The Catalyst'      : (isHighQ?3:0) + (isShort?2:0) + (!isNightOwl?1:0) + (!isLong?1:0) + (isHighVolume?1:0),
+    'The Absorber'      : (isLowPushback?4:0) + (isDeep?2:0) + (!isShort?1:0) + (isLongSpan?1:0) + (isMedQ?1:0),
+    'The Precise Asker' : (isHighQ?3:0) + (isLowPushback?3:0) + (isShort?1:0) + (!isLowVolume?1:0),
+    'The Mentor'        : (isDeep?2:0) + (isLowPushback?2:0) + (isLong?3:0) + (!isNightOwl?1:0) + (isLongSpan?1:0) + (isMedQ?1:0),
+    'The Visionary'     : (isNightOwl?3:0) + (isDeep?2:0) + (isLowPushback?1:0) + (isHighDeep?2:0) + (!isHighVolume?1:0) + (isHighVocab?2:0) + (isVeryLongSpan?1:0),
+    'The Persuader'     : (isHighPushback?3:0) + (isHighVolume?2:0) + (isShort?2:0) + (!isNightOwl?2:0) + (isLowQ?1:0),
+    'The Expert'        : (isLowQ?4:0) + (isLong?2:0) + (isLowPushback?2:0) + (isLongSpan?2:0) + (isHighVocab?2:0) + (!isNightOwl?1:0),
+    'The Translator'    : (isHighVocab?3:0) + (isHighDeep?2:0) + (isMultiPlatform?2:0) + (isDeep?1:0) + (!isShort?1:0) + (isMedPushback?1:0)
+  };
 
-  if (isVeryShort && isHighVolume) {
-    archetype = 'The Debugger';
-    thinkerType = 'Iterative Builder';
-    summaryFn = () => `This is a doer's profile. At ${avg} words per message across ${m.totalConversations} conversations, the pattern is clear — short, precise, task-focused exchanges that iterate rapidly toward a solution. This person does not philosophise about problems; they run them. The volume of ${m.userMessages} messages reflects someone who learns by doing, corrects by doing, and ships by doing. AI is a tool here, not a thought partner — and that distinction matters.`;
-    signalsFn = () => [
-      { name: 'Execution Speed', score: Math.min(95, 60 + (isHighVolume ? 20 : 0)), label: `${m.userMessages} messages — high iteration rate` },
-      { name: 'Precision', score: Math.min(92, 70 + (isShort ? 15 : 0)), label: `${avg} words/message — surgical, not verbose` },
-      { name: 'Problem Focus', score: 85, label: 'task-oriented sessions, low abstraction' },
-      { name: 'Debugging Instinct', score: 88, label: 'loops back to problems from multiple angles' },
-      { name: 'Build Velocity', score: Math.min(90, 50 + (isHighVolume ? 30 : 0)), label: `${m.totalConversations} sessions of active building` },
-      { name: 'Tolerance for Friction', score: 82, label: 'high failure rate accepted as part of process' }
-    ];
-    traitsFn = () => ['Iterates before theorising','Task-first mindset','High tolerance for trial and error','Builds to learn','Ships to validate','Low ceremony, high output','Fixes by doing','Precise under pressure'];
-    careersFn = () => [
-      { title: 'Software Engineer', why: `${avg}-word messages and ${m.userMessages} total exchanges is the pattern of someone who debugs in real time. This is an engineer's cognitive fingerprint — iterative, precise, execution-oriented.`, score: 95, tags: ['Execution','Precision','Volume'], unexpected: false },
-      { title: 'Technical Founder', why: `High output, low ceremony, fast iteration. This person builds their way to clarity rather than thinking their way to it — the exact mode that produces working products.`, score: 88, tags: ['Build velocity','Execution'], unexpected: false },
-      { title: 'Product Engineer', why: `The combination of volume and precision suggests someone who cares about outcomes, not just code. They iterate until it works, then until it works well.`, score: 84, tags: ['Precision','Output'], unexpected: false },
-      { title: 'Startup CTO', why: `High execution capacity with sustained engagement over ${m.spanMonths} months — this person can hold a technical vision and build it simultaneously.`, score: 79, tags: ['Stamina','Build velocity'], unexpected: true }
-    ];
-    quoteFn = () => `${m.userMessages} messages, ${avg} words each — this is what a builder's mind looks like in motion.`;
-    insightFn = () => `The low message length (${avg} words) is not a sign of shallow thinking — it is the signature of someone who thinks through their hands. The code is the thought.`;
+  // Pick highest scorer
+  const archetype = Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
 
-  } else if (isHighPushback && isDeep) {
-    archetype = 'The Challenger';
-    thinkerType = 'The Challenger';
-    summaryFn = () => `This mind does not accept the first answer — and the data is unambiguous about it. A ${p}% pushback rate combined with ${avg} words per message describes someone who arrives at AI conversations with a position already forming and pressure-tests it until something breaks or holds. Across ${m.spanMonths} months, this pattern is consistent: not someone who uses AI to think, but someone who uses AI to argue. The result is a thinker whose conclusions have been stress-tested.`;
-    signalsFn = () => [
-      { name: 'Position Strength', score: Math.min(95, p + 50), label: `challenges responses in ${p}% of exchanges` },
-      { name: 'Argumentative Depth', score: d, label: `${avg} words per message — arrives with a position` },
-      { name: 'Intellectual Resistance', score: Math.min(92, p + 45), label: 'does not update position without evidence' },
-      { name: 'Pressure Testing', score: Math.min(90, p + 40), label: 'uses AI as sparring partner' },
-      { name: 'Cognitive Stamina', score: Math.min(88, Math.round((m.userMessages/500)*80)+30), label: `${m.totalConversations} sustained sessions` },
-      { name: 'Independent Reasoning', score: Math.min(91, p + 42), label: 'forms conclusions before asking' }
-    ];
-    traitsFn = () => ['Position-first thinker','Argues to stress-test','Resistant to weak reasoning','Independent by default','Thinks in counterarguments','High intellectual standards','Does not move without evidence','Makes rooms sharper'];
-    careersFn = () => [
-      { title: 'Strategic Advisor', why: `A ${p}% pushback rate over ${m.spanMonths} months is the fingerprint of someone whose value is their judgment. Advisors hold positions under pressure — this profile does it naturally.`, score: 93, tags: ['Position strength','Independence'], unexpected: false },
-      { title: 'Investor / Analyst', why: `Investment requires resisting narratives. The challenger pattern — arriving with a thesis and pressure-testing it — is exactly how good investment decisions get made.`, score: 88, tags: ['Intellectual resistance','Depth'], unexpected: false },
-      { title: 'Policy & Research Lead', why: `Complex policy requires someone who argues before they conclude. The ${p}% challenge rate and ${avg}-word depth suggest someone who would not sign off on a weak brief.`, score: 85, tags: ['Depth','Reasoning'], unexpected: false },
-      { title: 'Founder', why: `Contrarian conviction, rejection-resistant, high standards — the challenger profile maps naturally to founding. The question is which problem is worth the fight.`, score: 82, tags: ['Independence','Stamina'], unexpected: true }
-    ];
-    quoteFn = () => `This person makes the work better — not because they are difficult, but because they will not let weak thinking survive in the room.`;
-    insightFn = () => `The ${p}% pushback rate is high — but the depth score (${d}) confirms these aren't reactive challenges. They're considered ones. That combination is rare and genuinely valuable.`;
+  // ── Per-archetype content ──
+  const profiles = {
 
-  } else if (isLowPushback && isDeep) {
-    archetype = 'The Absorber';
-    thinkerType = 'The Absorber';
-    summaryFn = () => `Low pushback does not mean passive — and this profile proves it. At ${avg} words per message with only ${p}% direct challenges, this is someone who processes fully before forming a position. They do not argue with AI because they are integrating, not debating — the debate happens later, in real rooms, with real stakes. Across ${m.totalConversations} conversations, the pattern is someone who arrives open and leaves decided.`;
-    signalsFn = () => [
-      { name: 'Integrative Depth', score: d, label: `${avg} words/message — full processing before output` },
-      { name: 'Receptive Intelligence', score: Math.min(92, 100 - p + 30), label: `${p}% pushback — absorbs before filtering` },
-      { name: 'Position Quality', score: Math.min(90, d - 5), label: 'conclusions are considered, not reactive' },
-      { name: 'Intellectual Flexibility', score: Math.min(88, 100 - p + 20), label: 'updates thinking when evidence warrants' },
-      { name: 'Depth of Processing', score: Math.min(93, d + 5), label: `${m.longMessagePct}% of messages are substantive` },
-      { name: 'Cognitive Patience', score: Math.min(87, m.spanMonths * 4 + 30), label: `${m.spanMonths} months of consistent engagement` }
-    ];
-    traitsFn = () => ['Processes before concluding','Absorbs fully before filtering','Debates in real rooms not with tools','Intellectual flexibility','High-quality output from deep input','Patient under complexity','Considered not reactive','Updates position with evidence'];
-    careersFn = () => [
-      { title: 'Research Lead', why: `The absorber pattern — deep engagement, low reactivity, high processing — is the cognitive fingerprint of excellent research. This person does not rush to conclusions.`, score: 92, tags: ['Depth','Patience','Processing'], unexpected: false },
-      { title: 'Chief of Staff', why: `CoS roles require someone who processes enormous amounts of information and synthesises without distorting it. Low pushback with high depth is exactly that profile.`, score: 88, tags: ['Integration','Depth'], unexpected: false },
-      { title: 'Strategy Consultant', why: `Clients need advisors who listen before they prescribe. The ${p}% pushback rate combined with ${avg}-word depth describes someone who earns conclusions rather than performing them.`, score: 85, tags: ['Receptive intelligence','Output quality'], unexpected: false },
-      { title: 'Executive Coach', why: `The absorber profile — genuinely open, deeply processing, not reflexively challenging — maps directly to the best coaches. They hold space and then act precisely.`, score: 80, tags: ['Flexibility','Depth'], unexpected: true }
-    ];
-    quoteFn = () => `Do not mistake the quiet for empty — this person is processing everything, and when they speak, it is finished thinking.`;
-    insightFn = () => `The ${p}% pushback rate would look like passivity on paper. But paired with ${avg} words per message and ${d}/100 depth, it is the opposite — someone so confident in their processing they do not need to perform disagreement.`;
+    'The Debugger': {
+      summary: `This is a doer's profile. At ${avg} words per message across ${m.totalConversations} conversations, the pattern is clear — short, precise, task-focused exchanges that iterate rapidly toward a solution. This person does not philosophise about problems; they run them. The ${vol} messages reflect someone who learns by doing, corrects by doing, and ships by doing.`,
+      signals: [
+        { name: 'Iteration Velocity',    score: Math.min(95,60+(isHighVolume?20:0)), label: `${vol} messages — high iteration rate` },
+        { name: 'Precision Density',     score: Math.min(92,70+(isShort?15:0)),      label: `${avg} words/message — surgical, not verbose` },
+        { name: 'Problem Persistence',   score: 85, label: 'loops back to problems from multiple angles' },
+        { name: 'Task Clarity',          score: 88, label: 'task-oriented sessions, low abstraction' },
+        { name: 'Build Rhythm',          score: Math.min(90,50+(isHighVolume?30:0)), label: `${m.totalConversations} sessions of active building` },
+        { name: 'Execution Focus',       score: 82, label: 'high failure rate accepted as part of process' }
+      ],
+      traits: ['Iterates before theorising','Task-first mindset','High tolerance for trial and error','Builds to learn','Ships to validate','Low ceremony, high output','Fixes by doing','Precise under pressure'],
+      careers: [
+        { title: 'Software Engineer', why: `${avg}-word messages and ${vol} total exchanges is the pattern of someone who debugs in real time — iterative, precise, execution-oriented.`, score: 95, tags: ['Execution','Precision'], unexpected: false },
+        { title: 'Technical Founder', why: `High output, low ceremony, fast iteration. This person builds their way to clarity — the exact mode that produces working products.`, score: 88, tags: ['Build velocity','Execution'], unexpected: false },
+        { title: 'Product Engineer', why: `Volume and precision together suggest someone who cares about outcomes, not just code. Iterates until it works, then until it works well.`, score: 84, tags: ['Precision','Output'], unexpected: false },
+        { title: 'Startup CTO', why: `High execution capacity over ${spn} months — can hold a technical vision and build it simultaneously.`, score: 79, tags: ['Stamina','Build velocity'], unexpected: true }
+      ],
+      quote: `${vol} messages, ${avg} words each — this is what a builder's mind looks like in motion.`,
+      insight: `The low message length (${avg} words) is not shallow thinking — it is the signature of someone who thinks through their hands. The code is the thought.`
+    },
 
-  } else if (isNightOwl && isDeep) {
-    archetype = 'The Strategist';
-    thinkerType = 'The Strategist';
-    summaryFn = () => `${m.nightPct}% of messages sent between 10pm and 2am. That is not insomnia — it is a cognitive schedule. This person's mind runs at depth when the noise disappears, averaging ${avg} words per message across ${m.totalConversations} sessions over ${m.spanMonths} months. The pattern is a slow burn: long periods of observation, then concentrated output. This is not a 9-to-5 thinker, and roles that demand one would waste what this profile offers.`;
-    signalsFn = () => [
-      { name: 'Strategic Depth', score: d, label: `${avg} words/message — deliberate, not reactive` },
-      { name: 'Night Cognition', score: Math.min(93, night * 1.5 + 30), label: `${m.nightPct}% activity after 10pm` },
-      { name: 'Long-Game Orientation', score: Math.min(90, m.spanMonths * 4 + 20), label: `${m.spanMonths} months of sustained thinking` },
-      { name: 'Depth Under Solitude', score: Math.min(88, d + 5), label: 'best thinking happens alone' },
-      { name: 'Pattern Recognition', score: Math.min(85, d - 5), label: 'cross-session continuity of thought' },
-      { name: 'Output Concentration', score: Math.min(87, night * 1.2 + 35), label: 'bursts of high-quality output' }
-    ];
-    traitsFn = () => ['Night-mode cognition','Slow burn thinker','Long-game orientation','Thinks before speaking','Operates best in solitude','Strategic over reactive','Pattern recognition across time','High output when the conditions are right'];
-    careersFn = () => [
-      { title: 'Strategy Lead', why: `${m.spanMonths} months of consistent night-time thinking is the signature of someone who plays a long game. Strategy requires exactly that — patience, depth, and the willingness to think before acting.`, score: 94, tags: ['Long-game','Depth','Night cognition'], unexpected: false },
-      { title: 'Founder / CEO', why: `The strategist profile — nocturnal, deep, self-directed — maps to the isolation and long-term thinking that founding requires. This person makes decisions alone and makes them well.`, score: 89, tags: ['Independence','Depth','Stamina'], unexpected: false },
-      { title: 'Investment Analyst', why: `Pattern recognition over time, night-mode depth, low reactivity — these are the cognitive tools of a good investor. This profile builds conviction slowly and holds it.`, score: 85, tags: ['Long-game','Pattern recognition'], unexpected: false },
-      { title: 'Writer / Researcher', why: `The combination of solitude, depth, and sustained engagement over ${m.spanMonths} months describes someone who can hold a complex idea long enough to resolve it.`, score: 81, tags: ['Depth','Stamina'], unexpected: true }
-    ];
-    quoteFn = () => `This is what a long-game mind looks like — not flashy, not fast, but consistently deep when it matters most.`;
-    insightFn = () => `The peak hour of ${m.peakHours} is not a quirk — it is structural. This person's best thinking requires a specific condition: silence. The data over ${m.spanMonths} months confirms it has not changed.`;
+    'The Architect': {
+      summary: `This profile designs before it builds. Long, deliberate messages averaging ${avg} words across ${m.totalConversations} conversations signal someone who maps the structure before touching the problem. The ${p}% pushback rate is low not because they agree easily, but because they arrive already knowing what they need. After ${spn} months, the pattern is consistent: structural intuition that runs ahead of execution.`,
+      signals: [
+        { name: 'Systems Thinking',      score: Math.min(93,d+8),  label: `depth score ${d} — maps structure before building` },
+        { name: 'Structural Clarity',    score: Math.min(90,avg+30), label: `${avg} words/message — deliberate framing` },
+        { name: 'Deliberate Depth',      score: d, label: 'designs in full before committing' },
+        { name: 'Design Precision',      score: Math.min(88,d+5), label: 'low ambiguity tolerance in output' },
+        { name: 'Abstraction Fluency',   score: Math.min(87,vocab+10), label: `vocab richness ${vocab} — thinks in abstractions` },
+        { name: 'Build Conviction',      score: Math.min(85,spn*4+20), label: `${spn} months of consistent architectural thinking` }
+      ],
+      traits: ['Designs before building','Thinks in structures and systems','Low tolerance for ambiguity in output','Arrives with the blueprint','Schematic thinking','Anticipates second-order effects','Long deliberate messages','Abstraction before implementation'],
+      careers: [
+        { title: 'Solution Architect', why: `${avg}-word messages and ${d}/100 depth score — this person maps systems before touching them, the core skill of architecture work.`, score: 94, tags: ['Systems thinking','Depth'], unexpected: false },
+        { title: 'Principal Engineer', why: `Structural intuition + low pushback + long span = someone who builds lasting systems, not just working ones.`, score: 89, tags: ['Precision','Abstraction'], unexpected: false },
+        { title: 'Technical Programme Manager', why: `Holds complex multi-part problems in structure without losing thread. That is the cognitive fingerprint of strong TPM work.`, score: 84, tags: ['Structure','Clarity'], unexpected: false },
+        { title: 'CTO', why: `${spn} months of deliberate structural thinking over ${m.totalConversations} sessions — this is someone who builds organisations the way they build systems.`, score: 80, tags: ['Long-game','Architecture'], unexpected: true }
+      ],
+      quote: `Give this person the hard architectural problem — the one everyone else is avoiding because it requires holding too many variables at once.`,
+      insight: `The low question rate (${q}%) is not incuriosity. It is the sign of someone who already understands the domain well enough to direct, not ask.`
+    },
 
-  } else if (isHighQ && !isHighPushback) {
-    archetype = 'The Explorer';
-    thinkerType = 'The Explorer';
-    summaryFn = () => `Questions are the product here — ${q}% of messages contain them, which is the signature of a mind that leads with curiosity rather than conclusion. At ${avg} words per message across ${m.totalConversations} conversations, this is someone who uses AI the way a good journalist uses a source: to find the question underneath the question. The low pushback rate (${p}%) is not absence of opinion — it is the discipline of staying open long enough to actually learn something.`;
-    signalsFn = () => [
-      { name: 'Curiosity Depth', score: Math.min(95, q * 2 + 30), label: `${q}% of messages contain questions` },
-      { name: 'Intellectual Openness', score: Math.min(90, 100 - p + 20), label: `${p}% pushback — genuinely open to new positions` },
-      { name: 'Exploratory Range', score: Math.min(88, q * 1.5 + 25), label: 'follows threads wherever they lead' },
-      { name: 'Question Quality', score: Math.min(85, q * 1.8 + 20), label: 'questions get more specific over time' },
-      { name: 'Domain Breadth', score: Math.min(87, q * 1.2 + 30), label: 'wide-ranging topic coverage' },
-      { name: 'Cognitive Agility', score: Math.min(83, q + 40), label: 'pivots quickly between angles' }
-    ];
-    traitsFn = () => ['Question-led thinker','Curiosity before conclusion','Follows threads wherever they lead','Intellectually open','Wide domain range','Journalist instinct','Learns by asking','Comfortable not knowing yet'];
-    careersFn = () => [
-      { title: 'Journalist / Investigator', why: `A ${q}% question rate is the cognitive fingerprint of someone who finds the story underneath the story. This profile asks the question after the obvious question — that is where the real information lives.`, score: 93, tags: ['Curiosity','Openness','Range'], unexpected: false },
-      { title: 'Product Researcher', why: `User research requires genuine curiosity and the discipline to not jump to conclusions. The explorer profile — high questions, low pushback — is exactly the mindset that produces accurate user insight.`, score: 88, tags: ['Curiosity','Openness'], unexpected: false },
-      { title: 'Innovation Consultant', why: `Explorers find opportunities others have rationalised away. The wide-ranging, question-led pattern across ${m.spanMonths} months suggests someone comfortable at the edges of established thinking.`, score: 84, tags: ['Range','Agility'], unexpected: false },
-      { title: 'Venture Capitalist', why: `The best investors are curious before they are convinced. The explorer pattern — wide range, low reactivity, high question rate — maps to finding opportunity before it is obvious.`, score: 80, tags: ['Range','Openness'], unexpected: true }
-    ];
-    quoteFn = () => `This person asks the question after the obvious question — and that is usually where the real answer is.`;
-    insightFn = () => `The ${q}% question rate might look like uncertainty. But combined with ${m.spanMonths} months of sustained engagement, it is the opposite — the discipline to stay curious long enough to actually understand something.`;
+    'The Craftsman': {
+      summary: `Quality is the signature here. Across ${m.totalConversations} conversations spanning ${spn} months, the pattern is someone who returns to problems until they are solved correctly — not just solved. At ${avg} words per message with ${lng}% long-form exchanges, this is not a speed profile. It is a standard profile. The consistency of the engagement over time is the data point that matters most.`,
+      signals: [
+        { name: 'Quality Threshold',     score: Math.min(93,spn*4+25), label: `${spn} months of consistent standards` },
+        { name: 'Iterative Refinement',  score: Math.min(90,d+10), label: `${avg} words/message — refines, not rushes` },
+        { name: 'Consistency Index',     score: Math.min(88,spn*3+30), label: `${m.totalConversations} sessions — sustained not sporadic` },
+        { name: 'Detail Orientation',    score: Math.min(87,lng+50), label: `${lng}% long-form messages — goes all the way in` },
+        { name: 'Standard Setting',      score: Math.min(85,d+5), label: 'internal benchmark drives output quality' },
+        { name: 'Completion Drive',      score: Math.min(86,spn*3+28), label: 'finishes what others abandon' }
+      ],
+      traits: ['Returns to problems until they are right','Quality over speed','Consistent not sporadic','High internal standards','Refinement instinct','Long feedback loop tolerance','Craft identity','Does not ship until it is ready'],
+      careers: [
+        { title: 'Senior Designer', why: `${spn} months of consistent engagement at ${avg} words/message — this person has the patience and standards that great design requires.`, score: 93, tags: ['Quality','Craft'], unexpected: false },
+        { title: 'Engineering Lead', why: `Craftsman profiles produce the best codebases — not fastest, best. The consistency over ${spn} months confirms it is not situational.`, score: 88, tags: ['Standards','Depth'], unexpected: false },
+        { title: 'Editorial Director', why: `The same cognitive signature that produces excellent engineering produces excellent editorial work — high standards, refinement instinct, no shortcuts.`, score: 84, tags: ['Quality','Craft'], unexpected: false },
+        { title: 'Independent Consultant', why: `Craft and standards without institutional dependency — this person's value is in the quality of their output, not their speed.`, score: 80, tags: ['Standards','Depth'], unexpected: true }
+      ],
+      quote: `This person will not ship something broken. That sounds obvious. It is not common.`,
+      insight: `The moderate volume (${vol} messages) across ${spn} months is not low engagement — it is discipline. They only open a conversation when they are ready to go all the way in.`
+    },
 
-  } else {
-    // Default — The Synthesiser
-    archetype = 'The Synthesiser';
-    thinkerType = 'The Synthesiser';
-    summaryFn = () => `Balance is the signature here. At ${avg} words per message, ${p}% pushback, and ${q}% questions across ${m.totalConversations} conversations, this is a profile that does not optimise for any single cognitive mode — it moves between them. The synthesiser does not go deep on one axis; they go deep on the space between axes. After ${m.spanMonths} months of sustained engagement, the pattern is someone who connects things others keep separate.`;
-    signalsFn = () => [
-      { name: 'Synthetic Intelligence', score: Math.min(90, d + 10), label: 'connects across domains naturally' },
-      { name: 'Cognitive Balance', score: Math.min(88, 50 + Math.abs(50 - p)), label: `${p}% pushback — selective, not reflexive` },
-      { name: 'Processing Depth', score: d, label: `${avg} words/message — substantial engagement` },
-      { name: 'Adaptive Approach', score: Math.min(85, q + 40), label: 'shifts mode to match the problem' },
-      { name: 'Sustained Engagement', score: Math.min(87, m.spanMonths * 4 + 20), label: `${m.spanMonths} months of consistent thinking` },
-      { name: 'Pattern Recognition', score: Math.min(83, d - 5), label: 'finds structure in complexity' }
-    ];
-    traitsFn = () => ['Connects dots others miss','Comfortable in ambiguity','Moves between modes fluidly','Balanced not binary','Pattern recognition across domains','Synthesises before concluding','Sustained engagement','Thinks in systems'];
-    careersFn = () => [
-      { title: 'Chief of Staff', why: `The synthesiser profile — balanced, adaptive, sustained — is the cognitive fingerprint of an excellent CoS. They process diverse inputs and produce coherent output without distorting either.`, score: 91, tags: ['Balance','Synthesis','Stamina'], unexpected: false },
-      { title: 'Strategy Consultant', why: `Cross-domain fluency and the ability to connect seemingly unrelated things is the core value of strategy work. This profile has both, built consistently over ${m.spanMonths} months.`, score: 87, tags: ['Synthesis','Pattern recognition'], unexpected: false },
-      { title: 'Product Lead', why: `Product requires holding user insight, technical reality, and business logic simultaneously. The synthesiser's ability to move between modes without losing thread is exactly that skill.`, score: 84, tags: ['Adaptive','Balance'], unexpected: false },
-      { title: 'Founder', why: `Founding requires synthesis — of vision, team, market, and timing. The ${m.spanMonths}-month engagement pattern suggests someone who thinks long enough to see how things fit together.`, score: 80, tags: ['Synthesis','Stamina'], unexpected: true }
-    ];
-    quoteFn = () => `This is the profile of someone who makes disparate things coherent — and in complex organisations, that skill is rarer and more valuable than it looks.`;
-    insightFn = () => `The balanced metrics — not extreme on any axis — might look unremarkable. But balance at depth (${d}/100) over ${m.spanMonths} months is its own kind of extraordinary. Most people are extreme in one direction. This person is extreme in their range.`;
-  }
+    'The Operator': {
+      summary: `Execution is the mode here. Short messages, high volume, daytime — this is someone who uses AI as a tool, not a thought partner. At ${avg} words per message across ${vol} exchanges, the pattern is throughput: tasks in, outputs out, next task. Across ${m.totalConversations} conversations over ${spn} months, there is no evidence of philosophical detours. That is a feature.`,
+      signals: [
+        { name: 'Execution Velocity',    score: Math.min(95,60+(isHighVolume?25:0)), label: `${vol} messages — high throughput` },
+        { name: 'Task Throughput',       score: Math.min(92,55+(isShort?25:0)),      label: `${avg} words/message — no friction` },
+        { name: 'Decision Speed',        score: 87, label: 'low deliberation, high action' },
+        { name: 'Output Consistency',    score: Math.min(89,spn*4+20), label: `${spn} months of consistent output` },
+        { name: 'Friction Intolerance',  score: Math.min(88,55+(isShort?20:0)), label: 'removes blockers immediately' },
+        { name: 'Action Bias',           score: Math.min(86,50+(isHighVolume?25:0)), label: 'moves before others have finished deciding' }
+      ],
+      traits: ['Execution-first mindset','AI is a tool not a partner','High throughput low ceremony','Removes blockers fast','Task clarity before starting','No philosophical detours','Ships consistently','Reliable under load'],
+      careers: [
+        { title: 'Head of Operations', why: `${vol} messages at ${avg} words each — pure throughput. Operations roles reward exactly this: high output, low friction, consistent execution.`, score: 94, tags: ['Execution','Throughput'], unexpected: false },
+        { title: 'Project Manager', why: `The operator profile — short messages, high volume, daytime — is the cognitive fingerprint of someone who keeps things moving without needing to own the thinking.`, score: 89, tags: ['Output','Consistency'], unexpected: false },
+        { title: 'Growth Lead', why: `Growth is an execution function. This profile's bias toward action over deliberation is exactly what fast-moving growth roles need.`, score: 85, tags: ['Velocity','Action bias'], unexpected: false },
+        { title: 'Chief of Staff', why: `CoS roles require someone who can execute in ten directions simultaneously. The operator's throughput and low ceremony maps directly.`, score: 81, tags: ['Execution','Range'], unexpected: true }
+      ],
+      quote: `When everyone else is still deciding, this person has already shipped the first version and started on the second.`,
+      insight: `The low pushback rate (${p}%) is efficiency, not compliance. They are not agreeing with AI — they are extracting what they need and moving on.`
+    },
+
+    'The Strategist': {
+      summary: `${m.nightPct}% of messages sent between 10pm and 2am. That is not insomnia — it is a cognitive schedule. This mind runs at depth when the noise disappears, averaging ${avg} words per message across ${m.totalConversations} sessions over ${spn} months. The pattern is a slow burn: long periods of observation, then concentrated output. This is not a 9-to-5 thinker, and roles that demand one would waste what this profile offers.`,
+      signals: [
+        { name: 'Strategic Depth',       score: d,                          label: `${avg} words/message — deliberate, not reactive` },
+        { name: 'Night Cognition',       score: Math.min(93,night*1.5+30), label: `${m.nightPct}% activity after 10pm` },
+        { name: 'Long-Range Thinking',   score: Math.min(90,spn*4+20),     label: `${spn} months of sustained strategic thinking` },
+        { name: 'Deliberation Index',    score: Math.min(88,d+5),          label: 'thinks before acting, consistently' },
+        { name: 'Pattern Recognition',   score: Math.min(85,d-5),          label: 'cross-session continuity of thought' },
+        { name: 'Output Quality',        score: Math.min(87,night*1.2+35), label: 'bursts of high-quality concentrated output' }
+      ],
+      traits: ['Night-mode cognition','Slow burn not sprint','Long-game orientation','Thinks before speaking','Operates best in solitude','Strategic over reactive','Pattern recognition across time','High output when conditions are right'],
+      careers: [
+        { title: 'Strategy Lead', why: `${spn} months of consistent night-time thinking is the signature of someone who plays a long game. Strategy requires exactly that.`, score: 94, tags: ['Long-game','Depth'], unexpected: false },
+        { title: 'Founder / CEO', why: `Nocturnal, deep, self-directed — the isolation and long-term thinking that founding requires. Makes decisions alone and makes them well.`, score: 89, tags: ['Independence','Depth'], unexpected: false },
+        { title: 'Investment Analyst', why: `Pattern recognition over time, night-mode depth, low reactivity — the cognitive tools of a good investor. Builds conviction slowly and holds it.`, score: 85, tags: ['Long-game','Pattern recognition'], unexpected: false },
+        { title: 'Writer / Researcher', why: `Solitude + depth + ${spn} months sustained = someone who can hold a complex idea long enough to resolve it.`, score: 81, tags: ['Depth','Stamina'], unexpected: true }
+      ],
+      quote: `This is what a long-game mind looks like — not flashy, not fast, but consistently deep when it matters most.`,
+      insight: `The peak hour of ${m.peakHours} is not a quirk — it is structural. This person's best thinking requires one condition: silence. ${spn} months of data confirms it has not changed.`
+    },
+
+    'The Analyst': {
+      summary: `Evidence-first. This profile does not commit until certain — and the data reflects it. Low pushback (${p}%) is not passivity; it is the discipline of waiting until the evidence is strong enough to act on. At ${avg} words per message across ${m.totalConversations} conversations, this is someone who processes methodically, never jumps to conclusions, and produces output that holds under scrutiny.`,
+      signals: [
+        { name: 'Evidence Threshold',    score: Math.min(93,100-p+20), label: `${p}% pushback — commits only when certain` },
+        { name: 'Methodical Precision',  score: d,                     label: `${avg} words/message — structured processing` },
+        { name: 'Structural Logic',      score: Math.min(90,d+8),      label: 'builds arguments before stating them' },
+        { name: 'Certainty Standard',    score: Math.min(88,100-p+15), label: 'does not move on incomplete evidence' },
+        { name: 'Data Fluency',          score: Math.min(87,d+3),      label: 'comfortable with complexity and ambiguity' },
+        { name: 'Measured Output',       score: Math.min(85,spn*4+20), label: `${spn} months of consistent methodical engagement` }
+      ],
+      traits: ['Evidence before conclusion','Does not rush to answers','Methodical not reactive','Low tolerance for weak reasoning','Builds in full before stating','Earns conclusions through process','Precise language','Reliable output'],
+      careers: [
+        { title: 'Data Analyst / Scientist', why: `${avg}-word messages with ${p}% pushback — methodical depth without performative challenge. Exactly the profile that produces accurate analysis.`, score: 94, tags: ['Evidence','Precision'], unexpected: false },
+        { title: 'Research Analyst', why: `Premature closure resistance over ${spn} months — this person does not conclude until the data supports it. Research requires exactly that.`, score: 89, tags: ['Methodical','Depth'], unexpected: false },
+        { title: 'Finance / Risk Analyst', why: `The analyst's evidence threshold and structural logic are the cognitive tools of risk work — identify it, quantify it, do not over-claim.`, score: 85, tags: ['Logic','Precision'], unexpected: false },
+        { title: 'Policy Researcher', why: `Complex policy requires someone who will not sign off on a weak brief. This profile never does.`, score: 81, tags: ['Evidence','Methodical'], unexpected: true }
+      ],
+      quote: `This person does not have opinions — they have conclusions. The difference matters enormously in high-stakes decisions.`,
+      insight: `The low question rate (${q}%) is not incuriosity. It is the sign of someone who has already framed the problem correctly before they start. The question is already answered in the approach.`
+    },
+
+    'The Philosopher': {
+      summary: `This profile thinks for the sake of thinking. Very long messages (${avg} words average), low volume (${vol} total), active late at night — the signature of someone for whom the question is the destination, not an obstacle. Across ${m.totalConversations} conversations spanning ${spn} months, the pattern is depth over breadth, always. Ideas are not tools here — they are the work.`,
+      signals: [
+        { name: 'Conceptual Depth',      score: Math.min(95,avg/2+50), label: `${avg} words/message — thinks in full paragraphs` },
+        { name: 'Idea Density',          score: Math.min(92,d+10),    label: 'each session is substantively rich' },
+        { name: 'Abstract Fluency',      score: Math.min(90,vocab+10), label: `vocab richness ${vocab} — moves in abstractions` },
+        { name: 'Reflective Capacity',   score: Math.min(88,deep+50), label: `${deep}% deep-dive requests — never surface` },
+        { name: 'Intellectual Patience', score: Math.min(87,spn*4+20), label: `${spn} months of sustained philosophical engagement` },
+        { name: 'Wonder Retention',      score: Math.min(85,night*1.5+25), label: 'ideas arrive late and run long' }
+      ],
+      traits: ['Thinks for the sake of thinking','Question is the destination','Depth over breadth always','Comfortable with open loops','Conceptual not practical','Reflective before reactive','Night-mode ideation','Ideas are the work'],
+      careers: [
+        { title: 'Research Fellow / Theorist', why: `${avg}-word average messages — this person writes essays in their head before they type. Theoretical research is the natural habitat.`, score: 93, tags: ['Depth','Abstraction'], unexpected: false },
+        { title: 'Ethics / Policy Advisor', why: `Philosophical depth + sustained engagement over ${spn} months = someone who can hold the long-term implications of decisions others are not thinking about yet.`, score: 88, tags: ['Depth','Reflection'], unexpected: false },
+        { title: 'Essayist / Long-form Writer', why: `The message pattern here maps directly to long-form writing — paragraph-level thinking, rich vocabulary, night-mode ideation.`, score: 85, tags: ['Ideas','Depth'], unexpected: false },
+        { title: 'Professor / Academic', why: `Ideas as the work, patience with complexity, sustained intellectual engagement — the philosophical profile fits academia more naturally than most.`, score: 82, tags: ['Abstraction','Patience'], unexpected: true }
+      ],
+      quote: `Give this person an impossible question and enough time. The answer will be worth the wait.`,
+      insight: `The low message volume (${vol}) is not low engagement — it is the opposite. This person does not open a conversation unless they intend to go all the way in. Every session is a commitment.`
+    },
+
+    'The Synthesiser': {
+      summary: `Connects dots others miss. Cross-domain fluency, high deep-dive rate, multi-source engagement — the synthesiser is not a specialist or a generalist but something rarer: someone who moves between domains and integrates what they find. At ${avg} words per message across ${m.totalConversations} conversations over ${spn} months, the pattern is someone who is always building a bigger picture.`,
+      signals: [
+        { name: 'Cross-Domain Fluency',  score: Math.min(93,deep+50),       label: `${deep}% deep-dive rate — goes all the way in` },
+        { name: 'Pattern Integration',   score: Math.min(90,d+10),          label: `${avg} words/message — synthesises as it thinks` },
+        { name: 'Conceptual Range',      score: Math.min(88,vocab+10),      label: `vocab ${vocab} — draws from wide conceptual territory` },
+        { name: 'Ambiguity Tolerance',   score: Math.min(87,d+5),           label: 'comfortable holding multiple frames simultaneously' },
+        { name: 'Connection Density',    score: Math.min(89,spn*4+20),      label: `${spn} months — long enough to see the pattern` },
+        { name: 'Synthesis Speed',       score: Math.min(85,deep+40),       label: 'integrates before concluding' }
+      ],
+      traits: ['Connects things others keep separate','Comfortable with complexity','Cross-domain by default','Integrates before concluding','Builds bigger pictures','Tolerates open loops','Wide conceptual range','Synthesis as a cognitive mode'],
+      careers: [
+        { title: 'Chief of Staff', why: `The synthesiser processes diverse inputs and produces coherent output without distorting either. That is the CoS role exactly.`, score: 91, tags: ['Synthesis','Range'], unexpected: false },
+        { title: 'Strategy Consultant', why: `Cross-domain fluency over ${spn} months — the ability to connect unrelated things is the core value of strategy work.`, score: 87, tags: ['Pattern recognition','Integration'], unexpected: false },
+        { title: 'Product Lead', why: `Product requires holding user insight, technical reality, and business logic simultaneously. The synthesiser's mode is exactly that.`, score: 84, tags: ['Integration','Range'], unexpected: false },
+        { title: 'Founder', why: `Founding requires synthesis of vision, team, market, and timing. The ${spn}-month engagement suggests someone who thinks long enough to see how things fit.`, score: 80, tags: ['Synthesis','Stamina'], unexpected: true }
+      ],
+      quote: `This is the profile of someone who makes disparate things coherent — and in complex organisations, that skill is rarer than it looks.`,
+      insight: `The balanced metrics — not extreme on any single axis — might look unremarkable. But synthesis at depth (${d}/100) over ${spn} months is its own kind of extraordinary.`
+    },
+
+    'The Challenger': {
+      summary: `This mind does not accept the first answer. A ${p}% pushback rate combined with ${avg} words per message describes someone who arrives at conversations with a position already forming and pressure-tests it until something breaks or holds. Across ${spn} months, this is consistent: not someone who uses AI to think, but someone who uses AI to argue. The result is conclusions that have been stress-tested.`,
+      signals: [
+        { name: 'Challenge Threshold',   score: Math.min(95,p+50), label: `pushes back in ${p}% of exchanges` },
+        { name: 'Argument Precision',    score: d,                 label: `${avg} words/message — arrives with a position` },
+        { name: 'Intellectual Rigour',   score: Math.min(92,p+45), label: 'does not update without evidence' },
+        { name: 'Position Clarity',      score: Math.min(90,p+40), label: 'uses AI as sparring partner' },
+        { name: 'Debate Stamina',        score: Math.min(88,Math.round((vol/500)*80)+30), label: `${m.totalConversations} sustained challenge sessions` },
+        { name: 'Critical Independence', score: Math.min(91,p+42), label: 'forms conclusions before asking' }
+      ],
+      traits: ['Position-first thinker','Argues to stress-test','Resistant to weak reasoning','Independent by default','Thinks in counterarguments','High intellectual standards','Does not move without evidence','Makes rooms sharper'],
+      careers: [
+        { title: 'Strategic Advisor', why: `A ${p}% pushback rate over ${spn} months — someone whose value is their judgment. Advisors hold positions under pressure; this profile does it naturally.`, score: 93, tags: ['Position strength','Independence'], unexpected: false },
+        { title: 'Investor / Analyst', why: `Investment requires resisting narratives. The challenger pattern — thesis first, pressure-test second — is how good investment decisions get made.`, score: 88, tags: ['Rigour','Depth'], unexpected: false },
+        { title: 'Policy & Research Lead', why: `${p}% challenge rate and ${avg}-word depth — someone who would not sign off on a weak brief.`, score: 85, tags: ['Depth','Reasoning'], unexpected: false },
+        { title: 'Founder', why: `Contrarian conviction, rejection-resistant, high standards — the challenger maps naturally to founding. The question is which problem is worth the fight.`, score: 82, tags: ['Independence','Stamina'], unexpected: true }
+      ],
+      quote: `This person makes the work better — not because they are difficult, but because they will not let weak thinking survive in the room.`,
+      insight: `The ${p}% pushback rate is high — but the depth score (${d}) confirms these are considered challenges, not reactive ones. That combination is rare and genuinely valuable.`
+    },
+
+    'The Explorer': {
+      summary: `Questions are the product here — ${q}% of messages contain them, the signature of a mind that leads with curiosity rather than conclusion. At ${avg} words per message across ${m.totalConversations} conversations, this is someone who uses AI the way a good journalist uses a source: to find the question underneath the question. The low pushback rate (${p}%) is not absence of opinion — it is the discipline of staying open long enough to actually learn.`,
+      signals: [
+        { name: 'Curiosity Velocity',    score: Math.min(95,q*2+30),      label: `${q}% of messages contain questions` },
+        { name: 'Question Quality',      score: Math.min(90,q*1.8+20),    label: 'questions get more specific over time' },
+        { name: 'Domain Range',          score: Math.min(88,q*1.2+30),    label: 'wide-ranging topic coverage' },
+        { name: 'Idea Generation',       score: Math.min(87,q*1.5+25),    label: 'follows threads wherever they lead' },
+        { name: 'Exploration Stamina',   score: Math.min(85,spn*4+20),    label: `${spn} months of sustained exploratory thinking` },
+        { name: 'Discovery Orientation', score: Math.min(83,q+40),        label: 'pivots quickly between angles' }
+      ],
+      traits: ['Question-led thinker','Curiosity before conclusion','Follows threads wherever they lead','Intellectually open','Wide domain range','Journalist instinct','Learns by asking','Comfortable not knowing yet'],
+      careers: [
+        { title: 'Journalist / Investigator', why: `A ${q}% question rate — asks the question after the obvious question. That is where the real information lives.`, score: 93, tags: ['Curiosity','Range'], unexpected: false },
+        { title: 'Product Researcher', why: `User research requires genuine curiosity and discipline to not jump to conclusions. High questions, low pushback — exactly right.`, score: 88, tags: ['Curiosity','Openness'], unexpected: false },
+        { title: 'Innovation Consultant', why: `Explorers find opportunities others rationalised away. Wide-ranging, question-led over ${spn} months — comfortable at the edges of established thinking.`, score: 84, tags: ['Range','Agility'], unexpected: false },
+        { title: 'Venture Capitalist', why: `The best investors are curious before they are convinced. Wide range, low reactivity, high question rate — finds opportunity before it is obvious.`, score: 80, tags: ['Range','Openness'], unexpected: true }
+      ],
+      quote: `This person asks the question after the obvious question — and that is usually where the real answer is.`,
+      insight: `The ${q}% question rate might look like uncertainty. But combined with ${spn} months of sustained engagement, it is the opposite — the discipline to stay curious long enough to actually understand.`
+    },
+
+    'The Maverick': {
+      summary: `Contrarian by design. High pushback, irregular schedule, night-mode — this profile resists the consensus frame as a cognitive default. At ${p}% pushback across ${m.totalConversations} conversations, this is someone who stress-tests received wisdom before accepting it. Right more often than people expect. Wrong more memorably when they are not. Neither outcome changes the approach.`,
+      signals: [
+        { name: 'Contrarian Confidence', score: Math.min(95,p+45), label: `${p}% pushback — challenges as default` },
+        { name: 'Pattern Disruption',    score: Math.min(91,p+40), label: 'spots weak consensus before others do' },
+        { name: 'Independent Reasoning', score: Math.min(89,p+38), label: 'forms positions without external validation' },
+        { name: 'Unconventional Range',  score: Math.min(87,vocab+10), label: `vocab ${vocab} — draws from outside the mainstream` },
+        { name: 'Position Conviction',   score: Math.min(88,p+42), label: 'holds positions under pressure' },
+        { name: 'Frame Breaking',        score: Math.min(85,p+35), label: 'questions the brief before answering it' }
+      ],
+      traits: ['Contrarian by design','Resists consensus frames','Stress-tests before accepting','Independent position formation','High pushback is intellectual hygiene','Comfortable being early and alone','Makes teams smarter by friction','Wrong memorably, right consistently'],
+      careers: [
+        { title: 'Founding Partner / VC', why: `Contrarian conviction + night-mode + independent reasoning — the cognitive profile of someone who backs ideas before they are obvious.`, score: 93, tags: ['Contrarian','Conviction'], unexpected: false },
+        { title: 'Turnaround CEO', why: `High pushback over ${spn} months signals someone who will not inherit assumptions. Turnarounds require exactly that — the willingness to question everything before rebuilding.`, score: 88, tags: ['Independence','Disruption'], unexpected: false },
+        { title: 'Editorial Director', why: `The maverick's ability to spot weak consensus and resist conventional framing is the rarest editorial skill. Good editorial direction requires someone who reads against the grain.`, score: 84, tags: ['Contrarian','Range'], unexpected: false },
+        { title: 'Regulatory Challenger / Lobbyist', why: `Changing regulations requires a mind that can argue against the established position fluently and persistently. This profile does both.`, score: 80, tags: ['Position strength','Stamina'], unexpected: true }
+      ],
+      quote: `Hire this person when the room is too comfortable. They will find the problem before it finds you.`,
+      insight: `The ${p}% pushback rate might read as difficult. The data over ${spn} months shows it is consistent — which means it is structural, not situational. That is the difference between a maverick and someone having a bad day.`
+    },
+
+    'The Catalyst': {
+      summary: `Starts things. High question rate (${q}%), short decisive messages (${avg} words), daytime, high volume — this is someone who moves fast and makes everyone around them move faster. Across ${m.totalConversations} conversations, the pattern is activation: ideas arrive quickly, get stress-tested quickly, and get handed off. The catalyst is not the person who finishes — they are the person who makes finishing possible.`,
+      signals: [
+        { name: 'Activation Energy',     score: Math.min(94,q*2+30), label: `${q}% question rate — energises rooms` },
+        { name: 'Question Velocity',     score: Math.min(91,q*1.8+25), label: 'questions that move things forward' },
+        { name: 'Momentum Generation',   score: Math.min(89,vol/10+50), label: `${vol} messages — high activation rate` },
+        { name: 'Decision Speed',        score: Math.min(88,50+(isShort?25:0)), label: `${avg} words/message — decisive, not deliberate` },
+        { name: 'Energy Transmission',   score: Math.min(86,q*1.5+25), label: 'makes others move faster' },
+        { name: 'Initiation Drive',      score: Math.min(85,q+40), label: 'starts before others have finished deciding' }
+      ],
+      traits: ['Starts things fast','Questions that move things forward','Makes rooms sharper','Hands off when it is moving','High activation energy','Low completion dependency','Daytime peak — consistent and structured','Energises the people around them'],
+      careers: [
+        { title: 'Business Development Lead', why: `${q}% question rate and short decisive messages — this is what BD looks like cognitively. Finds the opening, activates the conversation, hands it over.`, score: 93, tags: ['Activation','Velocity'], unexpected: false },
+        { title: 'Founding CEO', why: `Catalysts start companies. The activation energy, question velocity, and high volume over ${spn} months describe someone who makes things happen by sheer forward motion.`, score: 88, tags: ['Initiation','Energy'], unexpected: false },
+        { title: 'Community / Growth Lead', why: `Growth is fundamentally catalytic — find the lever, activate it, move to the next one. This profile does that naturally.`, score: 85, tags: ['Momentum','Energy'], unexpected: false },
+        { title: 'Partnerships Director', why: `Partnerships require someone who moves fast and makes the other person feel the urgency. The catalyst's short-message, high-question pattern is exactly that.`, score: 81, tags: ['Activation','Velocity'], unexpected: true }
+      ],
+      quote: `This person does not wait for permission to start — and that energy is genuinely contagious.`,
+      insight: `The high question rate (${q}%) is not uncertainty — it is how the catalyst moves things. Questions are not requests for information here. They are activation events.`
+    },
+
+    'The Absorber': {
+      summary: `Low pushback does not mean passive — and this profile makes that clear. At ${avg} words per message with only ${p}% direct challenges, this is someone who processes fully before forming a position. They do not argue with AI because they are integrating, not debating — the real challenge happens later, in real rooms, with real stakes. Across ${m.totalConversations} conversations, the pattern is someone who arrives open and leaves decided.`,
+      signals: [
+        { name: 'Absorption Depth',      score: d,                         label: `${avg} words/message — full processing before output` },
+        { name: 'Processing Patience',   score: Math.min(92,100-p+30),    label: `${p}% pushback — absorbs before filtering` },
+        { name: 'Contextual Awareness',  score: Math.min(90,d-5),         label: 'conclusions are considered, not reactive' },
+        { name: 'Listening Intelligence',score: Math.min(88,100-p+20),    label: 'updates thinking when evidence warrants' },
+        { name: 'Deliberate Response',   score: Math.min(93,d+5),         label: `${lng}% substantive messages — goes all the way in` },
+        { name: 'Information Integration',score: Math.min(87,spn*4+30),   label: `${spn} months of patient consistent engagement` }
+      ],
+      traits: ['Processes before concluding','Absorbs fully before filtering','Real debate happens in rooms, not with tools','Intellectual flexibility','High-quality output from deep input','Patient under complexity','Considered not reactive','Updates position with evidence'],
+      careers: [
+        { title: 'Research Lead', why: `Deep engagement, low reactivity, high processing — the absorber does not rush to conclusions. Research rewards exactly that.`, score: 92, tags: ['Depth','Processing'], unexpected: false },
+        { title: 'Chief of Staff', why: `CoS requires someone who processes enormous inputs and synthesises without distorting. Low pushback with high depth is exactly that profile.`, score: 88, tags: ['Integration','Depth'], unexpected: false },
+        { title: 'Strategy Consultant', why: `Clients need advisors who listen before they prescribe. The ${p}% pushback with ${avg}-word depth — earns conclusions rather than performing them.`, score: 85, tags: ['Receptive','Output quality'], unexpected: false },
+        { title: 'Executive Coach', why: `Genuinely open, deeply processing, not reflexively challenging — the absorber holds space and then acts precisely. Best coaches work exactly this way.`, score: 80, tags: ['Flexibility','Depth'], unexpected: true }
+      ],
+      quote: `Do not mistake the quiet for empty — this person is processing everything, and when they speak, it is finished thinking.`,
+      insight: `The ${p}% pushback rate would look like passivity on paper. Paired with ${avg} words/message and ${d}/100 depth, it is the opposite — someone confident enough in their processing that they do not need to perform disagreement.`
+    },
+
+    'The Precise Asker': {
+      summary: `Solves problems through better questions, not debate. A high question rate (${q}%) with low pushback (${p}%) is not contradiction — it is precision. This profile does not argue with AI because their questions are specific enough to make argument unnecessary. At ${avg} words per message across ${m.totalConversations} conversations, the pattern is interrogative thinking: the right question, asked correctly, does the work.`,
+      signals: [
+        { name: 'Question Precision',    score: Math.min(94,q*2+25), label: `${q}% question rate — highly interrogative` },
+        { name: 'Problem Framing',       score: Math.min(91,q*1.8+20), label: 'frames before asking — minimum viable inquiry' },
+        { name: 'Clarity Drive',         score: Math.min(89,100-p+20), label: `${p}% pushback — precision makes debate unnecessary` },
+        { name: 'Solution Orientation',  score: Math.min(87,q*1.5+25), label: 'questions point toward the answer' },
+        { name: 'Iterative Refinement',  score: Math.min(86,q+40),    label: 'each question sharpens the next' },
+        { name: 'Specification Depth',   score: Math.min(85,d+5),     label: 'gets to the exact answer, not approximately right' }
+      ],
+      traits: ['Question-led not debate-led','Frames before asking','Minimum viable inquiry','Low pushback is precision not passivity','Gets to the exact answer','Iterative question refinement','Problem clarity before solution seeking','Interrogative as a cognitive mode'],
+      careers: [
+        { title: 'Product Manager', why: `${q}% question rate + low pushback — someone who discovers what users actually need by asking the right questions, not the obvious ones.`, score: 93, tags: ['Framing','Precision'], unexpected: false },
+        { title: 'UX Researcher', why: `The precise asker's interrogative mode is the foundation of great user research — specific questions, no leading, clean insights.`, score: 88, tags: ['Questioning','Clarity'], unexpected: false },
+        { title: 'Management Consultant', why: `The highest-value consultant skill is the diagnostic question — the one that reveals the real problem. This profile generates them naturally.`, score: 85, tags: ['Framing','Precision'], unexpected: false },
+        { title: 'Corporate Lawyer', why: `Legal precision requires asking exactly the right question and getting the exact answer. The precise asker's low pushback + high question rate maps directly.`, score: 81, tags: ['Precision','Clarity'], unexpected: true }
+      ],
+      quote: `This person asks the question that makes the next three questions unnecessary. That is a rare cognitive skill.`,
+      insight: `The combination of high questions (${q}%) and low pushback (${p}%) sounds contradictory. It is not — it is the signature of someone whose questions are so well-formed they do not need to argue.`
+    },
+
+    'The Mentor': {
+      summary: `This profile uses AI to develop thinking it will share with others. Long, structured messages (${avg} words average, ${lng}% over 100 words), daytime schedule, consistent across ${spn} months — the pattern is someone who explains rather than argues, who builds frameworks others can follow, who thinks about how ideas land, not just whether they are true.`,
+      signals: [
+        { name: 'Explanatory Depth',     score: Math.min(93,avg/2+50),    label: `${avg} words/message — thinks in full frameworks` },
+        { name: 'Structural Clarity',    score: Math.min(90,d+8),         label: 'builds scaffolds others can follow' },
+        { name: 'Knowledge Transfer',    score: Math.min(89,lng+50),      label: `${lng}% long-form — invests in completeness` },
+        { name: 'Audience Awareness',    score: Math.min(87,100-p+15),    label: `${p}% pushback — adapts to what lands` },
+        { name: 'Generous Thinking',     score: Math.min(86,spn*4+20),    label: `${spn} months of consistent knowledge development` },
+        { name: 'Framework Building',    score: Math.min(85,d+3),         label: 'organises knowledge for others' }
+      ],
+      traits: ['Explains rather than argues','Thinks about how ideas land','Builds frameworks not just answers','Daytime structured thinker','Generous with knowledge','Scaffolds for understanding','Pedagogical instinct','Develops thinking to share it'],
+      careers: [
+        { title: 'Head of Learning & Development', why: `${avg}-word messages and ${lng}% long-form — someone who builds knowledge structures others can follow. That is the L&D role at its best.`, score: 93, tags: ['Pedagogy','Frameworks'], unexpected: false },
+        { title: 'Engineering Manager', why: `The mentor profile — explains rather than dictates, builds frameworks, generous with knowledge — maps directly to technical leadership that develops people.`, score: 88, tags: ['Knowledge transfer','Depth'], unexpected: false },
+        { title: 'Management Consultant', why: `The best consultants leave clients smarter, not just better-served. The mentor's explanatory depth and framework-building instinct does exactly that.`, score: 85, tags: ['Frameworks','Clarity'], unexpected: false },
+        { title: 'Content Strategist', why: `Mentors make complex things legible. Over ${spn} months, this profile has consistently built explanations — that is the core content skill.`, score: 81, tags: ['Pedagogy','Generosity'], unexpected: true }
+      ],
+      quote: `This person makes everyone around them more capable — not through managing but through explaining. That is the rarest leadership trait.`,
+      insight: `The low pushback rate (${p}%) is not because they accept everything — it is because they are already thinking about how to communicate the better answer, not win the argument.`
+    },
+
+    'The Visionary': {
+      summary: `Sees things before they are obvious. ${m.nightPct}% of messages sent after 10pm, ${avg} words per message, high vocabulary richness — the visionary operates in the space before consensus forms. After ${spn} months of sustained engagement, the pattern is someone who builds conviction without needing the room to agree first. Comfortable being early. Comfortable being alone in a position.`,
+      signals: [
+        { name: 'Anticipatory Thinking', score: Math.min(94,night*1.5+30), label: `${m.nightPct}% night activity — pre-consensus thinking` },
+        { name: 'Long-Horizon Vision',   score: Math.min(91,spn*4+20),    label: `${spn} months — long enough to see what others miss` },
+        { name: 'Independent Conviction',score: Math.min(89,100-p+15),    label: `${p}% pushback — confident, not performative` },
+        { name: 'Conceptual Originality',score: Math.min(88,vocab+10),    label: `vocab ${vocab} — conceptual range ahead of mainstream` },
+        { name: 'Night Cognition',       score: Math.min(87,night*1.2+35),label: 'depth arrives when distractions disappear' },
+        { name: 'Pattern Foresight',     score: Math.min(85,deep+40),     label: `${deep}% deep-dive — goes past the obvious signal` }
+      ],
+      traits: ['Sees things before they are obvious','Builds conviction without validation','Comfortable being early','Night-mode ideation','Pre-consensus thinking','Operates alone before the room catches up','Long-game over short wins','High originality — low need for approval'],
+      careers: [
+        { title: 'Founder', why: `The visionary profile is the founding profile — pre-consensus conviction, night-mode depth, long-game orientation. This person was always going to build something.`, score: 94, tags: ['Pre-consensus','Conviction'], unexpected: false },
+        { title: 'Venture Partner', why: `Backs ideas before they are obvious. The ${spn}-month pattern of night-mode, deep-dive, vocabulary-rich thinking is the cognitive fingerprint of a great early-stage investor.`, score: 89, tags: ['Foresight','Conviction'], unexpected: false },
+        { title: 'Creative Director', why: `Visionaries define culture before it arrives. The high vocabulary and night-mode depth suggest someone who is already operating in the next frame.`, score: 85, tags: ['Originality','Pre-consensus'], unexpected: false },
+        { title: 'Chief Strategy Officer', why: `Long-game thinking + independent conviction + ${spn} months of sustained engagement — this person should be setting the 5-year direction, not the quarterly plan.`, score: 82, tags: ['Long-game','Foresight'], unexpected: true }
+      ],
+      quote: `By the time most people see what this person saw, they have already moved on to the next thing.`,
+      insight: `The low pushback rate (${p}%) might look like agreement. It is not — it is the efficiency of someone who does not need AI to validate positions they have already built in their head at ${m.peakHours}.`
+    },
+
+    'The Persuader': {
+      summary: `Uses AI to sharpen arguments they will deploy on people, not on AI. High pushback (${p}%), high volume (${vol} messages), short decisive messages (${avg} words), daytime — this is not someone debating for the sake of it. They are pressure-testing. Every challenge is rehearsal. The persuader is not arguing with AI — they are preparing to be convincing somewhere else.`,
+      signals: [
+        { name: 'Argument Precision',     score: Math.min(94,p+45),         label: `${p}% pushback — stress-tests before deploying` },
+        { name: 'Position Stress-Testing',score: Math.min(91,p+40),         label: 'challenges are rehearsal, not resistance' },
+        { name: 'Rhetorical Clarity',     score: Math.min(89,50+(isShort?25:0)), label: `${avg} words — compressed, not casual` },
+        { name: 'Conviction Velocity',    score: Math.min(88,vol/10+50),    label: `${vol} messages — high output under conviction` },
+        { name: 'Objection Mapping',      score: Math.min(87,p+38),         label: 'anticipates counterarguments as part of thinking' },
+        { name: 'Persuasion Architecture',score: Math.min(85,p+35),         label: 'builds the case, then challenges it, then uses it' }
+      ],
+      traits: ['Uses AI as a rehearsal room','High pushback is preparation not personality','Builds the argument then attacks it','Short decisive messages — compresses naturally','Daytime peak — disciplined and structured','Anticipates objections before they arise','Persuasion is a cognitive mode','Conviction precedes deployment'],
+      careers: [
+        { title: 'Sales Director / CRO', why: `${p}% pushback + ${vol} messages + daytime — this is the cognitive fingerprint of someone who prepares to persuade. The best salespeople are this way.`, score: 94, tags: ['Conviction','Preparation'], unexpected: false },
+        { title: 'Trial Lawyer', why: `Argument stress-testing, objection anticipation, short compressed messages — legal advocacy requires exactly this cognitive approach.`, score: 89, tags: ['Argument precision','Rigour'], unexpected: false },
+        { title: 'Fundraising Lead', why: `Investors push back. The persuader's instinct to anticipate and pre-address objections is the most valuable fundraising skill.`, score: 86, tags: ['Conviction','Preparation'], unexpected: false },
+        { title: 'Policy Advocate', why: `Changing minds at institutional scale requires building arguments that survive scrutiny. This profile builds them and then tries to break them.`, score: 82, tags: ['Persuasion','Stamina'], unexpected: true }
+      ],
+      quote: `This person does not walk into a room unprepared. They have already had every argument — with themselves — before it starts.`,
+      insight: `The high pushback rate (${p}%) is easy to misread as contrarian. The daytime schedule and high volume reveal the real pattern: this is discipline, not personality. They push back because it makes them better.`
+    },
+
+    'The Expert': {
+      summary: `Deep domain authority. This profile does not ask questions — it directs. At ${q}% question rate across ${m.totalConversations} conversations with ${avg} words per message, the pattern is someone who arrives already knowing the domain and uses AI for execution, not education. Low pushback is not passivity — it is confidence. They do not need to argue with AI because they already know what good looks like.`,
+      signals: [
+        { name: 'Domain Authority',      score: Math.min(95,100-q+15),    label: `${q}% question rate — directs, does not ask` },
+        { name: 'Directive Precision',   score: Math.min(92,avg/2+50),    label: `${avg} words/message — detailed, expert-level framing` },
+        { name: 'Knowledge Density',     score: Math.min(90,vocab+10),    label: `vocab ${vocab} — domain-specific richness` },
+        { name: 'Context Economy',       score: Math.min(88,100-q+10),    label: 'assumes shared context — no over-explaining' },
+        { name: 'Instructional Clarity', score: Math.min(87,d+5),         label: 'knows what good looks like, directs toward it' },
+        { name: 'Expertise Depth',       score: Math.min(86,spn*4+20),    label: `${spn} months — sustained expert-level engagement` }
+      ],
+      traits: ['Directs rather than asks','Arrives with domain knowledge','Treats AI as a capable junior','Low pushback is authority not passivity','Assumes context economy','Expert framing in every message','Sustained high-level engagement','Knows the landscape already'],
+      careers: [
+        { title: 'Principal / Distinguished Engineer', why: `${q}% question rate and ${avg}-word messages at expert depth — the cognitive fingerprint of someone who arrived knowing the answer and is delegating the execution.`, score: 94, tags: ['Domain authority','Precision'], unexpected: false },
+        { title: 'Specialist Consultant', why: `Expert profiles sell their knowledge, not their process. The low question rate and sustained engagement over ${spn} months confirms the knowledge is deep and current.`, score: 89, tags: ['Expertise','Depth'], unexpected: false },
+        { title: 'Clinical or Legal Specialist', why: `Domains where authority matters — medicine, law, finance — reward exactly this profile: someone who knows the territory and directs without second-guessing.`, score: 86, tags: ['Authority','Precision'], unexpected: false },
+        { title: 'Research Director', why: `Experts who can direct rather than ask are rare in research leadership. This profile does not need to explore — they know where to go.`, score: 82, tags: ['Domain authority','Direction'], unexpected: true }
+      ],
+      quote: `You do not brief this person — you give them the problem and get out of the way.`,
+      insight: `The low question rate (${q}%) is the most important signal in this profile. Questions are how people learn a domain. The absence of questions here is not incuriosity — it is mastery.`
+    },
+
+    'The Translator': {
+      summary: `Converts complex thinking for different audiences. High vocabulary (${vocab}/100), high deep-dive rate (${deep}%), multi-source engagement — this is not just synthesis. It is rendering. The translator makes hard things legible without making them simple. After ${spn} months, the pattern is someone who is always thinking about how ideas land, not just whether they are correct.`,
+      signals: [
+        { name: 'Conceptual Translation', score: Math.min(94,vocab+10),    label: `vocab ${vocab} — draws from wide territory to find the right frame` },
+        { name: 'Audience Modelling',     score: Math.min(91,deep+40),     label: `${deep}% deep-dive — goes deep enough to translate accurately` },
+        { name: 'Complexity Reduction',   score: Math.min(89,d+8),         label: 'finds the version that lands without losing meaning' },
+        { name: 'Vocabulary Range',       score: Math.min(88,vocab+5),     label: 'register fluency — shifts language to context' },
+        { name: 'Register Fluency',       score: Math.min(87,avg/2+45),    label: `${avg} words/message — enough length to render correctly` },
+        { name: 'Clarity Architecture',   score: Math.min(85,spn*4+20),    label: `${spn} months of consistent clarity-oriented thinking` }
+      ],
+      traits: ['Makes hard things legible not simple','Thinks about how ideas land','Register fluency across contexts','Deep enough to translate accurately','Audience-first framing','Everyone sends them the draft before it goes out','Renders complexity, does not flatten it','Sustained translation instinct'],
+      careers: [
+        { title: 'Editorial Director', why: `High vocab, high deep-dive, multi-source — this is someone who reads at depth and writes for reach. Editorial direction is exactly that translation task.`, score: 93, tags: ['Translation','Clarity'], unexpected: false },
+        { title: 'Science / Technical Writer', why: `The translator profile makes the complex legible without losing the complexity. Science communication rewards exactly this.`, score: 88, tags: ['Register fluency','Depth'], unexpected: false },
+        { title: 'Product Marketing Lead', why: `Product marketing is translation — take the technical reality and render it for the person who needs to care. This profile does it naturally.`, score: 85, tags: ['Audience modelling','Clarity'], unexpected: false },
+        { title: 'Executive Communications Director', why: `Translating strategy for boards, staff, press, and investors simultaneously requires exactly the register fluency this profile demonstrates.`, score: 82, tags: ['Translation','Range'], unexpected: true }
+      ],
+      quote: `This person is the one everyone sends the draft to before it goes out. Their edits do not just fix — they clarify.`,
+      insight: `The high vocabulary (${vocab}/100) might suggest specialist knowledge. Combined with the deep-dive rate (${deep}%), it is something different — the range needed to translate accurately across contexts. Specialists know one language. Translators know several.`
+    }
+
+  }; // end profiles
+
+  const chosen = profiles[archetype] || profiles['The Synthesiser'];
+
+  // Score careers independently from signals
+  const scoredCareers = scoreCareerRoles(m);
+  const careerFits = scoredCareers.map((r, i) => ({
+    title: r.title,
+    why: `Signal score ${r.score} from ${m.userMessages} messages across ${spn} months — the data maps to this role.`,
+    score: Math.min(97, Math.max(68, r.score * 7 + 45)),
+    tags: [r.domain],
+    unexpected: i === 3
+  }));
 
   return {
     profileName: archetype,
-    thinkerType,
-    summary: summaryFn(),
-    signals: signalsFn(),
-    traits: traitsFn(),
-    careerFits: careersFn(),
-    employerQuote: quoteFn(),
-    hiddenInsight: insightFn()
+    thinkerType: archetype,
+    summary: chosen.summary,
+    signals: chosen.signals,
+    traits: chosen.traits,
+    careerFits,
+    employerQuote: chosen.quote,
+    hiddenInsight: chosen.insight,
+    cultureNarrative: ''
   };
 }
 
 // ── RENDER RESULTS ──
 
 // ── CULTURE MAP ──
-function computeCultureMap(metadata, profile) {
-  // Each dimension is a value 0-100 where 0 = left label, 100 = right label
-  const p = metadata.pushbackRatio || 0;
-  const q = metadata.questionRatio || 0;
-  const avg = metadata.avgWordsPerMessage || 0;
-  const depth = metadata.depthScore || 50;
-  const night = metadata.nightPct || 0;
-  const deep = metadata.deepDiveRatio || 0;
-  const long = metadata.longMessagePct || 0;
-  const span = metadata.spanMonths || 0;
+function computeCultureMap(metadata) {
+  // Each dimension: 0 = left pole, 100 = right pole
+  const p   = metadata.pushbackRatio     || 0;
+  const q   = metadata.questionRatio     || 0;
+  const avg = metadata.avgWordsPerMessage|| 0;
+  const dep = metadata.depthScore        || 50;
+  const ngt = metadata.nightPct          || 0;
+  const dv  = metadata.deepDiveRatio     || 0;
+  const lng = metadata.longMessagePct    || 0;
+  const spn = metadata.spanMonths        || 1;
+  const vol = Math.min(100, (metadata.userMessages || 0) / 15);
+
+  const clamp = (v) => Math.min(95, Math.max(5, Math.round(v)));
 
   const dims = [
     {
-      left: 'Cool & Unbothered',
-      right: 'Intense & All-In',
-      pos: Math.min(95, Math.max(5, Math.round((p * 0.5) + (deep * 0.3) + (long * 0.2)))),
+      id: 'thinkingMode',
+      left: 'Solo Processor',
+      right: 'Social Thinker',
+      pos: clamp((ngt * 0.5) + ((100 - q) * 0.3) + (avg * 0.2)),
       verdict: (v) => v < 35
-        ? `<strong>Cool & Unbothered</strong> — You you do not spiral. You process, decide, and move on.`
+        ? `<strong>Solo Processor</strong> — You arrive with conclusions. Thinking happens before the room sees it.`
         : v > 65
-        ? `<strong>Intense & All-In</strong> — When something catches you, you do not let go easily.`
-        : `<strong>Balanced</strong> — Measured by default, intense when it matters.`
+        ? `<strong>Social Thinker</strong> — You build ideas in conversation. The room is part of your process.`
+        : `<strong>Context-switcher</strong> — You shift between both modes depending on what the problem needs.`
     },
     {
-      left: 'Big Picture',
-      right: 'Deep in the Weeds',
-      pos: Math.min(95, Math.max(5, Math.round((depth * 0.4) + (avg * 0.4) + (deep * 0.2)))),
+      id: 'ambiguityResponse',
+      left: 'Needs Clarity First',
+      right: 'Moves Into Fog',
+      pos: clamp((dv * 0.5) + (q * 0.3) + ((100 - avg) * 0.2)),
       verdict: (v) => v < 35
-        ? `<strong>Big Picture</strong> — You think in systems and strategy, not granular detail.`
+        ? `<strong>Needs Clarity First</strong> — You define the problem before you touch it. Ambiguity is something you resolve, not inhabit.`
         : v > 65
-        ? `<strong>Deep in the Weeds</strong> — You're not satisfied until you understand the mechanics.`
-        : `<strong>Fluent in both</strong> — You can zoom in and out. Rare and valuable.`
+        ? `<strong>Moves Into Fog</strong> — You think before the map is complete. Fog is not a blocker — it is where you do your best work.`
+        : `<strong>Adaptive</strong> — You tolerate ambiguity when needed but prefer clear parameters when available.`
     },
     {
-      left: 'Solo Thinker',
-      right: 'Room Energiser',
-      pos: Math.min(95, Math.max(5, Math.round(100 - (night * 0.6) - (long * 0.2) + (q * 0.3)))),
+      id: 'feedbackOrientation',
+      left: 'Seeks Confirmation',
+      right: 'Seeks Friction',
+      pos: clamp((p * 0.6) + (dv * 0.4)),
       verdict: (v) => v < 35
-        ? `<strong>Solo Thinker</strong> — Your best ideas arrive alone. You think before you speak.`
+        ? `<strong>Seeks Confirmation</strong> — You use AI to refine what you already think. Alignment over challenge.`
         : v > 65
-        ? `<strong>Room Energiser</strong> — You think out loud. You make rooms sharper.`
-        : `<strong>Selective collaborator</strong> — You choose when to go deep alone vs when to open it up.`
+        ? `<strong>Seeks Friction</strong> — You use AI as a sparring partner. You trust ideas that survive pressure more than ones that do not.`
+        : `<strong>Selective challenger</strong> — You push back when it genuinely matters, not as a reflex.`
     },
     {
-      left: 'Challenger',
-      right: 'Builder',
-      pos: Math.min(95, Math.max(5, Math.round(100 - (p * 0.7) - (q * 0.2)))),
+      id: 'timeHorizon',
+      left: 'Present-Focused',
+      right: 'Long-Game Thinker',
+      pos: clamp((spn * 3) + (ngt * 0.4) + (dep * 0.3)),
       verdict: (v) => v < 35
-        ? `<strong>Challenger</strong> — You question the brief before you answer it. You make things better.`
+        ? `<strong>Present-Focused</strong> — Your cognitive energy goes into what is in front of you. Execution over anticipation.`
         : v > 65
-        ? `<strong>Builder</strong> — You take the goal and execute. Momentum over debate.`
-        : `<strong>Strategic challenger</strong> — You challenge what matters, build what works.`
+        ? `<strong>Long-Game Thinker</strong> — You think in years, not quarters. The long game is where your attention naturally goes.`
+        : `<strong>Balanced horizon</strong> — You hold near and far simultaneously — tactical when needed, strategic when possible.`
     },
     {
-      left: 'Slow Burn',
-      right: 'Fast Fire',
-      pos: Math.min(95, Math.max(5, Math.round(100 - (span * 1.5) + (q * 0.3) + (p * 0.2)))),
+      id: 'knowledgeMode',
+      left: 'Breadth Collector',
+      right: 'Depth Miner',
+      pos: clamp((avg * 0.4) + (lng * 0.4) + ((100 - q) * 0.2)),
       verdict: (v) => v < 35
-        ? `<strong>Slow Burn</strong> — You let ideas develop. Patience is a competitive advantage for you.`
+        ? `<strong>Breadth Collector</strong> — Wide not deep. You collect signals from everywhere and synthesise fast.`
         : v > 65
-        ? `<strong>Fast Fire</strong> — You iterate quickly. Speed is how you learn.`
-        : `<strong>Adaptable pace</strong> — You match the energy of the situation.`
+        ? `<strong>Depth Miner</strong> — You drill. One topic at a time, until you understand the mechanics, not just the surface.`
+        : `<strong>Range with depth</strong> — You scan wide but commit to depth when something earns it.`
+    },
+    {
+      id: 'pressureResponse',
+      left: 'Needs Space to Think',
+      right: 'Sharpens Under Pressure',
+      pos: clamp(((100 - ngt) * 0.4) + (vol * 0.3) + ((100 - avg) * 0.3)),
+      verdict: (v) => v < 35
+        ? `<strong>Needs Space to Think</strong> — Your best thinking happens with time. Pressure compresses your process in ways that cost quality.`
+        : v > 65
+        ? `<strong>Sharpens Under Pressure</strong> — Deadlines focus you. Constraints produce your clearest thinking.`
+        : `<strong>Situational</strong> — You adapt your pace to what the work demands.`
+    },
+    {
+      id: 'communicationRegister',
+      left: 'Shows the Working',
+      right: 'Delivers the Answer',
+      pos: clamp(((100 - avg) * 0.4) + ((100 - dv) * 0.3) + ((100 - lng) * 0.3)),
+      verdict: (v) => v < 35
+        ? `<strong>Shows the Working</strong> — You think out loud. Your process is visible. People understand not just what you concluded but how.`
+        : v > 65
+        ? `<strong>Delivers the Answer</strong> — You lead with the conclusion. Your communication is compressed and confident.`
+        : `<strong>Context-aware</strong> — You calibrate how much process to show based on who needs to understand it.`
     }
   ];
 
-  // Culture environments derived from overall profile
-  const isIntense = dims[0].pos > 55;
-  const isDeep = dims[1].pos > 55;
-  const isSolo = dims[2].pos < 45;
-  const isChallenger = dims[3].pos < 45;
-  const isFast = dims[4].pos > 55;
+  // Return dimension positions as a flat object for passing to API
+  const dimScores = {};
+  dims.forEach(d => { dimScores[d.id] = d.pos; });
 
-  const thrives = [];
-  const drains = [];
-
-  if (isChallenger) { thrives.push('Roles with creative latitude'); drains.push('Heavy process and bureaucracy'); }
-  if (isIntense) { thrives.push('High-stakes, high-ownership work'); drains.push('Roles without real responsibility'); }
-  if (isSolo) { thrives.push('Deep work environments'); drains.push('Constant meetings and interruptions'); }
-  if (isDeep) { thrives.push('Complex problem domains'); drains.push('Surface-level, repetitive tasks'); }
-  if (isFast) { thrives.push('Fast-moving startups'); drains.push('Slow institutional decision-making'); }
-  if (!isFast) { thrives.push('Research and strategy roles'); drains.push('Pressure to ship before thinking'); }
-  if (!isSolo) { thrives.push('Collaborative, energetic teams'); drains.push('Isolated, heads-down roles'); }
-
-  return { dims, thrives: thrives.slice(0,3), drains: drains.slice(0,3) };
+  return { dims, dimScores };
 }
 
 function renderCultureMap(metadata, profile) {
-  const { dims, thrives, drains } = computeCultureMap(metadata, profile);
+  const { dims } = computeCultureMap(metadata);
   const dimsEl = document.getElementById('cultureDims');
-  const envEl = document.getElementById('cultureEnv');
+  const envEl  = document.getElementById('cultureEnv');
 
-  dimsEl.innerHTML = dims.map((d, i) => {
-    const isLeft = d.pos < 45;
-    const isRight = d.pos > 55;
+  dimsEl.innerHTML = dims.map((d) => {
+    const isLeft  = d.pos < 40;
+    const isRight = d.pos > 60;
     return `
     <div class="culture-dim">
       <div class="culture-labels">
-        <span class="culture-label-l ${isLeft ? 'active' : ''}">${d.left}</span>
+        <span class="culture-label-l ${isLeft  ? 'active' : ''}">${d.left}</span>
         <span class="culture-label-r ${isRight ? 'active' : ''}">${d.right}</span>
       </div>
       <div class="culture-track">
-        <div class="culture-fill" data-pos="${d.pos}" style="width:0;left:${d.pos <= 50 ? d.pos : 50}%;right:${d.pos > 50 ? (100-d.pos) : 50}%"></div>
-        <div class="culture-dot" data-pos="${d.pos}" style="left:50%"></div>
+        <div class="culture-fill" data-pos="${d.pos}" style="width:0;left:${d.pos<=50?d.pos:50}%;right:${d.pos>50?(100-d.pos):50}%"></div>
+        <div class="culture-dot"  data-pos="${d.pos}" style="left:50%"></div>
       </div>
       <div class="culture-verdict">${d.verdict(d.pos)}</div>
     </div>`;
   }).join('');
 
-  envEl.innerHTML = `
-    <div class="culture-env-title">Where you thrive vs where you drain</div>
-    <div class="env-cols">
-      <div class="env-col thrives">
-        <h5>✓ Thrives in</h5>
-        ${thrives.map(t => `<div class="env-item">${t}</div>`).join('')}
-      </div>
-      <div class="env-col drains">
-        <h5>✗ Drained by</h5>
-        ${drains.map(t => `<div class="env-item">${t}</div>`).join('')}
-      </div>
-    </div>`;
+  // Render culture narrative (Claude-generated) or fallback
+  const narrative = profile.cultureNarrative || '';
+  if (narrative) {
+    envEl.innerHTML = `
+      <div class="culture-env-title">Where you do your best work</div>
+      <p class="culture-narrative">${narrative}</p>`;
+  } else {
+    envEl.innerHTML = '';
+  }
 
   // Animate dots after render
   setTimeout(() => {
@@ -1762,6 +2228,8 @@ function renderResults(profile, metadata) {
         </div>
         <div class="bar-t"><div class="bar-f" data-score="${s.score}"></div></div>
         <div class="sig-obs">${s.label}</div>
+        ${s.growth ? `<div class="sig-growth"><div class="sig-growth-lbl">Growth edge</div>${s.growth}</div>` : ''}
+        ${s.managerNote ? `<div class="sig-manager"><div class="sig-manager-lbl">For your manager</div>${s.managerNote}</div>` : ''}
       </div>`;
   });
 
