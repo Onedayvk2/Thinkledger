@@ -16,8 +16,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const kvRes = await fetch(`${UPSTASH_URL}/get/profile:${id}`, {
-      headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
+    const kvRes = await fetch(`${UPSTASH_URL}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UPSTASH_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(['GET', `profile:${id}`])
     });
     const result = await kvRes.json();
 
@@ -25,16 +30,7 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Profile not found' });
     }
 
-    // result.result is the raw stored string — parse it
-    let payload;
-    try {
-      payload = JSON.parse(result.result);
-    } catch(e) {
-      payload = result.result; // already an object
-    }
-
-    // payload = { id, profile: {...}, metadata: {...} }
-    // profile.html expects: data.profile.profileName, data.profile.meta
+    const payload = JSON.parse(result.result);
     const out = {
       ...payload.profile,
       meta: payload.metadata
