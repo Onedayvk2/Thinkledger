@@ -1,5 +1,4 @@
 {
-  "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
     { "source": "/api/generate", "destination": "/api/generate.js" },
@@ -7,7 +6,8 @@
     { "source": "/api/profile", "destination": "/api/profile.js" },
     { "source": "/profile/:id", "destination": "/profile.html" },
     { "source": "/app", "destination": "/app.html" },
-    { "source": "/demo", "destination": "/demo.html" }
+    { "source": "/demo", "destination": "/demo.html" },
+    { "source": "/", "destination": "/index.html" }
   ],
   "functions": {
     "api/generate.js": { "maxDuration": 60 },
