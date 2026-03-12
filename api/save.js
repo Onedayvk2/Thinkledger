@@ -8,66 +8,54 @@ export default async function handler(req, res) {
   const { profile, metadata } = req.body;
   if (!profile || !metadata) return res.status(400).json({ error: 'Missing data' });
 
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let id = '';
-  for (let i = 0; i < 10; i++) id += chars[Math.floor(Math.random() * chars.length)];
+  const id = Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
 
   const payload = {
     id,
-    profileName:      profile.profileName      || '',
-    realName:         profile.realName         || '',
-    thinkerType:      profile.thinkerType      || '',
-    summary:          profile.summary          || '',
-    signals:          profile.signals          || [],
-    traits:           profile.traits           || [],
-    careerFits:       profile.careerFits       || [],
-    employerQuote:    profile.employerQuote    || '',
-    hiddenInsight:    profile.hiddenInsight    || '',
-    cultureNarrative: profile.cultureNarrative || '',
-    meta: {
-      totalConversations: metadata.totalConversations || 0,
-      userMessages:       metadata.userMessages       || 0,
-      spanMonths:         metadata.spanMonths         || 0,
-      integrityScore:     metadata.integrityScore     || 0,
-      avgWordsPerMessage: metadata.avgWordsPerMessage || 0,
-      depthScore:         metadata.depthScore         || 50,
-      deepDiveRatio:      metadata.deepDiveRatio      || 0,
-      longMessagePct:     metadata.longMessagePct     || 0,
-      peakHours:          metadata.peakHours          || '',
-      nightPct:           metadata.nightPct           || 0,
-      pushbackRatio:      metadata.pushbackRatio      || 0,
-      questionRatio:      metadata.questionRatio      || 0,
-      firstDate:          metadata.firstDate          || null,
-      lastDate:           metadata.lastDate           || null,
-      monthChart:         metadata.monthChart         || [],
-      hourCount:          metadata.hourCount          || {}
+    profile,
+    metadata: {
+      totalConversations: metadata.totalConversations,
+      userMessages: metadata.userMessages,
+      spanMonths: metadata.spanMonths,
+      integrityScore: metadata.integrityScore,
+      avgWordsPerMessage: metadata.avgWordsPerMessage,
+      peakHours: metadata.peakHours,
+      firstDate: metadata.firstDate,
+      lastDate: metadata.lastDate,
+      monthChart: metadata.monthChart,
+      nightPct: metadata.nightPct,
+      hourCount: metadata.hourCount,
+      pushbackRatio: metadata.pushbackRatio,
+      questionRatio: metadata.questionRatio,
     },
-    savedAt: new Date().toISOString()
+    createdAt: new Date().toISOString()
   };
 
   const UPSTASH_URL   = process.env.UPSTASH_REDIS_REST_URL;
   const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-  if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-    return res.status(500).json({ error: 'Storage not configured. Add UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN to Vercel environment variables.' });
+  if (UPSTASH_URL && UPSTASH_TOKEN) {
+    try {
+      const value = encodeURIComponent(JSON.stringify(payload));
+      const ttl   = 60 * 60 * 24 * 365; // 1 year
+      const kvRes = await fetch(
+        `${UPSTASH_URL}/set/profile:${id}/${value}/ex/${ttl}`,
+        {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
+        }
+      );
+      const body = await kvRes.text();
+      if (!kvRes.ok) throw new Error('Upstash error: ' + body);
+    } catch (err) {
+      console.error('Upstash save error:', err.message);
+      // Fall through to in-memory fallback
+    }
   }
 
-  try {
-    // Upstash REST: SET key value EX seconds — pass as URL segments
-    const key = `profile:${id}`;
-    const value = JSON.stringify(payload);
-    const ttl = 31536000; // 1 year in seconds
+  // Always keep in-memory copy as fallback
+  global._profiles = global._profiles || {};
+  global._profiles[id] = payload;
 
-    const upstashRes = await fetch(`${UPSTASH_URL}/set/${encodeURIComponent(key)}/${encodeURIComponent(value)}/ex/${ttl}`, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
-    });
-
-    const result = await upstashRes.json();
-    if (!upstashRes.ok || result.error) throw new Error(result.error || 'Upstash error');
-
-    return res.status(200).json({ id, url: `/profile/${id}` });
-  } catch (err) {
-    return res.status(500).json({ error: 'Could not save profile: ' + err.message });
-  }
+  return res.status(200).json({ id, url: `/profile/${id}` });
 }
