@@ -2463,168 +2463,174 @@ function generatePDF() {
   const m = _currentMetadata || {};
   const realName = (document.getElementById('userRealName')?.value || '').trim();
 
-  const inc = {
-    summary:  document.getElementById('pdf_summary').checked,
-    culture:  document.getElementById('pdf_culture').checked,
-    signals:  document.getElementById('pdf_signals').checked,
-    traits:   document.getElementById('pdf_traits').checked,
-    careers:  document.getElementById('pdf_careers').checked,
-    employer: document.getElementById('pdf_employer').checked,
-    insight:  document.getElementById('pdf_insight').checked,
+  // Load jsPDF dynamically
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  script.onload = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const W = 210, margin = 20, contentW = W - margin * 2;
+    let y = 20;
+
+    const addText = (text, x, size, style, color, maxW) => {
+      doc.setFontSize(size);
+      doc.setFont('helvetica', style || 'normal');
+      doc.setTextColor(...(color || [15,15,15]));
+      const lines = doc.splitTextToSize(String(text || ''), maxW || contentW);
+      doc.text(lines, x, y);
+      y += lines.length * (size * 0.45) + 2;
+    };
+
+    const checkPage = (needed) => {
+      if (y + needed > 280) { doc.addPage(); y = 20; }
+    };
+
+    // Header block
+    doc.setFillColor(26, 58, 42);
+    doc.rect(0, 0, W, 42, 'F');
+    doc.setFontSize(22);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255,255,255);
+    doc.text(p.profileName || 'Thinker Profile', margin, 18);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(180,210,190);
+    doc.text(p.thinkerType || '', margin, 26);
+    if (realName) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(200,220,205);
+      doc.text(realName, margin, 34);
+    }
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(150,190,165);
+    const metaParts = [];
+    if (m.totalConversations) metaParts.push(m.totalConversations + ' conversations');
+    if (m.userMessages) metaParts.push(m.userMessages.toLocaleString() + ' messages');
+    if (m.spanMonths) metaParts.push(m.spanMonths + ' months');
+    if (m.integrityScore) metaParts.push('Integrity ' + m.integrityScore + '/100');
+    doc.text(metaParts.join('  ·  '), margin, realName ? 34 : 34);
+    y = 52;
+
+    // Summary
+    checkPage(20);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100,100,95);
+    doc.text('WHO THIS PERSON IS AS A THINKER', margin, y); y += 6;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(15,15,15);
+    const summaryLines = doc.splitTextToSize(p.summary || '', contentW);
+    doc.text(summaryLines, margin, y);
+    y += summaryLines.length * 4.5 + 8;
+
+    // Signals
+    checkPage(20);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100,100,95);
+    doc.text('COGNITIVE SIGNALS', margin, y); y += 6;
+    (p.signals || []).forEach(s => {
+      checkPage(12);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(15,15,15);
+      doc.text(s.name, margin, y);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(26,58,42);
+      doc.text(String(s.score), W - margin - 8, y, { align: 'right' });
+      y += 4;
+      doc.setFillColor(224,221,216);
+      doc.rect(margin, y, contentW, 1.5, 'F');
+      doc.setFillColor(26,58,42);
+      doc.rect(margin, y, contentW * (s.score / 100), 1.5, 'F');
+      y += 4;
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(107,103,96);
+      doc.text(s.label || '', margin, y);
+      y += 7;
+    });
+    y += 4;
+
+    // Traits
+    checkPage(16);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100,100,95);
+    doc.text('THINKING TRAITS', margin, y); y += 6;
+    doc.setFontSize(9.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(15,15,15);
+    const traitsText = (p.traits || []).join('   ·   ');
+    const traitLines = doc.splitTextToSize(traitsText, contentW);
+    doc.text(traitLines, margin, y);
+    y += traitLines.length * 4.5 + 8;
+
+    // Career fits
+    checkPage(20);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100,100,95);
+    doc.text('WHERE THIS PROFILE BELONGS', margin, y); y += 6;
+    (p.careerFits || []).forEach((r, i) => {
+      checkPage(16);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(i < 3 ? 26 : 180, i < 3 ? 58 : 180, i < 3 ? 42 : 180);
+      doc.text((i + 1) + '.  ' + r.title, margin, y); y += 5;
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(107,103,96);
+      const whyLines = doc.splitTextToSize(r.why || '', contentW - 8);
+      doc.text(whyLines, margin + 8, y);
+      y += whyLines.length * 4 + 5;
+    });
+
+    // Employer quote
+    checkPage(20);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100,100,95);
+    doc.text('WHAT AN EMPLOYER READS', margin, y); y += 6;
+    doc.setFillColor(232,237,233);
+    const quoteLines = doc.splitTextToSize('"' + (p.employerQuote || '') + '"', contentW - 8);
+    doc.rect(margin, y - 3, 2, quoteLines.length * 5 + 4, 'F');
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(15,15,15);
+    doc.text(quoteLines, margin + 6, y);
+    y += quoteLines.length * 5 + 8;
+
+    // Hidden insight
+    if (p.hiddenInsight) {
+      checkPage(16);
+      doc.setFillColor(250,245,232);
+      const insightLines = doc.splitTextToSize(p.hiddenInsight, contentW - 8);
+      doc.rect(margin, y - 3, contentW, insightLines.length * 5 + 10, 'F');
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(184,150,46);
+      doc.text('A HIDDEN SIGNAL', margin + 4, y + 2); y += 7;
+      doc.setFontSize(9.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(15,15,15);
+      doc.text(insightLines, margin + 4, y);
+      y += insightLines.length * 5 + 8;
+    }
+
+    // Footer
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(180,180,175);
+    doc.text('ThinkLedger — thinkledger.vercel.app   ·   No conversation content was read or stored', margin, 290);
+
+    doc.save('thinkledger-profile.pdf');
   };
-
-  const parts = [];
-  if (m.totalConversations) parts.push(m.totalConversations + ' conversations');
-  if (m.userMessages) parts.push(m.userMessages.toLocaleString() + ' messages');
-  if (m.spanMonths) parts.push(m.spanMonths + ' months');
-  const metaLine = parts.join(' · ');
-
-  // Culture map — recompute from signals (same formula as app)
-  function computeCultureDims(m) {
-    const pr  = m.pushbackRatio||0, q=m.questionRatio||0, avg=m.avgWordsPerMessage||0;
-    const dep = m.depthScore||50, ngt=m.nightPct||0, dv=m.deepDiveRatio||0;
-    const lng = m.longMessagePct||0, spn=m.spanMonths||1;
-    const vol = Math.min(100,(m.userMessages||0)/15);
-    const cl  = v => Math.min(95,Math.max(5,Math.round(v)));
-    return [
-      {left:'Solo Processor',      right:'Social Thinker',          pos:cl((ngt*0.5)+((100-q)*0.3)+(avg*0.2)),
-       verdict: v => v<35?'Solo Processor — arrives with conclusions':v>65?'Social Thinker — builds ideas in conversation':'Context-switcher — shifts between both modes'},
-      {left:'Needs Clarity First', right:'Moves Into Fog',          pos:cl((dv*0.5)+(q*0.3)+((100-avg)*0.2)),
-       verdict: v => v<35?'Needs Clarity First — defines before touching':v>65?'Moves Into Fog — fog is the workspace':'Adaptive — tolerates ambiguity when needed'},
-      {left:'Seeks Confirmation',  right:'Seeks Friction',          pos:cl((pr*0.6)+(dv*0.4)),
-       verdict: v => v<35?'Seeks Confirmation — alignment over challenge':v>65?'Seeks Friction — ideas must survive pressure':'Selective challenger — pushes back when it matters'},
-      {left:'Present-Focused',     right:'Long-Game Thinker',       pos:cl((spn*3)+(ngt*0.4)+(dep*0.3)),
-       verdict: v => v<35?'Present-Focused — execution over anticipation':v>65?'Long-Game Thinker — thinks in years not quarters':'Balanced horizon — holds near and far simultaneously'},
-      {left:'Breadth Collector',   right:'Depth Miner',             pos:cl((avg*0.4)+(lng*0.4)+((100-q)*0.2)),
-       verdict: v => v<35?'Breadth Collector — wide not deep, synthesises fast':v>65?'Depth Miner — drills until the mechanics are understood':'Range with depth — scans wide, commits when earned'},
-      {left:'Needs Space to Think',right:'Sharpens Under Pressure', pos:cl(((100-ngt)*0.4)+(vol*0.3)+((100-avg)*0.3)),
-       verdict: v => v<35?'Needs Space to Think — pressure compresses quality':v>65?'Sharpens Under Pressure — deadlines produce clarity':'Situational — adapts pace to the work'},
-      {left:'Shows the Working',   right:'Delivers the Answer',     pos:cl(((100-avg)*0.4)+((100-dv)*0.3)+((100-lng)*0.3)),
-       verdict: v => v<35?'Shows the Working — process is visible and shared':v>65?'Delivers the Answer — leads with the conclusion':'Context-aware — calibrates how much process to show'},
-    ];
-  }
-
-  const cultureDims = computeCultureDims(m);
-  const cultureHtml = cultureDims.map(d => {
-    const pct = d.pos;
-    const label = pct < 40 ? d.left : pct > 60 ? d.right : 'Balanced';
-    const barLeft  = pct <= 50 ? pct : 50;
-    const barWidth = pct <= 50 ? (50 - pct) : (pct - 50);
-    const barRight = pct > 50 ? (100 - pct) : 50;
-    return `<div class="c-dim">
-      <div class="c-labels"><span class="${pct<40?'c-active':''}">${d.left}</span><span class="${pct>60?'c-active':''}">${d.right}</span></div>
-      <div class="c-track">
-        <div class="c-centre"></div>
-        <div class="c-fill" style="left:${pct<=50 ? pct : 50}%;width:${Math.abs(pct-50)}%"></div>
-        <div class="c-dot" style="left:${pct}%"></div>
-      </div>
-      <div class="c-verdict">${d.verdict(pct)}</div>
-    </div>`;
-  }).join('');
-
-  const signalsHtml = (p.signals || []).map(s => `
-    <div class="sig">
-      <div class="sig-top"><span class="sig-name">${s.name}</span><span class="sig-score">${s.score}</span></div>
-      <div class="bar-track"><div class="bar-fill" style="width:${s.score}%"></div></div>
-      <div class="sig-obs">${s.label || ''}</div>
-      ${s.growth ? `<div class="sig-growth"><strong>Growth edge:</strong> ${s.growth}</div>` : ''}
-      ${s.managerNote ? `<div class="sig-manager"><strong>For your manager:</strong> ${s.managerNote}</div>` : ''}
-    </div>`).join('');
-
-  const traitsHtml = (p.traits || []).map(t => `<span class="trait">${t}</span>`).join('');
-
-  const careersHtml = (p.careerFits || []).map((r, i) => `
-    <div class="career-role">
-      <div class="role-num">${i + 1}</div>
-      <div>
-        <div class="role-title">${r.title}${r.unexpected ? ' <span class="unexpected">UNEXPECTED</span>' : ''}</div>
-        <div class="role-why">${r.why}</div>
-      </div>
-    </div>`).join('');
-
-  const sections = [];
-  if (inc.summary)  sections.push(`<div class="section-label">Who this person is as a thinker</div><div class="summary">${p.summary || ''}</div>`);
-  if (inc.culture)  sections.push(`<div class="section-label">How this mind works</div><div class="culture-dims">${cultureHtml}</div>${p.cultureNarrative ? `<div class="culture-narr">${p.cultureNarrative}</div>` : ''}`);
-  if (inc.signals)  sections.push(`<div class="section-label">Cognitive Signals</div><div class="signals">${signalsHtml}</div>`);
-  if (inc.traits)   sections.push(`<div class="section-label">Thinking Traits</div><div class="traits">${traitsHtml}</div>`);
-  if (inc.careers)  sections.push(`<div class="section-label">Career Fits</div><div class="careers">${careersHtml}</div>`);
-  if (inc.employer) sections.push(`<div class="section-label">What an employer reads</div><div class="employer-quote">"${p.employerQuote || ''}"</div>`);
-  if (inc.insight)  sections.push(`<div class="insight"><div class="insight-label">A Hidden Signal</div><div class="insight-text">${p.hiddenInsight || ''}</div></div>`);
-
-  const html = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>${p.profileName || 'ThinkLedger Profile'}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Geist',sans-serif;background:#fff;color:#0f0f0f;font-size:13px;line-height:1.6;padding:48px;max-width:720px;margin:0 auto}
-  .brand{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#b8a890;margin-bottom:32px}
-  .profile-name{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:600;letter-spacing:-1px;color:#0a0a08;line-height:1.05;margin-bottom:6px}
-  .profile-type{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#9a9490;margin-bottom:4px}
-  .meta{font-size:11px;color:#b8a890;letter-spacing:0.5px;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid #e8e4de}
-  .section-label{font-size:9px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:#b8a890;margin:28px 0 14px}
-  .summary{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;line-height:1.75;color:#2a2a28;margin-bottom:8px}
-  .c-dim{margin-bottom:18px}
-  .c-labels{display:flex;justify-content:space-between;font-size:10px;font-weight:500;margin-bottom:5px;color:#b8a890}
-  .c-active{color:#1a3a2a;font-weight:600}
-  .c-track{height:20px;background:#f5f3ef;border-radius:4px;position:relative;margin-bottom:5px;display:flex;align-items:center}
-  .c-centre{position:absolute;top:0;bottom:0;left:50%;width:1px;background:#ddd8d0}
-  .c-fill{position:absolute;top:6px;height:8px;background:#c8ddd0;border-radius:2px}
-  .c-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:16px;height:16px;background:#1a3a2a;border:3px solid #fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.25);z-index:2}
-  .c-verdict{font-size:10px;color:#9a9490;font-style:italic}
-  .culture-narr{font-size:12px;color:#6b6760;line-height:1.75;font-style:italic;background:#f7f5f0;border-radius:4px;padding:14px 18px;border:1px solid #ede9e3;margin-top:14px}
-  .signals{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
-  .sig{padding:12px;border:1px solid #ede9e3;border-radius:4px}
-  .sig-top{display:flex;justify-content:space-between;margin-bottom:6px}
-  .sig-name{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
-  .sig-score{font-family:'Cormorant Garamond',serif;font-size:22px;color:#1a3a2a}
-  .bar-track{height:2px;background:#ede9e3;border-radius:1px;margin-bottom:6px}
-  .bar-fill{height:100%;background:#1a3a2a;border-radius:1px}
-  .sig-obs{font-size:10px;color:#9a9490}
-  .sig-growth{font-size:10px;color:#2a2a28;margin-top:6px;border-top:1px solid #ede9e3;padding-top:6px;line-height:1.5}
-  .sig-manager{font-size:10px;color:#9a9490;font-style:italic;margin-top:5px;border-top:1px solid #ede9e3;padding-top:5px}
-  .traits{display:flex;flex-wrap:wrap;gap:6px}
-  .trait{padding:4px 10px;background:#f7f5f0;border:1px solid #ede9e3;border-radius:2px;font-size:11px}
-  .career-role{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid #ede9e3}
-  .career-role:last-child{border-bottom:none}
-  .role-num{font-family:'Cormorant Garamond',serif;font-size:24px;color:#1a3a2a;width:24px;flex-shrink:0;line-height:1.2}
-  .role-title{font-size:13px;font-weight:500;margin-bottom:3px}
-  .role-why{font-size:11px;color:#9a9490;line-height:1.55}
-  .unexpected{font-size:9px;color:#b8962e;font-weight:500;letter-spacing:0.5px;margin-left:6px}
-  .employer-quote{font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;line-height:1.65;border-left:2px solid #1a3a2a;padding-left:14px;color:#2a2a28;margin:8px 0}
-  .insight{background:#faf5e8;border:1px solid #e8d9a0;border-radius:6px;padding:14px 18px;margin-top:8px}
-  .insight-label{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#b8962e;margin-bottom:4px}
-  .insight-text{font-size:11px;line-height:1.6}
-  .footer{margin-top:40px;padding-top:16px;border-top:1px solid #ede9e3;font-size:9px;color:#c8c4be;letter-spacing:1px;text-transform:uppercase;display:flex;justify-content:space-between}
-  @media print{body{padding:0}@page{margin:28px 36px;size:A4}}
-</style>
-</head>
-<body>
-  <div class="brand">ThinkLedger · Cognitive Profile</div>
-  ${realName ? `<div style="font-size:11px;letter-spacing:0.5px;color:#b8a890;margin-bottom:6px">${realName}</div>` : ''}
-  <div class="profile-name">${p.profileName || 'Thinker Profile'}</div>
-  <div class="profile-type">${p.thinkerType || ''}</div>
-  <div class="meta">${metaLine} · Integrity ${m.integrityScore || '—'}/100 · Peak hour ${m.peakHours || '—'}</div>
-  ${sections.join('')}
-  <div class="footer">
-    <span>ThinkLedger — thinkledger.vercel.app</span>
-    <span>No conversation content was read or stored</span>
-  </div>
-  <scr'+'ipt>window.onload = () => { window.print(); }</scr'+'ipt>
-<\/body>
-<\/html>`;
-
-  const blob = new Blob([html], { type: 'text/html' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'thinkledger-profile.html';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  script.onerror = () => alert('Could not load PDF library. Please check your internet connection.');
+  document.head.appendChild(script);
 }
 
 function shareTwitter() {
