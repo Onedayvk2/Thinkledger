@@ -11,6 +11,8 @@ export default async function handler(req, res) {
   const UPSTASH_URL   = process.env.UPSTASH_REDIS_REST_URL;
   const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
+  let payload = null;
+
   // Try Upstash first
   if (UPSTASH_URL && UPSTASH_TOKEN) {
     try {
@@ -21,17 +23,29 @@ export default async function handler(req, res) {
       const body = await kvRes.text();
       const json = JSON.parse(body);
       if (json.result) {
-        const payload = JSON.parse(decodeURIComponent(json.result));
-        return res.status(200).json({ profile: payload });
+        payload = JSON.parse(decodeURIComponent(json.result));
       }
     } catch (err) {
       console.error('Upstash get error:', err.message);
     }
   }
 
-  // Fallback: in-memory (same process only, works on warm lambda)
-  const mem = global._profiles?.[id];
-  if (mem) return res.status(200).json({ profile: mem });
+  // Fallback: in-memory
+  if (!payload) {
+    payload = global._profiles?.[id] || null;
+  }
 
-  return res.status(404).json({ error: 'Profile not found' });
+  if (!payload) {
+    return res.status(404).json({ error: 'Profile not found' });
+  }
+
+  // payload shape: { id, profile: {...profileData}, metadata: {...}, createdAt }
+  // profile.html reads: data.profile.profileName, data.profile.meta
+  // So flatten: spread profile fields and attach metadata as .meta
+  const out = {
+    ...payload.profile,
+    meta: payload.metadata
+  };
+
+  return res.status(200).json({ profile: out });
 }
