@@ -11,39 +11,39 @@ export default async function handler(req, res) {
   const UPSTASH_URL   = process.env.UPSTASH_REDIS_REST_URL;
   const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-  if (UPSTASH_URL && UPSTASH_TOKEN) {
-    try {
-      const kvRes = await fetch(`${UPSTASH_URL}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${UPSTASH_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(['GET', `profile:${id}`])
-      });
-      const result = await kvRes.json();
-      if (result.result) {
-        // payload = { id, profile: {...}, metadata: {...} }
-        // profile.html expects: data.profile.profileName, data.profile.meta
-        // So we return the inner profile object, with meta attached from metadata
-        const payload = JSON.parse(result.result);
-        const out = {
-          ...payload.profile,
-          meta: payload.metadata
-        };
-        return res.status(200).json({ profile: out });
-      }
-    } catch (err) {
-      console.error('Upstash get error:', err.message);
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) {
+    return res.status(500).json({ error: 'Database not configured' });
+  }
+
+  try {
+    const kvRes = await fetch(`${UPSTASH_URL}/get/profile:${id}`, {
+      headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
+    });
+    const result = await kvRes.json();
+
+    if (!result.result) {
+      return res.status(404).json({ error: 'Profile not found' });
     }
-  }
 
-  // Fallback: in-memory
-  const mem = global._profiles?.[id];
-  if (mem) {
-    const out = { ...mem.profile, meta: mem.metadata };
+    // result.result is the raw stored string — parse it
+    let payload;
+    try {
+      payload = JSON.parse(result.result);
+    } catch(e) {
+      payload = result.result; // already an object
+    }
+
+    // payload = { id, profile: {...}, metadata: {...} }
+    // profile.html expects: data.profile.profileName, data.profile.meta
+    const out = {
+      ...payload.profile,
+      meta: payload.metadata
+    };
+
     return res.status(200).json({ profile: out });
-  }
 
-  return res.status(404).json({ error: 'Profile not found' });
+  } catch (err) {
+    console.error('profile fetch error:', err.message);
+    return res.status(500).json({ error: 'Could not retrieve profile' });
+  }
 }
