@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ThinkLedger — Generate Your Profile</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #0f0f0f;
@@ -24,7 +24,7 @@
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Syne', sans-serif;
     background: var(--paper);
     color: var(--ink);
     min-height: 100vh;
@@ -45,7 +45,7 @@
   }
 
   .logo {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 22px;
     color: var(--ink);
     text-decoration: none;
@@ -103,7 +103,7 @@
   }
 
   .upload-title {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: clamp(32px, 5vw, 48px);
     letter-spacing: -1.5px;
     line-height: 1.1;
@@ -148,7 +148,7 @@
   }
 
   .upload-box-title {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 22px;
     margin-bottom: 8px;
   }
@@ -169,7 +169,7 @@
     font-weight: 500;
     cursor: pointer;
     border: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Syne', sans-serif;
     transition: opacity 0.15s;
   }
   .upload-btn:hover { opacity: 0.85; }
@@ -216,7 +216,7 @@
   }
 
   .guide-card h4 {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 17px;
     margin-bottom: 12px;
     display: flex;
@@ -302,7 +302,7 @@
   }
 
   .results-header h2 {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 36px;
     letter-spacing: -1px;
     margin-bottom: 6px;
@@ -333,7 +333,7 @@
   }
 
   .ts-dates {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 19px; letter-spacing: -0.5px;
     color: var(--ink); margin-bottom: 4px;
   }
@@ -404,7 +404,7 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 22px;
     color: var(--ink);
     line-height: 1;
@@ -468,7 +468,7 @@
   }
 
   .summary-txt {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 19px;
     font-style: italic;
     line-height: 1.68;
@@ -506,7 +506,7 @@
   .sig-name { font-size: 12px; font-weight: 500; color: var(--ink); }
 
   .sig-score {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 22px;
     color: var(--accent);
     line-height: 1;
@@ -559,6 +559,48 @@
     animation: fadeUp 0.5s ease 0.24s both;
   }
   .callout.night .c-title { color: #e8e4ff; }
+  .callout.evening {
+    background: #1a1a0a;
+    color: #e8e0b8;
+    border: 1px solid #3a3a1a;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.evening .c-title { color: #e8d060; }
+  .callout.morning {
+    background: #0a1a18;
+    color: #b8e0d8;
+    border: 1px solid #1a3a36;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.morning .c-title { color: #70c8b8; }
+  .callout.daytime {
+    background: #f7f5f0;
+    color: #4a4a46;
+    border: 1px solid #d8d4cc;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.daytime .c-title { color: #1a3a2a; }
+  .callout.evening {
+    background: #1a1a0f;
+    color: #e8e0b8;
+    border: 1px solid #3a3a1a;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.evening .c-title { color: #e8d060; }
+  .callout.morning {
+    background: #0f1a1a;
+    color: #b8e0d8;
+    border: 1px solid #1a3a38;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.morning .c-title { color: #80d0c0; }
+  .callout.daytime {
+    background: #f7f5f0;
+    color: #4a4a46;
+    border: 1px solid #e0ddd8;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.daytime .c-title { color: #1a3a2a; }
 
   .callout.insight {
     background: var(--gold-light);
@@ -624,7 +666,7 @@
   .role-row:last-child { border-bottom: none; }
 
   .role-rank {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 26px;
     color: var(--border);
     line-height: 1;
@@ -667,7 +709,7 @@
   }
 
   .fit-score {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 12px; color: var(--mid);
     white-space: nowrap; text-align: right;
     padding-top: 2px;
@@ -691,7 +733,7 @@
   }
 
   .employer-q {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Fraunces', serif;
     font-size: 18px; font-style: italic;
     line-height: 1.65; color: var(--ink);
     border-left: 3px solid var(--accent);
@@ -734,7 +776,7 @@
     border-radius: 4px;
     font-size: 13px; font-weight: 500;
     cursor: pointer; border: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Syne', sans-serif;
     transition: opacity 0.15s;
   }
   .btn:hover { opacity: 0.8; }
@@ -1020,7 +1062,7 @@
     <div id="nameFieldWrap" style="margin-bottom:12px;">
       <label style="display:block;font-size:11px;font-weight:500;color:var(--mid);letter-spacing:0.5px;margin-bottom:6px;">Your name <span style="font-weight:400;color:#b8b0a8">(optional — shown on your public profile)</span></label>
       <input id="userRealName" type="text" placeholder="e.g. Alex Chen" maxlength="60"
-        style="width:100%;max-width:320px;padding:9px 12px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--white);outline:none;"
+        style="width:100%;max-width:320px;padding:9px 12px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:'Syne',sans-serif;color:var(--ink);background:var(--white);outline:none;"
         onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
     </div>
 
@@ -1036,8 +1078,8 @@
 
       <!-- Copy link row -->
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
-        <input id="shareUrl" readonly style="flex:1;min-width:160px;padding:9px 12px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:var(--white);font-family:'DM Sans',sans-serif;color:var(--ink);">
-        <button onclick="copyShareUrl()" style="padding:9px 16px;white-space:nowrap;font-size:12px;background:var(--accent);color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">Copy link</button>
+        <input id="shareUrl" readonly style="flex:1;min-width:160px;padding:9px 12px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:var(--white);font-family:'Syne',sans-serif;color:var(--ink);">
+        <button onclick="copyShareUrl()" style="padding:9px 16px;white-space:nowrap;font-size:12px;background:var(--accent);color:#fff;border:none;border-radius:5px;font-family:'Syne',sans-serif;cursor:pointer;font-weight:500;">Copy link</button>
       </div>
 
       <!-- Share label -->
@@ -1046,27 +1088,27 @@
       <!-- Platform buttons — grid so they always show -->
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:14px;">
 
-        <button onclick="shareLinkedIn()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#0077b5;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+        <button onclick="shareLinkedIn()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#0077b5;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Syne',sans-serif;cursor:pointer;font-weight:500;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           LinkedIn
         </button>
 
-        <button onclick="shareTwitter()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#000;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+        <button onclick="shareTwitter()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#000;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Syne',sans-serif;cursor:pointer;font-weight:500;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.735-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           X / Twitter
         </button>
 
-        <button onclick="shareFacebook()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#1877f2;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+        <button onclick="shareFacebook()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#1877f2;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Syne',sans-serif;cursor:pointer;font-weight:500;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           Facebook
         </button>
 
-        <button onclick="shareWhatsApp()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#25d366;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+        <button onclick="shareWhatsApp()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#25d366;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Syne',sans-serif;cursor:pointer;font-weight:500;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           WhatsApp
         </button>
 
-        <button onclick="downloadImageCard()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;">
+        <button onclick="downloadImageCard()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Syne',sans-serif;cursor:pointer;font-weight:500;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
           Instagram / TikTok
         </button>
@@ -1079,7 +1121,7 @@
     <!-- PDF SECTION PICKER MODAL -->
     <div id="pdfModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center;">
       <div style="background:#fff;border-radius:12px;padding:32px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-        <div style="font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:6px;color:var(--ink)">Choose what to include</div>
+        <div style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:6px;color:var(--ink)">Choose what to include</div>
         <div style="font-size:12px;color:var(--mid);margin-bottom:24px">Uncheck anything you want to leave out</div>
 
         <div id="pdfSections" style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
@@ -1135,8 +1177,8 @@
         </div>
 
         <div style="display:flex;gap:10px;">
-          <button onclick="generatePDF()" style="flex:1;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;">Generate PDF</button>
-          <button onclick="closePDFPicker()" style="padding:12px 20px;background:var(--paper);color:var(--mid);border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;">Cancel</button>
+          <button onclick="generatePDF()" style="flex:1;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:500;font-family:'Syne',sans-serif;cursor:pointer;">Generate PDF</button>
+          <button onclick="closePDFPicker()" style="padding:12px 20px;background:var(--paper);color:var(--mid);border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Syne',sans-serif;cursor:pointer;">Cancel</button>
         </div>
       </div>
     </div>
@@ -2315,14 +2357,45 @@ function renderResults(profile, metadata) {
   // Summary
   document.getElementById('rSummary').textContent = profile.summary;
 
-  // Night owl
+  // Time-of-day mind card
   const peakH = parseInt(Object.entries(metadata.hourCount||{}).sort((a,b)=>b[1]-a[1])[0]?.[0]);
-  const isNightOwl = [22,23,0,1,2].includes(peakH);
   const nightCallout = document.getElementById('nightCallout');
-  if (isNightOwl) {
-    document.getElementById('nightText').textContent = `Peak activity at ${metadata.peakHours}. ${metadata.nightPct}% of all messages sent between 10pm and 2am. This is not a 9-to-5 thinker — ideas arrive at depth when distractions disappear.`;
+  const spnLabel = metadata.spanMonths >= 12
+    ? `The ${metadata.spanMonths}-month pattern shows this has never changed. It is not a phase. It is a cognitive schedule.`
+    : `This pattern holds across ${metadata.spanMonths} months of data.`;
+
+  if ([21,22,23,0,1,2].includes(peakH)) {
+    const peakLabel = peakH === 0 ? 'Midnight' : peakH === 21 ? '9pm' : peakH === 22 ? '10pm' : peakH === 23 ? '11pm' : peakH === 1 ? '1am' : '2am';
+    const hourDesc = peakH === 21 ? 'Not midnight, not 1am — 9pm. The hour when the day has finished but the mind has not.'
+      : peakH === 22 ? 'Not midnight, not 1am — 10pm. The hour when the day has finished but the mind has not.'
+      : peakH === 23 ? '11pm. Not the small hours — the threshold. The last hour before the world goes quiet.'
+      : peakH === 0  ? 'Midnight exactly. The symbolic hour — and apparently the cognitive one too.'
+      : peakH === 1  ? '1am. Past the threshold. This is not evening thinking — it is night thinking.'
+      : '2am. The deepest night hour. Few people operate here by choice.';
+    nightCallout.querySelector('.c-icon').textContent = '🌙';
+    nightCallout.querySelector('.c-title').textContent = 'The Midnight Mind';
+    document.getElementById('nightText').textContent = `${peakLabel} is peak. ${hourDesc} This is a structured night thinker — not chaotic nocturnal energy but deliberate evening cognition. ${spnLabel}`;
+
+  } else if ([18,19,20].includes(peakH)) {
+    const peakLabel = peakH === 18 ? '6pm' : peakH === 19 ? '7pm' : '8pm';
+    nightCallout.querySelector('.c-icon').textContent = '🌆';
+    nightCallout.querySelector('.c-title').textContent = 'The Evening Mind';
+    nightCallout.className = nightCallout.className.replace('night','evening');
+    document.getElementById('nightText').textContent = `${peakLabel} is peak. The working day is over but the thinking is not. This is someone who uses the transition hour — when obligations end and focus returns — as their primary cognitive window. Not a night owl, not a morning person. An evening thinker. ${spnLabel}`;
+
+  } else if ([5,6,7,8,9].includes(peakH)) {
+    const peakLabel = ['5am','6am','7am','8am','9am'][peakH - 5];
+    nightCallout.querySelector('.c-icon').textContent = '🌅';
+    nightCallout.querySelector('.c-title').textContent = 'The Morning Mind';
+    nightCallout.className = nightCallout.className.replace('night','morning');
+    document.getElementById('nightText').textContent = `${peakLabel} is peak. Before the noise starts. This is someone whose best thinking happens in the first window of the day — before meetings, before messages, before the world has formed opinions. The mind is sharpest when the context is still clean. ${spnLabel}`;
+
   } else {
-    nightCallout.style.display = 'none';
+    const peakLabel = peakH !== undefined ? `${peakH}:00` : 'midday';
+    nightCallout.querySelector('.c-icon').textContent = '☀️';
+    nightCallout.querySelector('.c-title').textContent = 'The Daytime Mind';
+    nightCallout.className = nightCallout.className.replace('night','daytime');
+    document.getElementById('nightText').textContent = `${peakLabel} is peak. This is a daytime thinker — someone whose cognitive rhythm aligns with the working world. Collaboration, iteration, and real-time input are natural strengths. Note: if this does not feel accurate, your export may have captured more work-related sessions than personal ones, which can push peak hours toward business hours.`;
   }
 
   // Signals
