@@ -36,20 +36,19 @@ export default async function handler(req, res) {
 
   if (UPSTASH_URL && UPSTASH_TOKEN) {
     try {
-      const value = encodeURIComponent(JSON.stringify(payload));
-      const ttl   = 60 * 60 * 24 * 365; // 1 year
-      const kvRes = await fetch(
-        `${UPSTASH_URL}/set/profile:${id}/${value}/ex/${ttl}`,
-        {
-          method: 'GET',
-          headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
-        }
-      );
-      const body = await kvRes.text();
-      if (!kvRes.ok) throw new Error('Upstash error: ' + body);
+      // POST with JSON body — handles large payloads reliably
+      const kvRes = await fetch(`${UPSTASH_URL}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${UPSTASH_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(['SET', `profile:${id}`, JSON.stringify(payload), 'EX', 31536000])
+      });
+      const result = await kvRes.json();
+      if (result.error) throw new Error(result.error);
     } catch (err) {
       console.error('Upstash save error:', err.message);
-      // Fall through to in-memory fallback
     }
   }
 
