@@ -11,19 +11,27 @@ export default async function handler(req, res) {
   const UPSTASH_URL   = process.env.UPSTASH_REDIS_REST_URL;
   const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-  let payload = null;
-
-  // Try Upstash first
   if (UPSTASH_URL && UPSTASH_TOKEN) {
     try {
-      const kvRes = await fetch(
-        `${UPSTASH_URL}/get/profile:${id}`,
-        { headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` } }
-      );
-      const body = await kvRes.text();
-      const json = JSON.parse(body);
-      if (json.result) {
-        payload = JSON.parse(decodeURIComponent(json.result));
+      const kvRes = await fetch(`${UPSTASH_URL}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${UPSTASH_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(['GET', `profile:${id}`])
+      });
+      const result = await kvRes.json();
+      if (result.result) {
+        // payload = { id, profile: {...}, metadata: {...} }
+        // profile.html expects: data.profile.profileName, data.profile.meta
+        // So we return the inner profile object, with meta attached from metadata
+        const payload = JSON.parse(result.result);
+        const out = {
+          ...payload.profile,
+          meta: payload.metadata
+        };
+        return res.status(200).json({ profile: out });
       }
     } catch (err) {
       console.error('Upstash get error:', err.message);
@@ -31,21 +39,11 @@ export default async function handler(req, res) {
   }
 
   // Fallback: in-memory
-  if (!payload) {
-    payload = global._profiles?.[id] || null;
+  const mem = global._profiles?.[id];
+  if (mem) {
+    const out = { ...mem.profile, meta: mem.metadata };
+    return res.status(200).json({ profile: out });
   }
 
-  if (!payload) {
-    return res.status(404).json({ error: 'Profile not found' });
-  }
-
-  // payload shape: { id, profile: {...profileData}, metadata: {...}, createdAt }
-  // profile.html reads: data.profile.profileName, data.profile.meta
-  // So flatten: spread profile fields and attach metadata as .meta
-  const out = {
-    ...payload.profile,
-    meta: payload.metadata
-  };
-
-  return res.status(200).json({ profile: out });
+  return res.status(404).json({ error: 'Profile not found' });
 }
