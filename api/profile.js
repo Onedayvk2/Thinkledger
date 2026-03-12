@@ -6,25 +6,32 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
   const { id } = req.query;
-  if (!id) return res.status(400).json({ error: 'No profile ID provided' });
+  if (!id) return res.status(400).json({ error: 'No profile ID' });
 
   const UPSTASH_URL   = process.env.UPSTASH_REDIS_REST_URL;
   const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-  if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-    return res.status(500).json({ error: 'Storage not configured' });
+  // Try Upstash first
+  if (UPSTASH_URL && UPSTASH_TOKEN) {
+    try {
+      const kvRes = await fetch(
+        `${UPSTASH_URL}/get/profile:${id}`,
+        { headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` } }
+      );
+      const body = await kvRes.text();
+      const json = JSON.parse(body);
+      if (json.result) {
+        const payload = JSON.parse(decodeURIComponent(json.result));
+        return res.status(200).json({ profile: payload });
+      }
+    } catch (err) {
+      console.error('Upstash get error:', err.message);
+    }
   }
 
-  try {
-    const upstashRes = await fetch(`${UPSTASH_URL}/get/profile:${id}`, {
-      headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
-    });
-    if (!upstashRes.ok) throw new Error(`Upstash error ${upstashRes.status}`);
-    const data = await upstashRes.json();
-    if (!data.result) return res.status(404).json({ error: 'Profile not found' });
-    const profile = JSON.parse(data.result);
-    return res.status(200).json({ profile });
-  } catch (err) {
-    return res.status(500).json({ error: 'Could not retrieve profile: ' + err.message });
-  }
+  // Fallback: in-memory (same process only, works on warm lambda)
+  const mem = global._profiles?.[id];
+  if (mem) return res.status(200).json({ profile: mem });
+
+  return res.status(404).json({ error: 'Profile not found' });
 }
