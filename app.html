@@ -1152,7 +1152,6 @@ let _pendingFiles = []; // stores parsed data from each file
 
 uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.classList.add('drag-over'); });
 uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('drag-over'));
-uploadBox.addEventListener('click', () => fileInput.click());
 uploadBox.addEventListener('drop', e => {
   e.preventDefault();
   uploadBox.classList.remove('drag-over');
@@ -2950,7 +2949,7 @@ function downloadImageCard() {
   }, 600);
 }
 
-function copyLink() { {
+function copyLink() {
   navigator.clipboard.writeText(window.location.href).then(() => {
     const btn = document.querySelectorAll('.btn.s')[0];
     const orig = btn.textContent;
