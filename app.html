@@ -2618,8 +2618,13 @@ function generatePDF() {
 
   const blob = new Blob([html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
-  const win = window.open(url, '_blank');
-  if (!win) alert('Please allow popups for this site, then click Download PDF again.');
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'thinkledger-profile.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function shareTwitter() {
