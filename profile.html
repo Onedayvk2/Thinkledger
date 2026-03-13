@@ -113,6 +113,10 @@
     document.title = (p.profileName || 'Profile') + ' — ThinkLedger';
     document.getElementById('pName').textContent = p.profileName || 'Thinker Profile';
     document.getElementById('pType').textContent = p.thinkerType || '';
+    // If profileName is the same as thinkerType (no real name saved), hide the subtitle to avoid duplication
+    if (!p.realName && p.profileName === p.thinkerType) {
+      document.getElementById('pType').style.display = 'none';
+    }
     document.getElementById('pIntegrity').textContent = (p.meta && p.meta.integrityScore) ? p.meta.integrityScore : '—';
     document.getElementById('pSummary').textContent = p.summary || '';
     document.getElementById('pQuote').textContent = '"' + (p.employerQuote || '') + '"';
