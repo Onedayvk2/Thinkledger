@@ -2583,7 +2583,7 @@ function generatePDF() {
 
   function doCapture() {
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', () => {
-      const profileEl = document.getElementById('profileResult');
+      const profileEl = document.getElementById('resultsState');
       if (!profileEl) { restoreSections(); alert('Profile not found.'); return; }
 
       // Show a loading indicator
@@ -2609,6 +2609,10 @@ function generatePDF() {
           logging: false,
           windowWidth: 860,
           onclone: (clonedDoc) => {
+            // Hide UI chrome that shouldn't appear in PDF
+            const hideIds = ['saveBtn', 'savedBanner', 'nameFieldWrap'];
+            hideIds.forEach(id => { const el = clonedDoc.getElementById(id); if (el) el.style.display = 'none'; });
+            clonedDoc.querySelectorAll('.share-row, .results-header').forEach(el => el.style.display = 'none');
             // Trigger bar animations in clone
             clonedDoc.querySelectorAll('.bar-fill').forEach(b => {
               b.style.transition = 'none';
