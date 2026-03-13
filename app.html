@@ -2668,8 +2668,7 @@ function generatePDF() {
               .callout.night *, .callout.morning *, .callout.evening * { color: #1a3a2a !important; }
               .callout.night .c-title, .callout.morning .c-title, .callout.evening .c-title { color: #1a3a2a !important; font-weight: 600 !important; }
               .callout.night .c-text, .callout.morning .c-text, .callout.evening .c-text { color: #3a4a44 !important; opacity: 1 !important; }
-              .employer-card, .career-card, .integrity-wrap, .callout, .culture-card, .insight-card, .privacy-card, .traits-wrap { page-break-inside: avoid !important; break-inside: avoid !important; }
-              .employer-card { page-break-before: always !important; }
+              .employer-card, .career-card, .integrity-wrap, .callout, .culture-card, .culture-dim, .insight-card, .privacy-card, .traits-wrap, .sig-card, .role-row { page-break-inside: avoid !important; break-inside: avoid !important; }
             `;
             clonedDoc.head.appendChild(printStyle);
 
@@ -2688,16 +2687,16 @@ function generatePDF() {
             });
             clonedDoc.querySelectorAll('.culture-fill').forEach(fill => {
               const pos = parseFloat(fill.dataset.pos || 50);
+              fill.style.transition = 'none';
               fill.style.backgroundColor = '#1a3a2a';
-              if (pos <= 50) {
-                fill.style.left = pos + '%';
-                fill.style.right = '50%';
-                fill.style.width = '';
-              } else {
-                fill.style.left = '50%';
-                fill.style.right = (100 - pos) + '%';
-                fill.style.width = '';
-              }
+              // Use explicit pixel-free width calculation via left+right instead of width:0
+              fill.style.removeProperty('width');
+              fill.setAttribute('style',
+                `transition:none !important; background-color:#1a3a2a; position:absolute; top:0; height:100%; border-radius:2px;` +
+                (pos <= 50
+                  ? `left:${pos}%; right:50%;`
+                  : `left:50%; right:${100-pos}%;`)
+              );
             });
 
             // Fix integrity ring
@@ -2728,7 +2727,7 @@ function generatePDF() {
 
           // Build list of element top positions to avoid slicing through
           const avoidCuts = new Set();
-          const avoidSelectors = ['.employer-card', '.career-card', '.callout', '.culture-card', '.callout.insight', '.privacy-card'];
+          const avoidSelectors = ['.employer-card', '.career-card', '.callout', '.culture-dim', '.callout.insight', '.privacy-card', '.sig-card', '.role-row'];
           const profileRect = profileEl.getBoundingClientRect();
           avoidSelectors.forEach(sel => {
             profileEl.querySelectorAll(sel).forEach(el => {
