@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ThinkLedger — Generate Your Profile</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #0f0f0f;
@@ -24,7 +24,7 @@
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Geist', sans-serif;
     background: var(--paper);
     color: var(--ink);
     min-height: 100vh;
@@ -45,7 +45,7 @@
   }
 
   .logo {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 22px;
     color: var(--ink);
     text-decoration: none;
@@ -103,7 +103,7 @@
   }
 
   .upload-title {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: clamp(32px, 5vw, 48px);
     letter-spacing: -1.5px;
     line-height: 1.1;
@@ -148,7 +148,7 @@
   }
 
   .upload-box-title {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 22px;
     margin-bottom: 8px;
   }
@@ -169,7 +169,7 @@
     font-weight: 500;
     cursor: pointer;
     border: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Geist', sans-serif;
     transition: opacity 0.15s;
   }
   .upload-btn:hover { opacity: 0.85; }
@@ -216,7 +216,7 @@
   }
 
   .guide-card h4 {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 17px;
     margin-bottom: 12px;
     display: flex;
@@ -302,7 +302,7 @@
   }
 
   .results-header h2 {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 36px;
     letter-spacing: -1px;
     margin-bottom: 6px;
@@ -333,7 +333,7 @@
   }
 
   .ts-dates {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 19px; letter-spacing: -0.5px;
     color: var(--ink); margin-bottom: 4px;
   }
@@ -404,7 +404,7 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 22px;
     color: var(--ink);
     line-height: 1;
@@ -468,7 +468,7 @@
   }
 
   .summary-txt {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 19px;
     font-style: italic;
     line-height: 1.68;
@@ -506,7 +506,7 @@
   .sig-name { font-size: 12px; font-weight: 500; color: var(--ink); }
 
   .sig-score {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 22px;
     color: var(--accent);
     line-height: 1;
@@ -523,7 +523,24 @@
     transition: width 1.2s cubic-bezier(0.4,0,0.2,1) 0.5s;
   }
 
-  .sig-obs { font-size: 11px; color: var(--mid); line-height: 1.5; }
+  .sig-obs { font-size: 11px; color: var(--mid); line-height: 1.5; margin-bottom: 10px; }
+
+  .sig-growth {
+    font-size: 11px; color: var(--ink); line-height: 1.55;
+    border-top: 1px solid var(--border); padding-top: 9px; margin-top: 2px;
+  }
+  .sig-growth-lbl {
+    font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 3px;
+  }
+  .sig-manager {
+    font-size: 11px; color: var(--mid); line-height: 1.5; font-style: italic;
+    border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px;
+  }
+  .sig-manager-lbl {
+    font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 3px; font-style: normal;
+  }
 
   /* CALLOUTS */
   .callout {
@@ -542,6 +559,48 @@
     animation: fadeUp 0.5s ease 0.24s both;
   }
   .callout.night .c-title { color: #e8e4ff; }
+  .callout.evening {
+    background: #1a1a0a;
+    color: #e8e0b8;
+    border: 1px solid #3a3a1a;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.evening .c-title { color: #e8d060; }
+  .callout.morning {
+    background: #0a1a18;
+    color: #b8e0d8;
+    border: 1px solid #1a3a36;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.morning .c-title { color: #70c8b8; }
+  .callout.daytime {
+    background: #f7f5f0;
+    color: #4a4a46;
+    border: 1px solid #d8d4cc;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.daytime .c-title { color: #1a3a2a; }
+  .callout.evening {
+    background: #1a1a0f;
+    color: #e8e0b8;
+    border: 1px solid #3a3a1a;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.evening .c-title { color: #e8d060; }
+  .callout.morning {
+    background: #0f1a1a;
+    color: #b8e0d8;
+    border: 1px solid #1a3a38;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.morning .c-title { color: #80d0c0; }
+  .callout.daytime {
+    background: #f7f5f0;
+    color: #4a4a46;
+    border: 1px solid #e0ddd8;
+    animation: fadeUp 0.5s ease 0.24s both;
+  }
+  .callout.daytime .c-title { color: #1a3a2a; }
 
   .callout.insight {
     background: var(--gold-light);
@@ -607,7 +666,7 @@
   .role-row:last-child { border-bottom: none; }
 
   .role-rank {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 26px;
     color: var(--border);
     line-height: 1;
@@ -650,7 +709,7 @@
   }
 
   .fit-score {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 12px; color: var(--mid);
     white-space: nowrap; text-align: right;
     padding-top: 2px;
@@ -674,7 +733,7 @@
   }
 
   .employer-q {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Cormorant Garamond', serif;
     font-size: 18px; font-style: italic;
     line-height: 1.65; color: var(--ink);
     border-left: 3px solid var(--accent);
@@ -717,7 +776,7 @@
     border-radius: 4px;
     font-size: 13px; font-weight: 500;
     cursor: pointer; border: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Geist', sans-serif;
     transition: opacity 0.15s;
   }
   .btn:hover { opacity: 0.8; }
@@ -741,7 +800,7 @@
   }
 
   @media print {
-    nav, .share-row, #uploadState, #analyzingState { display: none !important; }
+    nav, .share-row, #nameFieldWrap, #uploadState, #analyzingState { display: none !important; }
     #resultsState { display: block !important; }
   }
 
@@ -786,14 +845,9 @@
   }
   .culture-verdict strong { color: var(--ink); font-style: normal; }
   .culture-env { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
-  .culture-env-title { font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); margin-bottom: 14px; }
-  .env-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .env-col h5 { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
-  .env-col.thrives h5 { color: var(--accent); }
-  .env-col.drains h5 { color: #c0392b; }
-  .env-item { font-size: 12px; color: var(--mid); padding: 5px 0; border-bottom: 1px solid var(--border); line-height: 1.4; }
-  .env-item:last-child { border-bottom: none; }
-  @media(max-width:600px){ .env-cols { grid-template-columns: 1fr; } .culture-card { padding: 20px 18px; } }
+  .culture-env-title { font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--mid); margin-bottom: 12px; }
+  .culture-narrative { font-size: 13px; color: var(--mid); line-height: 1.75; font-style: italic; }
+  @media(max-width:600px){ .culture-card { padding: 20px 18px; } }
 </style>
 </head>
 <body>
@@ -962,7 +1016,7 @@
     <!-- CULTURE MAP -->
     <div class="culture-card" id="cultureCard">
       <div class="section-title">Culture & Energy Map</div>
-      <div class="culture-intro">How you show up in a room. Derived from conversation behaviour — not self-reported.</div>
+      <div class="culture-intro">Seven dimensions of how you show up — derived from conversation behaviour, not self-reported.</div>
       <div id="cultureDims"></div>
       <div class="culture-env" id="cultureEnv"></div>
     </div>
@@ -1004,6 +1058,14 @@
     </div>
 
     <!-- SHARE -->
+    <!-- OPTIONAL NAME FIELD -->
+    <div id="nameFieldWrap" style="margin-bottom:12px;">
+      <label style="display:block;font-size:11px;font-weight:500;color:var(--mid);letter-spacing:0.5px;margin-bottom:6px;">Your name <span style="font-weight:400;color:#b8b0a8">(optional — shown on your public profile)</span></label>
+      <input id="userRealName" type="text" placeholder="e.g. Alex Chen" maxlength="60"
+        style="width:100%;max-width:320px;padding:9px 12px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:'Geist',sans-serif;color:var(--ink);background:var(--white);outline:none;"
+        onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+    </div>
+
     <div class="share-row">
       <button class="btn p" id="saveBtn" onclick="saveProfile()">Get shareable link</button>
       <button class="btn s" onclick="openPDFPicker()">Download PDF</button>
@@ -1011,13 +1073,114 @@
     </div>
 
     <!-- SAVE RESULT -->
-    <div id="savedBanner" style="display:none;margin-top:16px;background:var(--accent-light);border:1px solid #b8d4c0;border-radius:8px;padding:16px 20px;">
-      <div style="font-size:12px;color:var(--accent);font-weight:500;margin-bottom:8px">✓ Profile saved — share this link:</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <input id="shareUrl" readonly style="flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:4px;font-size:13px;background:var(--white);font-family:'DM Sans',sans-serif;color:var(--ink);">
-        <button class="btn p" style="padding:9px 18px;white-space:nowrap" onclick="copyShareUrl()">Copy</button>
+    <div id="savedBanner" style="display:none;margin-top:16px;background:var(--accent-light);border:1px solid #b8d4c0;border-radius:10px;padding:20px 24px;">
+      <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:12px;">✓ Profile saved — share it anywhere</div>
+
+      <!-- Copy link row -->
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+        <input id="shareUrl" readonly style="flex:1;min-width:160px;padding:9px 12px;border:1px solid var(--border);border-radius:4px;font-size:12px;background:var(--white);font-family:'Geist',sans-serif;color:var(--ink);">
+        <button onclick="copyShareUrl()" style="padding:9px 16px;white-space:nowrap;font-size:12px;background:var(--accent);color:#fff;border:none;border-radius:5px;font-family:'Geist',sans-serif;cursor:pointer;font-weight:500;">Copy link</button>
       </div>
-      <div style="font-size:11px;color:var(--mid);margin-top:8px">Anyone with this link can view your profile. You can share it in emails, LinkedIn, or messages.</div>
+
+      <!-- Share label -->
+      <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--mid);margin-bottom:10px;">Share on</div>
+
+      <!-- Platform buttons — grid so they always show -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:14px;">
+
+        <button onclick="shareLinkedIn()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#0077b5;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Geist',sans-serif;cursor:pointer;font-weight:500;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </button>
+
+        <button onclick="shareTwitter()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#000;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Geist',sans-serif;cursor:pointer;font-weight:500;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.735-8.835L1.254 2.25H8.08l4.259 5.631 5.905-5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          X / Twitter
+        </button>
+
+        <button onclick="shareFacebook()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#1877f2;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Geist',sans-serif;cursor:pointer;font-weight:500;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Facebook
+        </button>
+
+        <button onclick="shareWhatsApp()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:#25d366;color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Geist',sans-serif;cursor:pointer;font-weight:500;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </button>
+
+        <button onclick="downloadImageCard()" style="display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 12px;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'Geist',sans-serif;cursor:pointer;font-weight:500;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          Instagram / TikTok
+        </button>
+
+      </div>
+      <div style="font-size:11px;color:var(--mid);line-height:1.6;">Instagram/TikTok button downloads 2 cards: a dark spectrum card (1080×1080) and a light identity card (1200×627 for LinkedIn/X). Post the one that fits the platform.</div>
+    </div>
+    <canvas id="shareCanvas" style="display:none"></canvas>
+
+    <!-- PDF SECTION PICKER MODAL -->
+    <div id="pdfModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:none;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:12px;padding:32px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:6px;color:var(--ink)">Choose what to include</div>
+        <div style="font-size:12px;color:var(--mid);margin-bottom:24px">Uncheck anything you want to leave out</div>
+
+        <div id="pdfSections" style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_summary" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Summary</div>
+              <div style="font-size:11px;color:var(--mid)">The core paragraph describing this thinking style</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_culture" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Culture Map</div>
+              <div style="font-size:11px;color:var(--mid)">7 cognitive dimensions with verdicts</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_signals" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Cognitive Signals</div>
+              <div style="font-size:11px;color:var(--mid)">6 scored signals with growth notes and manager guidance</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_traits" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Thinking Traits</div>
+              <div style="font-size:11px;color:var(--mid)">8 observable behavioural patterns</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_careers" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Career Fits</div>
+              <div style="font-size:11px;color:var(--mid)">4 roles including the unexpected pick</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_employer" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Employer Quote</div>
+              <div style="font-size:11px;color:var(--mid)">What a hiring manager would say about this profile</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
+            <input type="checkbox" id="pdf_insight" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Hidden Signal</div>
+              <div style="font-size:11px;color:var(--mid)">The thing the data reveals that's hard to articulate</div>
+            </div>
+          </label>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <button onclick="generatePDF()" style="flex:1;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:500;font-family:'Geist',sans-serif;cursor:pointer;">Generate PDF</button>
+          <button onclick="closePDFPicker()" style="padding:12px 20px;background:var(--paper);color:var(--mid);border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Geist',sans-serif;cursor:pointer;">Cancel</button>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -1213,8 +1376,8 @@ function extractMetadata(data, platform) {
     // Normalise messages across ChatGPT / Claude / Gemini / Grok formats
     let msgs = [];
     if (conv.mapping) {
-      // ChatGPT format
-      msgs = Object.values(conv.mapping).filter(m => m.message?.content);
+      // ChatGPT format - include all nodes with a message, content check happens during extraction
+      msgs = Object.values(conv.mapping).filter(m => m.message?.author?.role);
     } else if (conv.parts) {
       // Gemini Takeout format — conv itself contains parts
       msgs = conv.parts.map(p => ({ _gemini: true, role: p.role, text: p.text, created_at: conv.created_at }));
@@ -1232,12 +1395,34 @@ function extractMetadata(data, platform) {
         created = msg.created_at ? new Date(msg.created_at) : null;
       } else if (msg.message) {
         role = msg.message.author?.role;
-        msgContent = Array.isArray(msg.message.content) ? msg.message.content.map(c => c.text||'').join(' ') : (msg.message.content || '');
+        // Handle ChatGPT content — string, array, or {content_type, parts} object
+        const rawContent = msg.message.content;
+        if (!rawContent) {
+          msgContent = '';
+        } else if (typeof rawContent === 'string') {
+          msgContent = rawContent;
+        } else if (Array.isArray(rawContent)) {
+          msgContent = rawContent.map(c => typeof c === 'string' ? c : (c.text || '')).join(' ');
+        } else if (typeof rawContent === 'object' && rawContent.parts) {
+          // New ChatGPT format: {content_type: 'text', parts: ['message text']}
+          msgContent = rawContent.parts.filter(p => typeof p === 'string').join(' ');
+        } else {
+          msgContent = '';
+        }
         created = msg.message.create_time ? new Date(msg.message.create_time * 1000) : null;
       } else {
         role = msg.sender || msg.role || msg.author;
         msgContent = msg.text || msg.content || msg.parts?.map?.(p => p.text||'').join(' ') || '';
-        created = msg.created_at ? new Date(msg.created_at) : (msg.timestamp ? new Date(msg.timestamp) : null);
+        // Claude exports: created_at can be Unix seconds (float) or ISO string
+        const rawTs = msg.created_at || msg.timestamp;
+        if (!rawTs) { created = null; }
+        else if (typeof rawTs === 'number') { created = new Date(rawTs < 1e10 ? rawTs * 1000 : rawTs); }
+        else {
+          // If ISO string has no timezone suffix, JS treats it as local time — force UTC
+          const tsStr = String(rawTs);
+          const hasOffset = tsStr.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(tsStr);
+          created = new Date(hasOffset ? tsStr : tsStr + 'Z');
+        }
       }
       const isUser = role === 'user' || role === 'human';
 
@@ -1302,12 +1487,16 @@ function extractMetadata(data, platform) {
     pct: Math.round((monthCounts[m]/maxMonthVal)*100)
   }));
 
+  const msgsPerConv = totalConversations ? Math.round(userMessages / totalConversations) : 0;
+  const convsPerMonth = spanMonths ? Math.round(totalConversations / spanMonths) : totalConversations;
+
   return {
     totalConversations, userMessages, avgWordsPerMessage: avgWords,
     questionRatio, pushbackRatio, deepDiveRatio, vocabRichness, depthScore,
     longMessagePct: longPct, peakHours: peakHourLabel, nightPct,
     spanDays, spanMonths, integrityScore: Math.max(30, integrityScore),
     firstDate, lastDate, monthChart, hourCount,
+    msgsPerConv, convsPerMonth,
     platform: platform || 'AI Assistant',
     singlePlatform: true
   };
@@ -1348,10 +1537,12 @@ function startAnalysis(metadata) {
 // ── API CALL ──
 async function callAPI(metadata) {
   try {
+    // Compute culture dimensions locally and include scores for Claude to write the narrative
+    const { dimScores } = computeCultureMap(metadata);
     const response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ metadata })
+      body: JSON.stringify({ metadata, dimScores })
     });
 
     if (!response.ok) throw new Error('API error');
@@ -1363,158 +1554,750 @@ async function callAPI(metadata) {
   }
 }
 
+// ── SHARED CAREER ROLE LIBRARY — 60 roles, 8 domains, signal-scored ──
+function scoreCareerRoles(m) {
+  const p    = m.pushbackRatio        || 0;
+  const q    = m.questionRatio        || 0;
+  const avg  = m.avgWordsPerMessage   || 0;
+  const d    = m.depthScore           || 50;
+  const night= m.nightPct             || 0;
+  const deep = m.deepDiveRatio        || 0;
+  const lng  = m.longMessagePct       || 0;
+  const spn  = m.spanMonths           || 1;
+  const vol  = m.userMessages         || 0;
+  const vocab= m.vocabRichness        || 50;
+  const plat = m.platformCount        || 1;
+
+  const isNightOwl     = night > 30;
+  const isHighVolume   = vol > 500;
+  const isLowVolume    = vol < 100;
+  const isHighPushback = p > 28;
+  const isMedPushback  = p >= 12 && p <= 28;
+  const isLowPushback  = p < 12;
+  const isDeep         = d > 65 || avg > 55;
+  const isVeryDeep     = avg > 90;
+  const isHighQ        = q > 18;
+  const isMedQ         = q >= 8 && q <= 18;
+  const isLowQ         = q < 8;
+  const isLongSpan     = spn > 8;
+  const isShort        = avg < 30;
+  const isVeryShort    = avg < 18;
+  const isLong         = lng > 25;
+  const isHighDeep     = deep > 20;
+  const isHighVocab    = vocab > 70;
+  const isMultiPlatform= plat > 1;
+
+  const roles = [
+    // TECHNICAL
+    { title: 'Inference Infrastructure Engineer',       domain: 'technical',   score: (isVeryShort?4:isShort?2:0)+(isHighVolume?3:0)+(isLowPushback?2:0)+(isLowQ?2:0)+(!isNightOwl?1:0) },
+    { title: 'Staff Engineer (Systems)',                domain: 'technical',   score: (isDeep?3:0)+(isLong?2:0)+(isLowQ?3:0)+(isLowPushback?1:0)+(isHighVocab?1:0)+(isLongSpan?1:0) },
+    { title: 'Technical Founder (0-to-1)',              domain: 'technical',   score: (isNightOwl?3:0)+(isHighVolume?2:0)+(isDeep?2:0)+(isLongSpan?2:0)+(isHighVocab?1:0)+(isHighPushback?1:0) },
+    { title: 'Head of Inference & ML Platform',        domain: 'technical',   score: (isDeep?3:0)+(isLowQ?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isNightOwl?1:0) },
+    { title: 'Principal Security Engineer',            domain: 'technical',   score: (isLowPushback?2:0)+(isDeep?2:0)+(isLowQ?3:0)+(isHighVocab?2:0)+(!isNightOwl?1:0) },
+    { title: 'Developer Advocate / Technical Evangelist', domain: 'technical', score: (isHighQ?2:0)+(isShort?2:0)+(isHighVolume?2:0)+(!isNightOwl?2:0)+(isMedPushback?1:0) },
+    { title: 'CTO (Series A–B)',                       domain: 'technical',   score: (isNightOwl?2:0)+(isDeep?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(isLowPushback?1:0) },
+    { title: 'Founding Engineer',                      domain: 'technical',   score: (isVeryShort?3:isShort?1:0)+(isHighVolume?3:0)+(isNightOwl?2:0)+(isHighPushback?1:0)+(isLongSpan?1:0) },
+    // RESEARCH
+    { title: 'Quantitative Research Analyst (HF/AM)',  domain: 'research',    score: (isLowPushback?3:0)+(isDeep?2:0)+(isLowQ?3:0)+(!isNightOwl?1:0)+(isLongSpan?1:0)+(isHighVocab?1:0) },
+    { title: 'Intelligence Analyst (Government/Defence)', domain: 'research', score: (isLowPushback?2:0)+(isDeep?3:0)+(isLowQ?2:0)+(isLongSpan?2:0)+(!isNightOwl?1:0) },
+    { title: 'UX Research Lead',                       domain: 'research',    score: (isHighQ?3:0)+(isLowPushback?3:0)+(!isHighVolume?1:0)+(!isLong?1:0)+(isMedPushback?1:0) },
+    { title: 'Epidemiologist / Clinical Researcher',   domain: 'research',    score: (isDeep?3:0)+(isLowPushback?2:0)+(isLong?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0) },
+    { title: 'Competitive Intelligence Lead',          domain: 'research',    score: (isDeep?2:0)+(isHighQ?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    { title: 'Director of People Analytics',           domain: 'research',    score: (isLowPushback?2:0)+(isDeep?2:0)+(!isNightOwl?2:0)+(isMedQ?2:0)+(isLongSpan?1:0) },
+    { title: 'Independent Research Scientist',         domain: 'research',    score: (isNightOwl?2:0)+(isDeep?3:0)+(isHighVocab?2:0)+(isHighDeep?2:0)+(!isHighVolume?1:0) },
+    { title: 'Head of Market Research',                domain: 'research',    score: (isHighQ?2:0)+(isDeep?2:0)+(!isNightOwl?2:0)+(isMedPushback?1:0)+(isLongSpan?1:0) },
+    // STRATEGY
+    { title: 'Management Consultant (McKinsey/BCG tier)', domain: 'strategy', score: (isNightOwl?2:0)+(isDeep?3:0)+(isLongSpan?2:0)+(!isHighVolume?1:0)+(isHighVocab?2:0)+(isLowPushback?1:0) },
+    { title: 'Chief of Staff (Hypergrowth Company)',   domain: 'strategy',    score: (isLongSpan?3:0)+(isDeep?1:0)+(isLowPushback?2:0)+(isMedPushback?1:0)+(isMedQ?2:0)+(!isNightOwl?1:0) },
+    { title: 'Corporate Development Director (M&A)',   domain: 'strategy',    score: (isHighPushback?2:0)+(isDeep?2:0)+(isLowQ?2:0)+(isLongSpan?2:0)+(isHighVocab?2:0) },
+    { title: 'Venture Capital Analyst (Pre-Seed/Seed)', domain: 'strategy',   score: (isNightOwl?2:0)+(isHighQ?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongSpan?1:0)+(isMedPushback?1:0) },
+    { title: 'Strategic Finance Lead',                 domain: 'strategy',    score: (isDeep?2:0)+(isLowPushback?3:0)+(isLowQ?2:0)+(!isNightOwl?2:0)+(isHighVocab?1:0) },
+    { title: 'Think Tank Director / Policy Strategist', domain: 'strategy',   score: (isNightOwl?2:0)+(isDeep?3:0)+(isHighVocab?3:0)+(isLongSpan?2:0)+(isLowPushback?1:0) },
+    { title: 'Chief Strategy Officer',                 domain: 'strategy',    score: (isNightOwl?3:0)+(isDeep?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(isLowPushback?1:0) },
+    { title: 'Foresight & Scenario Planning Lead',     domain: 'strategy',    score: (isNightOwl?3:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isHighDeep?2:0)+(isLongSpan?2:0) },
+    // COMMERCIAL
+    { title: 'Enterprise Account Executive (Complex Sales)', domain: 'commercial', score: (isHighPushback?3:0)+(isHighVolume?2:0)+(isShort?2:0)+(!isNightOwl?2:0)+(isLowQ?1:0) },
+    { title: 'Chief Revenue Officer',                  domain: 'commercial',  score: (isHighPushback?3:0)+(isHighVolume?2:0)+(!isNightOwl?2:0)+(isLongSpan?2:0) },
+    { title: 'VC-Backed Fundraising Lead',             domain: 'commercial',  score: (isHighPushback?3:0)+(isDeep?2:0)+(isNightOwl?1:0)+(isHighVocab?2:0)+(isLongSpan?1:0) },
+    { title: 'Head of Partnerships (Platform/Ecosystem)', domain: 'commercial', score: (isHighQ?2:0)+(isShort?2:0)+(!isNightOwl?2:0)+(isMedPushback?2:0)+(isHighVolume?1:0) },
+    { title: 'Growth Lead (PLG/B2C)',                  domain: 'commercial',  score: (isHighVolume?3:0)+(isShort?2:0)+(!isNightOwl?2:0)+(isHighQ?1:0)+(isLowPushback?1:0) },
+    { title: 'Founder (Pre-Seed, Commercial Thesis)',  domain: 'commercial',  score: (isHighPushback?2:0)+(isHighVolume?2:0)+(isNightOwl?2:0)+(isHighVocab?1:0)+(isLongSpan?1:0) },
+    { title: 'Business Development Director',         domain: 'commercial',  score: (isHighQ?3:0)+(isShort?2:0)+(!isNightOwl?1:0)+(isMedPushback?2:0)+(isHighVolume?1:0) },
+    { title: 'Category Manager (Consumer/Retail)',     domain: 'commercial',  score: (isLowPushback?2:0)+(!isNightOwl?2:0)+(isHighVolume?2:0)+(isShort?2:0)+(isLowQ?1:0) },
+    // LEGAL
+    { title: 'Litigation Partner (Commercial Law)',    domain: 'legal',       score: (isHighPushback?4:0)+(isDeep?2:0)+(isLowQ?2:0)+(isLong?2:0)+(isHighVocab?1:0) },
+    { title: 'Regulatory Affairs Director',           domain: 'legal',       score: (isDeep?2:0)+(isLowPushback?2:0)+(isLong?2:0)+(isHighVocab?3:0)+(isLongSpan?2:0) },
+    { title: 'Chief Privacy / AI Governance Officer', domain: 'legal',       score: (isDeep?3:0)+(isHighVocab?3:0)+(isLongSpan?2:0)+(isLowPushback?1:0)+(isNightOwl?1:0) },
+    { title: 'Policy Lead (Tech / AI / Health)',      domain: 'legal',       score: (isDeep?2:0)+(isLong?2:0)+(isHighVocab?3:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    { title: 'Transactional Lawyer (M&A / VC)',       domain: 'legal',       score: (isHighPushback?2:0)+(isDeep?2:0)+(isLowQ?2:0)+(isHighVocab?2:0)+(!isNightOwl?2:0) },
+    { title: 'Public Interest Lawyer / Advocate',     domain: 'legal',       score: (isHighPushback?3:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isHighDeep?1:0) },
+    { title: 'Compliance & Ethics Lead',              domain: 'legal',       score: (isLowPushback?3:0)+(isDeep?2:0)+(isHighVocab?2:0)+(!isNightOwl?2:0)+(isLongSpan?1:0) },
+    { title: 'Parliamentary / Legislative Advisor',   domain: 'legal',       score: (isDeep?2:0)+(isHighVocab?3:0)+(isLong?2:0)+(isMedPushback?2:0)+(isLongSpan?1:0) },
+    // CREATIVE
+    { title: 'Editorial Director (Long-Form / Magazine)', domain: 'creative', score: (isHighVocab?3:0)+(isHighDeep?2:0)+(isLong?2:0)+(isMultiPlatform?2:0)+(isNightOwl?1:0) },
+    { title: 'Science Communicator / Journalist',     domain: 'creative',    score: (isHighVocab?3:0)+(isHighDeep?2:0)+(isLowPushback?2:0)+(!isHighVolume?1:0)+(isHighQ?1:0) },
+    { title: 'Narrative Designer (Games / Interactive)', domain: 'creative',  score: (isNightOwl?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLong?2:0)+(isLowPushback?2:0) },
+    { title: 'Creative Director (Brand / Campaign)',  domain: 'creative',    score: (isNightOwl?2:0)+(isHighVocab?2:0)+(isDeep?2:0)+(isHighDeep?2:0)+(isMedPushback?1:0) },
+    { title: 'Speechwriter / Executive Ghostwriter',  domain: 'creative',    score: (isDeep?2:0)+(isHighVocab?3:0)+(isLong?2:0)+(isLowPushback?2:0)+(isLongSpan?1:0) },
+    { title: 'Head of Content Strategy',              domain: 'creative',    score: (isHighVocab?2:0)+(isHighDeep?2:0)+(isMedPushback?2:0)+(!isNightOwl?1:0)+(isLongSpan?2:0) },
+    { title: 'Staff Writer / Culture Critic',         domain: 'creative',    score: (isNightOwl?2:0)+(isHighVocab?3:0)+(isLong?2:0)+(isHighPushback?2:0)+(!isHighVolume?1:0) },
+    { title: 'Documentary Researcher / Producer',     domain: 'creative',    score: (isHighQ?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    // LEADERSHIP
+    { title: 'Founder / CEO (Venture-Backed)',        domain: 'leadership',  score: (isNightOwl?3:0)+(isDeep?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(isMultiPlatform?1:0)+(isHighPushback?1:0) },
+    { title: 'COO (Scaling Startup)',                 domain: 'leadership',  score: (isHighVolume?3:0)+(isShort?2:0)+(!isNightOwl?2:0)+(isLowPushback?2:0)+(isLongSpan?1:0) },
+    { title: 'General Manager (P&L Ownership)',       domain: 'leadership',  score: (isHighVolume?2:0)+(!isNightOwl?2:0)+(isLowPushback?2:0)+(isLongSpan?2:0)+(isMedPushback?1:0) },
+    { title: 'VP of Product',                         domain: 'leadership',  score: (isDeep?2:0)+(isHighQ?2:0)+(isMedPushback?2:0)+(isLongSpan?2:0)+(!isNightOwl?1:0) },
+    { title: 'Head of Operations (Series B+)',        domain: 'leadership',  score: (isHighVolume?3:0)+(isShort?3:0)+(!isNightOwl?1:0)+(isLowPushback?2:0)+(isLowQ?1:0) },
+    { title: 'Chief People Officer / CHRO',           domain: 'leadership',  score: (isLowPushback?3:0)+(isDeep?1:0)+(!isNightOwl?2:0)+(isMedQ?2:0)+(isLongSpan?2:0) },
+    { title: 'Managing Director (Professional Services)', domain: 'leadership', score: (isDeep?2:0)+(isLowPushback?2:0)+(isLongSpan?3:0)+(isHighVocab?2:0)+(!isNightOwl?1:0) },
+    { title: 'Venture Partner (Early-Stage Fund)',    domain: 'leadership',  score: (isNightOwl?3:0)+(isHighVocab?2:0)+(!isHighVolume?2:0)+(isLongSpan?2:0)+(isDeep?1:0) },
+    // EDUCATION
+    { title: 'Executive Coach (C-Suite)',             domain: 'education',   score: (isLowPushback?3:0)+(isDeep?2:0)+(isLongSpan?2:0)+(!isNightOwl?2:0)+(isMedQ?1:0) },
+    { title: 'Head of Learning & Development',        domain: 'education',   score: (isLong?3:0)+(isLowPushback?2:0)+(!isNightOwl?2:0)+(isHighDeep?2:0)+(isMedQ?1:0) },
+    { title: 'Professor / Research Academic',         domain: 'education',   score: (isVeryDeep?4:isLong?2:0)+(isDeep?2:0)+(isHighVocab?2:0)+(isNightOwl?2:0)+(isHighDeep?1:0) },
+    { title: 'Curriculum Designer (Professional/HE)', domain: 'education',   score: (isLong?2:0)+(isLowPushback?2:0)+(isDeep?2:0)+(isMedQ?2:0)+(!isNightOwl?2:0) },
+    { title: 'Organisational Psychologist',           domain: 'education',   score: (isDeep?2:0)+(isLowPushback?3:0)+(isHighVocab?2:0)+(isLongSpan?2:0)+(isMedQ?1:0) },
+    { title: 'Learning Experience Designer (EdTech)', domain: 'education',   score: (isHighQ?2:0)+(isLowPushback?2:0)+(isDeep?1:0)+(!isNightOwl?2:0)+(isMedPushback?1:0)+(isLong?1:0) }
+  ];
+
+  // Sort by score, pick top 3
+  const sorted = [...roles].sort((a, b) => b.score - a.score);
+  const top3 = sorted.slice(0, 3);
+  const primaryDomain = top3[0].domain;
+
+  // 4th must be a different domain from the top scorer
+  const unexpected = sorted.find(r => r.domain !== primaryDomain && !top3.includes(r))
+    || sorted[3];
+
+  return [...top3, unexpected];
+}
+
 // ── LOCAL FALLBACK PROFILE ──
 function generateLocalProfile(m) {
-  const d = m.depthScore, p = m.pushbackRatio, q = m.questionRatio;
-  let profileName = 'Analytical Thinker', thinkerType = 'Systematic Explorer';
-  if (p > 30 && d > 70) { profileName = 'Contrarian Architect'; thinkerType = 'Critical Synthesist'; }
-  else if (q > 50) { profileName = 'Curious Investigator'; thinkerType = 'First-Principles Thinker'; }
-  else if (d > 80) { profileName = 'Deep Systems Thinker'; thinkerType = 'Rigorous Explorer'; }
+  const d    = m.depthScore           || 50;
+  const p    = m.pushbackRatio        || 0;
+  const q    = m.questionRatio        || 0;
+  const avg  = m.avgWordsPerMessage   || 0;
+  const night= m.nightPct             || 0;
+  const deep = m.deepDiveRatio        || 0;
+  const lng  = m.longMessagePct       || 0;
+  const spn  = m.spanMonths           || 1;
+  const vol  = m.userMessages         || 0;
+  const vocab= m.vocabRichness        || 50;
+  const plat = m.platformCount        || 1;
+
+  // ── Signal flags — mirror generate.js exactly ──
+  const isNightOwl       = night > 30;
+  const isHighVolume     = vol > 500;
+  const isVeryHighVolume = vol > 1200;
+  const isLowVolume      = vol < 100;
+  const isHighPushback   = p > 28;
+  const isMedPushback    = p >= 12 && p <= 28;
+  const isLowPushback    = p < 12;
+  const isDeep           = d > 65 || avg > 55;
+  const isVeryDeep       = avg > 90;
+  const isHighQ          = q > 18;
+  const isMedQ           = q >= 8 && q <= 18;
+  const isLowQ           = q < 8;
+  const isLongSpan       = spn > 8;
+  const isVeryLongSpan   = spn > 14;
+  const isShort          = avg < 30;
+  const isVeryShort      = avg < 18;
+  const isLong           = lng > 25;
+  const isHighDeep       = deep > 20;
+  const isHighVocab      = vocab > 70;
+  const isMultiPlatform  = plat > 1;
+
+  // ── Score all 19 archetypes ──
+  const scores = {
+    'The Debugger'      : (isVeryShort?4:isShort?2:0) + (isHighVolume?3:0) + (isLowPushback?1:0) + (isLowQ?2:0) + (!isNightOwl?1:0),
+    'The Architect'     : (isDeep?3:0) + (isLong?2:0) + (isLowPushback?2:0) + (isLongSpan?1:0) + (isLowQ?2:0) + (isHighVocab?1:0),
+    'The Craftsman'     : (isLong?2:0) + (isLongSpan?3:0) + (isLowPushback?1:0) + (!isHighVolume?2:0) + (isMedQ?1:0),
+    'The Operator'      : (isHighVolume?3:0) + (isShort?3:0) + (isLowPushback?1:0) + (isLowQ?2:0) + (!isNightOwl?1:0),
+    'The Strategist'    : (isNightOwl?4:0) + (isDeep?2:0) + (isLowPushback?1:0) + (isLongSpan?2:0) + (!isHighVolume?1:0),
+    'The Analyst'       : (isDeep?2:0) + (isLowPushback?3:0) + (isLowQ?2:0) + (isLong?1:0) + (!isNightOwl?1:0) + (isLongSpan?1:0),
+    'The Philosopher'   : (isVeryDeep?4:isLong?2:0) + (isDeep?2:0) + (isNightOwl?2:0) + (!isHighVolume?2:0) + (isHighDeep?2:0) + (isHighVocab?1:0),
+    'The Synthesiser'   : (isHighDeep?3:0) + (isDeep?1:0) + (isLongSpan?2:0) + (isMultiPlatform?3:0) + (isHighVocab?1:0) + (isMedPushback?1:0),
+    'The Challenger'    : (isHighPushback?5:0) + (isDeep?2:0) + (isHighQ?1:0) + (isHighVocab?1:0),
+    'The Explorer'      : (isHighQ?4:0) + (!isDeep?1:0) + (!isLowVolume?1:0) + (!isNightOwl?1:0) + (isMedPushback?1:0),
+    'The Maverick'      : (isHighPushback?3:0) + (isNightOwl?2:0) + (!isHighVolume?1:0) + (isHighVocab?1:0) + (!isLongSpan?1:0),
+    'The Catalyst'      : (isHighQ?3:0) + (isShort?2:0) + (!isNightOwl?1:0) + (!isLong?1:0) + (isHighVolume?1:0),
+    'The Absorber'      : (isLowPushback?4:0) + (isDeep?2:0) + (!isShort?1:0) + (isLongSpan?1:0) + (isMedQ?1:0),
+    'The Precise Asker' : (isHighQ?3:0) + (isLowPushback?3:0) + (isShort?1:0) + (!isLowVolume?1:0),
+    'The Mentor'        : (isDeep?2:0) + (isLowPushback?2:0) + (isLong?3:0) + (!isNightOwl?1:0) + (isLongSpan?1:0) + (isMedQ?1:0),
+    'The Visionary'     : (isNightOwl?3:0) + (isDeep?2:0) + (isLowPushback?1:0) + (isHighDeep?2:0) + (!isHighVolume?1:0) + (isHighVocab?2:0) + (isVeryLongSpan?1:0),
+    'The Persuader'     : (isHighPushback?3:0) + (isHighVolume?2:0) + (isShort?2:0) + (!isNightOwl?2:0) + (isLowQ?1:0),
+    'The Expert'        : (isLowQ?4:0) + (isLong?2:0) + (isLowPushback?2:0) + (isLongSpan?2:0) + (isHighVocab?2:0) + (!isNightOwl?1:0),
+    'The Translator'    : (isHighVocab?3:0) + (isHighDeep?2:0) + (isMultiPlatform?2:0) + (isDeep?1:0) + (!isShort?1:0) + (isMedPushback?1:0)
+  };
+
+  // Pick highest scorer
+  const archetype = Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+
+  // ── Per-archetype content ──
+  const profiles = {
+
+    'The Debugger': {
+      summary: `This is a doer's profile. At ${avg} words per message across ${m.totalConversations} conversations, the pattern is clear — short, precise, task-focused exchanges that iterate rapidly toward a solution. This person does not philosophise about problems; they run them. The ${vol} messages reflect someone who learns by doing, corrects by doing, and ships by doing.`,
+      signals: [
+        { name: 'Iteration Velocity',    score: Math.min(95,60+(isHighVolume?20:0)), label: `${vol} messages — high iteration rate` },
+        { name: 'Precision Density',     score: Math.min(92,70+(isShort?15:0)),      label: `${avg} words/message — surgical, not verbose` },
+        { name: 'Problem Persistence',   score: 85, label: 'loops back to problems from multiple angles' },
+        { name: 'Task Clarity',          score: 88, label: 'task-oriented sessions, low abstraction' },
+        { name: 'Build Rhythm',          score: Math.min(90,50+(isHighVolume?30:0)), label: `${m.totalConversations} sessions of active building` },
+        { name: 'Execution Focus',       score: 82, label: 'high failure rate accepted as part of process' }
+      ],
+      traits: ['Iterates before theorising','Task-first mindset','High tolerance for trial and error','Builds to learn','Ships to validate','Low ceremony, high output','Fixes by doing','Precise under pressure'],
+      careers: [
+        { title: 'Software Engineer', why: `${avg}-word messages and ${vol} total exchanges is the pattern of someone who debugs in real time — iterative, precise, execution-oriented.`, score: 95, tags: ['Execution','Precision'], unexpected: false },
+        { title: 'Technical Founder', why: `High output, low ceremony, fast iteration. This person builds their way to clarity — the exact mode that produces working products.`, score: 88, tags: ['Build velocity','Execution'], unexpected: false },
+        { title: 'Product Engineer', why: `Volume and precision together suggest someone who cares about outcomes, not just code. Iterates until it works, then until it works well.`, score: 84, tags: ['Precision','Output'], unexpected: false },
+        { title: 'Startup CTO', why: `High execution capacity over ${spn} months — can hold a technical vision and build it simultaneously.`, score: 79, tags: ['Stamina','Build velocity'], unexpected: true }
+      ],
+      quote: `${vol} messages, ${avg} words each — this is what a builder's mind looks like in motion.`,
+      insight: `The low message length (${avg} words) is not shallow thinking — it is the signature of someone who thinks through their hands. The code is the thought.`
+    },
+
+    'The Architect': {
+      summary: `This profile designs before it builds. Long, deliberate messages averaging ${avg} words across ${m.totalConversations} conversations signal someone who maps the structure before touching the problem. The ${p}% pushback rate is low not because they agree easily, but because they arrive already knowing what they need. After ${spn} months, the pattern is consistent: structural intuition that runs ahead of execution.`,
+      signals: [
+        { name: 'Systems Thinking',      score: Math.min(93,d+8),  label: `depth score ${d} — maps structure before building` },
+        { name: 'Structural Clarity',    score: Math.min(90,avg+30), label: `${avg} words/message — deliberate framing` },
+        { name: 'Deliberate Depth',      score: d, label: 'designs in full before committing' },
+        { name: 'Design Precision',      score: Math.min(88,d+5), label: 'low ambiguity tolerance in output' },
+        { name: 'Abstraction Fluency',   score: Math.min(87,vocab+10), label: `vocab richness ${vocab} — thinks in abstractions` },
+        { name: 'Build Conviction',      score: Math.min(85,spn*4+20), label: `${spn} months of consistent architectural thinking` }
+      ],
+      traits: ['Designs before building','Thinks in structures and systems','Low tolerance for ambiguity in output','Arrives with the blueprint','Schematic thinking','Anticipates second-order effects','Long deliberate messages','Abstraction before implementation'],
+      careers: [
+        { title: 'Solution Architect', why: `${avg}-word messages and ${d}/100 depth score — this person maps systems before touching them, the core skill of architecture work.`, score: 94, tags: ['Systems thinking','Depth'], unexpected: false },
+        { title: 'Principal Engineer', why: `Structural intuition + low pushback + long span = someone who builds lasting systems, not just working ones.`, score: 89, tags: ['Precision','Abstraction'], unexpected: false },
+        { title: 'Technical Programme Manager', why: `Holds complex multi-part problems in structure without losing thread. That is the cognitive fingerprint of strong TPM work.`, score: 84, tags: ['Structure','Clarity'], unexpected: false },
+        { title: 'CTO', why: `${spn} months of deliberate structural thinking over ${m.totalConversations} sessions — this is someone who builds organisations the way they build systems.`, score: 80, tags: ['Long-game','Architecture'], unexpected: true }
+      ],
+      quote: `Give this person the hard architectural problem — the one everyone else is avoiding because it requires holding too many variables at once.`,
+      insight: `The low question rate (${q}%) is not incuriosity. It is the sign of someone who already understands the domain well enough to direct, not ask.`
+    },
+
+    'The Craftsman': {
+      summary: `Quality is the signature here. Across ${m.totalConversations} conversations spanning ${spn} months, the pattern is someone who returns to problems until they are solved correctly — not just solved. At ${avg} words per message with ${lng}% long-form exchanges, this is not a speed profile. It is a standard profile. The consistency of the engagement over time is the data point that matters most.`,
+      signals: [
+        { name: 'Quality Threshold',     score: Math.min(93,spn*4+25), label: `${spn} months of consistent standards` },
+        { name: 'Iterative Refinement',  score: Math.min(90,d+10), label: `${avg} words/message — refines, not rushes` },
+        { name: 'Consistency Index',     score: Math.min(88,spn*3+30), label: `${m.totalConversations} sessions — sustained not sporadic` },
+        { name: 'Detail Orientation',    score: Math.min(87,lng+50), label: `${lng}% long-form messages — goes all the way in` },
+        { name: 'Standard Setting',      score: Math.min(85,d+5), label: 'internal benchmark drives output quality' },
+        { name: 'Completion Drive',      score: Math.min(86,spn*3+28), label: 'finishes what others abandon' }
+      ],
+      traits: ['Returns to problems until they are right','Quality over speed','Consistent not sporadic','High internal standards','Refinement instinct','Long feedback loop tolerance','Craft identity','Does not ship until it is ready'],
+      careers: [
+        { title: 'Senior Designer', why: `${spn} months of consistent engagement at ${avg} words/message — this person has the patience and standards that great design requires.`, score: 93, tags: ['Quality','Craft'], unexpected: false },
+        { title: 'Engineering Lead', why: `Craftsman profiles produce the best codebases — not fastest, best. The consistency over ${spn} months confirms it is not situational.`, score: 88, tags: ['Standards','Depth'], unexpected: false },
+        { title: 'Editorial Director', why: `The same cognitive signature that produces excellent engineering produces excellent editorial work — high standards, refinement instinct, no shortcuts.`, score: 84, tags: ['Quality','Craft'], unexpected: false },
+        { title: 'Independent Consultant', why: `Craft and standards without institutional dependency — this person's value is in the quality of their output, not their speed.`, score: 80, tags: ['Standards','Depth'], unexpected: true }
+      ],
+      quote: `This person will not ship something broken. That sounds obvious. It is not common.`,
+      insight: `The moderate volume (${vol} messages) across ${spn} months is not low engagement — it is discipline. They only open a conversation when they are ready to go all the way in.`
+    },
+
+    'The Operator': {
+      summary: `Execution is the mode here. Short messages, high volume, daytime — this is someone who uses AI as a tool, not a thought partner. At ${avg} words per message across ${vol} exchanges, the pattern is throughput: tasks in, outputs out, next task. Across ${m.totalConversations} conversations over ${spn} months, there is no evidence of philosophical detours. That is a feature.`,
+      signals: [
+        { name: 'Execution Velocity',    score: Math.min(95,60+(isHighVolume?25:0)), label: `${vol} messages — high throughput` },
+        { name: 'Task Throughput',       score: Math.min(92,55+(isShort?25:0)),      label: `${avg} words/message — no friction` },
+        { name: 'Decision Speed',        score: 87, label: 'low deliberation, high action' },
+        { name: 'Output Consistency',    score: Math.min(89,spn*4+20), label: `${spn} months of consistent output` },
+        { name: 'Friction Intolerance',  score: Math.min(88,55+(isShort?20:0)), label: 'removes blockers immediately' },
+        { name: 'Action Bias',           score: Math.min(86,50+(isHighVolume?25:0)), label: 'moves before others have finished deciding' }
+      ],
+      traits: ['Execution-first mindset','AI is a tool not a partner','High throughput low ceremony','Removes blockers fast','Task clarity before starting','No philosophical detours','Ships consistently','Reliable under load'],
+      careers: [
+        { title: 'Head of Operations', why: `${vol} messages at ${avg} words each — pure throughput. Operations roles reward exactly this: high output, low friction, consistent execution.`, score: 94, tags: ['Execution','Throughput'], unexpected: false },
+        { title: 'Project Manager', why: `The operator profile — short messages, high volume, daytime — is the cognitive fingerprint of someone who keeps things moving without needing to own the thinking.`, score: 89, tags: ['Output','Consistency'], unexpected: false },
+        { title: 'Growth Lead', why: `Growth is an execution function. This profile's bias toward action over deliberation is exactly what fast-moving growth roles need.`, score: 85, tags: ['Velocity','Action bias'], unexpected: false },
+        { title: 'Chief of Staff', why: `CoS roles require someone who can execute in ten directions simultaneously. The operator's throughput and low ceremony maps directly.`, score: 81, tags: ['Execution','Range'], unexpected: true }
+      ],
+      quote: `When everyone else is still deciding, this person has already shipped the first version and started on the second.`,
+      insight: `The low pushback rate (${p}%) is efficiency, not compliance. They are not agreeing with AI — they are extracting what they need and moving on.`
+    },
+
+    'The Strategist': {
+      summary: `${m.nightPct}% of messages sent between 10pm and 2am. That is not insomnia — it is a cognitive schedule. This mind runs at depth when the noise disappears, averaging ${avg} words per message across ${m.totalConversations} sessions over ${spn} months. The pattern is a slow burn: long periods of observation, then concentrated output. This is not a 9-to-5 thinker, and roles that demand one would waste what this profile offers.`,
+      signals: [
+        { name: 'Strategic Depth',       score: d,                          label: `${avg} words/message — deliberate, not reactive` },
+        { name: 'Night Cognition',       score: Math.min(93,night*1.5+30), label: `${m.nightPct}% activity after 10pm` },
+        { name: 'Long-Range Thinking',   score: Math.min(90,spn*4+20),     label: `${spn} months of sustained strategic thinking` },
+        { name: 'Deliberation Index',    score: Math.min(88,d+5),          label: 'thinks before acting, consistently' },
+        { name: 'Pattern Recognition',   score: Math.min(85,d-5),          label: 'cross-session continuity of thought' },
+        { name: 'Output Quality',        score: Math.min(87,night*1.2+35), label: 'bursts of high-quality concentrated output' }
+      ],
+      traits: ['Night-mode cognition','Slow burn not sprint','Long-game orientation','Thinks before speaking','Operates best in solitude','Strategic over reactive','Pattern recognition across time','High output when conditions are right'],
+      careers: [
+        { title: 'Strategy Lead', why: `${spn} months of consistent night-time thinking is the signature of someone who plays a long game. Strategy requires exactly that.`, score: 94, tags: ['Long-game','Depth'], unexpected: false },
+        { title: 'Founder / CEO', why: `Nocturnal, deep, self-directed — the isolation and long-term thinking that founding requires. Makes decisions alone and makes them well.`, score: 89, tags: ['Independence','Depth'], unexpected: false },
+        { title: 'Investment Analyst', why: `Pattern recognition over time, night-mode depth, low reactivity — the cognitive tools of a good investor. Builds conviction slowly and holds it.`, score: 85, tags: ['Long-game','Pattern recognition'], unexpected: false },
+        { title: 'Writer / Researcher', why: `Solitude + depth + ${spn} months sustained = someone who can hold a complex idea long enough to resolve it.`, score: 81, tags: ['Depth','Stamina'], unexpected: true }
+      ],
+      quote: `This is what a long-game mind looks like — not flashy, not fast, but consistently deep when it matters most.`,
+      insight: `The peak hour of ${m.peakHours} is not a quirk — it is structural. This person's best thinking requires one condition: silence. ${spn} months of data confirms it has not changed.`
+    },
+
+    'The Analyst': {
+      summary: `Evidence-first. This profile does not commit until certain — and the data reflects it. Low pushback (${p}%) is not passivity; it is the discipline of waiting until the evidence is strong enough to act on. At ${avg} words per message across ${m.totalConversations} conversations, this is someone who processes methodically, never jumps to conclusions, and produces output that holds under scrutiny.`,
+      signals: [
+        { name: 'Evidence Threshold',    score: Math.min(93,100-p+20), label: `${p}% pushback — commits only when certain` },
+        { name: 'Methodical Precision',  score: d,                     label: `${avg} words/message — structured processing` },
+        { name: 'Structural Logic',      score: Math.min(90,d+8),      label: 'builds arguments before stating them' },
+        { name: 'Certainty Standard',    score: Math.min(88,100-p+15), label: 'does not move on incomplete evidence' },
+        { name: 'Data Fluency',          score: Math.min(87,d+3),      label: 'comfortable with complexity and ambiguity' },
+        { name: 'Measured Output',       score: Math.min(85,spn*4+20), label: `${spn} months of consistent methodical engagement` }
+      ],
+      traits: ['Evidence before conclusion','Does not rush to answers','Methodical not reactive','Low tolerance for weak reasoning','Builds in full before stating','Earns conclusions through process','Precise language','Reliable output'],
+      careers: [
+        { title: 'Data Analyst / Scientist', why: `${avg}-word messages with ${p}% pushback — methodical depth without performative challenge. Exactly the profile that produces accurate analysis.`, score: 94, tags: ['Evidence','Precision'], unexpected: false },
+        { title: 'Research Analyst', why: `Premature closure resistance over ${spn} months — this person does not conclude until the data supports it. Research requires exactly that.`, score: 89, tags: ['Methodical','Depth'], unexpected: false },
+        { title: 'Finance / Risk Analyst', why: `The analyst's evidence threshold and structural logic are the cognitive tools of risk work — identify it, quantify it, do not over-claim.`, score: 85, tags: ['Logic','Precision'], unexpected: false },
+        { title: 'Policy Researcher', why: `Complex policy requires someone who will not sign off on a weak brief. This profile never does.`, score: 81, tags: ['Evidence','Methodical'], unexpected: true }
+      ],
+      quote: `This person does not have opinions — they have conclusions. The difference matters enormously in high-stakes decisions.`,
+      insight: `The low question rate (${q}%) is not incuriosity. It is the sign of someone who has already framed the problem correctly before they start. The question is already answered in the approach.`
+    },
+
+    'The Philosopher': {
+      summary: `This profile thinks for the sake of thinking. Very long messages (${avg} words average), low volume (${vol} total), active late at night — the signature of someone for whom the question is the destination, not an obstacle. Across ${m.totalConversations} conversations spanning ${spn} months, the pattern is depth over breadth, always. Ideas are not tools here — they are the work.`,
+      signals: [
+        { name: 'Conceptual Depth',      score: Math.min(95,avg/2+50), label: `${avg} words/message — thinks in full paragraphs` },
+        { name: 'Idea Density',          score: Math.min(92,d+10),    label: 'each session is substantively rich' },
+        { name: 'Abstract Fluency',      score: Math.min(90,vocab+10), label: `vocab richness ${vocab} — moves in abstractions` },
+        { name: 'Reflective Capacity',   score: Math.min(88,deep+50), label: `${deep}% deep-dive requests — never surface` },
+        { name: 'Intellectual Patience', score: Math.min(87,spn*4+20), label: `${spn} months of sustained philosophical engagement` },
+        { name: 'Wonder Retention',      score: Math.min(85,night*1.5+25), label: 'ideas arrive late and run long' }
+      ],
+      traits: ['Thinks for the sake of thinking','Question is the destination','Depth over breadth always','Comfortable with open loops','Conceptual not practical','Reflective before reactive','Night-mode ideation','Ideas are the work'],
+      careers: [
+        { title: 'Research Fellow / Theorist', why: `${avg}-word average messages — this person writes essays in their head before they type. Theoretical research is the natural habitat.`, score: 93, tags: ['Depth','Abstraction'], unexpected: false },
+        { title: 'Ethics / Policy Advisor', why: `Philosophical depth + sustained engagement over ${spn} months = someone who can hold the long-term implications of decisions others are not thinking about yet.`, score: 88, tags: ['Depth','Reflection'], unexpected: false },
+        { title: 'Essayist / Long-form Writer', why: `The message pattern here maps directly to long-form writing — paragraph-level thinking, rich vocabulary, night-mode ideation.`, score: 85, tags: ['Ideas','Depth'], unexpected: false },
+        { title: 'Professor / Academic', why: `Ideas as the work, patience with complexity, sustained intellectual engagement — the philosophical profile fits academia more naturally than most.`, score: 82, tags: ['Abstraction','Patience'], unexpected: true }
+      ],
+      quote: `Give this person an impossible question and enough time. The answer will be worth the wait.`,
+      insight: `The low message volume (${vol}) is not low engagement — it is the opposite. This person does not open a conversation unless they intend to go all the way in. Every session is a commitment.`
+    },
+
+    'The Synthesiser': {
+      summary: `Connects dots others miss. Cross-domain fluency, high deep-dive rate, multi-source engagement — the synthesiser is not a specialist or a generalist but something rarer: someone who moves between domains and integrates what they find. At ${avg} words per message across ${m.totalConversations} conversations over ${spn} months, the pattern is someone who is always building a bigger picture.`,
+      signals: [
+        { name: 'Cross-Domain Fluency',  score: Math.min(93,deep+50),       label: `${deep}% deep-dive rate — goes all the way in` },
+        { name: 'Pattern Integration',   score: Math.min(90,d+10),          label: `${avg} words/message — synthesises as it thinks` },
+        { name: 'Conceptual Range',      score: Math.min(88,vocab+10),      label: `vocab ${vocab} — draws from wide conceptual territory` },
+        { name: 'Ambiguity Tolerance',   score: Math.min(87,d+5),           label: 'comfortable holding multiple frames simultaneously' },
+        { name: 'Connection Density',    score: Math.min(89,spn*4+20),      label: `${spn} months — long enough to see the pattern` },
+        { name: 'Synthesis Speed',       score: Math.min(85,deep+40),       label: 'integrates before concluding' }
+      ],
+      traits: ['Connects things others keep separate','Comfortable with complexity','Cross-domain by default','Integrates before concluding','Builds bigger pictures','Tolerates open loops','Wide conceptual range','Synthesis as a cognitive mode'],
+      careers: [
+        { title: 'Chief of Staff', why: `The synthesiser processes diverse inputs and produces coherent output without distorting either. That is the CoS role exactly.`, score: 91, tags: ['Synthesis','Range'], unexpected: false },
+        { title: 'Strategy Consultant', why: `Cross-domain fluency over ${spn} months — the ability to connect unrelated things is the core value of strategy work.`, score: 87, tags: ['Pattern recognition','Integration'], unexpected: false },
+        { title: 'Product Lead', why: `Product requires holding user insight, technical reality, and business logic simultaneously. The synthesiser's mode is exactly that.`, score: 84, tags: ['Integration','Range'], unexpected: false },
+        { title: 'Founder', why: `Founding requires synthesis of vision, team, market, and timing. The ${spn}-month engagement suggests someone who thinks long enough to see how things fit.`, score: 80, tags: ['Synthesis','Stamina'], unexpected: true }
+      ],
+      quote: `This is the profile of someone who makes disparate things coherent — and in complex organisations, that skill is rarer than it looks.`,
+      insight: `The balanced metrics — not extreme on any single axis — might look unremarkable. But synthesis at depth (${d}/100) over ${spn} months is its own kind of extraordinary.`
+    },
+
+    'The Challenger': {
+      summary: `This mind does not accept the first answer. A ${p}% pushback rate combined with ${avg} words per message describes someone who arrives at conversations with a position already forming and pressure-tests it until something breaks or holds. Across ${spn} months, this is consistent: not someone who uses AI to think, but someone who uses AI to argue. The result is conclusions that have been stress-tested.`,
+      signals: [
+        { name: 'Challenge Threshold',   score: Math.min(95,p+50), label: `pushes back in ${p}% of exchanges` },
+        { name: 'Argument Precision',    score: d,                 label: `${avg} words/message — arrives with a position` },
+        { name: 'Intellectual Rigour',   score: Math.min(92,p+45), label: 'does not update without evidence' },
+        { name: 'Position Clarity',      score: Math.min(90,p+40), label: 'uses AI as sparring partner' },
+        { name: 'Debate Stamina',        score: Math.min(88,Math.round((vol/500)*80)+30), label: `${m.totalConversations} sustained challenge sessions` },
+        { name: 'Critical Independence', score: Math.min(91,p+42), label: 'forms conclusions before asking' }
+      ],
+      traits: ['Position-first thinker','Argues to stress-test','Resistant to weak reasoning','Independent by default','Thinks in counterarguments','High intellectual standards','Does not move without evidence','Makes rooms sharper'],
+      careers: [
+        { title: 'Strategic Advisor', why: `A ${p}% pushback rate over ${spn} months — someone whose value is their judgment. Advisors hold positions under pressure; this profile does it naturally.`, score: 93, tags: ['Position strength','Independence'], unexpected: false },
+        { title: 'Investor / Analyst', why: `Investment requires resisting narratives. The challenger pattern — thesis first, pressure-test second — is how good investment decisions get made.`, score: 88, tags: ['Rigour','Depth'], unexpected: false },
+        { title: 'Policy & Research Lead', why: `${p}% challenge rate and ${avg}-word depth — someone who would not sign off on a weak brief.`, score: 85, tags: ['Depth','Reasoning'], unexpected: false },
+        { title: 'Founder', why: `Contrarian conviction, rejection-resistant, high standards — the challenger maps naturally to founding. The question is which problem is worth the fight.`, score: 82, tags: ['Independence','Stamina'], unexpected: true }
+      ],
+      quote: `This person makes the work better — not because they are difficult, but because they will not let weak thinking survive in the room.`,
+      insight: `The ${p}% pushback rate is high — but the depth score (${d}) confirms these are considered challenges, not reactive ones. That combination is rare and genuinely valuable.`
+    },
+
+    'The Explorer': {
+      summary: `Questions are the product here — ${q}% of messages contain them, the signature of a mind that leads with curiosity rather than conclusion. At ${avg} words per message across ${m.totalConversations} conversations, this is someone who uses AI the way a good journalist uses a source: to find the question underneath the question. The low pushback rate (${p}%) is not absence of opinion — it is the discipline of staying open long enough to actually learn.`,
+      signals: [
+        { name: 'Curiosity Velocity',    score: Math.min(95,q*2+30),      label: `${q}% of messages contain questions` },
+        { name: 'Question Quality',      score: Math.min(90,q*1.8+20),    label: 'questions get more specific over time' },
+        { name: 'Domain Range',          score: Math.min(88,q*1.2+30),    label: 'wide-ranging topic coverage' },
+        { name: 'Idea Generation',       score: Math.min(87,q*1.5+25),    label: 'follows threads wherever they lead' },
+        { name: 'Exploration Stamina',   score: Math.min(85,spn*4+20),    label: `${spn} months of sustained exploratory thinking` },
+        { name: 'Discovery Orientation', score: Math.min(83,q+40),        label: 'pivots quickly between angles' }
+      ],
+      traits: ['Question-led thinker','Curiosity before conclusion','Follows threads wherever they lead','Intellectually open','Wide domain range','Journalist instinct','Learns by asking','Comfortable not knowing yet'],
+      careers: [
+        { title: 'Journalist / Investigator', why: `A ${q}% question rate — asks the question after the obvious question. That is where the real information lives.`, score: 93, tags: ['Curiosity','Range'], unexpected: false },
+        { title: 'Product Researcher', why: `User research requires genuine curiosity and discipline to not jump to conclusions. High questions, low pushback — exactly right.`, score: 88, tags: ['Curiosity','Openness'], unexpected: false },
+        { title: 'Innovation Consultant', why: `Explorers find opportunities others rationalised away. Wide-ranging, question-led over ${spn} months — comfortable at the edges of established thinking.`, score: 84, tags: ['Range','Agility'], unexpected: false },
+        { title: 'Venture Capitalist', why: `The best investors are curious before they are convinced. Wide range, low reactivity, high question rate — finds opportunity before it is obvious.`, score: 80, tags: ['Range','Openness'], unexpected: true }
+      ],
+      quote: `This person asks the question after the obvious question — and that is usually where the real answer is.`,
+      insight: `The ${q}% question rate might look like uncertainty. But combined with ${spn} months of sustained engagement, it is the opposite — the discipline to stay curious long enough to actually understand.`
+    },
+
+    'The Maverick': {
+      summary: `Contrarian by design. High pushback, irregular schedule, night-mode — this profile resists the consensus frame as a cognitive default. At ${p}% pushback across ${m.totalConversations} conversations, this is someone who stress-tests received wisdom before accepting it. Right more often than people expect. Wrong more memorably when they are not. Neither outcome changes the approach.`,
+      signals: [
+        { name: 'Contrarian Confidence', score: Math.min(95,p+45), label: `${p}% pushback — challenges as default` },
+        { name: 'Pattern Disruption',    score: Math.min(91,p+40), label: 'spots weak consensus before others do' },
+        { name: 'Independent Reasoning', score: Math.min(89,p+38), label: 'forms positions without external validation' },
+        { name: 'Unconventional Range',  score: Math.min(87,vocab+10), label: `vocab ${vocab} — draws from outside the mainstream` },
+        { name: 'Position Conviction',   score: Math.min(88,p+42), label: 'holds positions under pressure' },
+        { name: 'Frame Breaking',        score: Math.min(85,p+35), label: 'questions the brief before answering it' }
+      ],
+      traits: ['Contrarian by design','Resists consensus frames','Stress-tests before accepting','Independent position formation','High pushback is intellectual hygiene','Comfortable being early and alone','Makes teams smarter by friction','Wrong memorably, right consistently'],
+      careers: [
+        { title: 'Founding Partner / VC', why: `Contrarian conviction + night-mode + independent reasoning — the cognitive profile of someone who backs ideas before they are obvious.`, score: 93, tags: ['Contrarian','Conviction'], unexpected: false },
+        { title: 'Turnaround CEO', why: `High pushback over ${spn} months signals someone who will not inherit assumptions. Turnarounds require exactly that — the willingness to question everything before rebuilding.`, score: 88, tags: ['Independence','Disruption'], unexpected: false },
+        { title: 'Editorial Director', why: `The maverick's ability to spot weak consensus and resist conventional framing is the rarest editorial skill. Good editorial direction requires someone who reads against the grain.`, score: 84, tags: ['Contrarian','Range'], unexpected: false },
+        { title: 'Regulatory Challenger / Lobbyist', why: `Changing regulations requires a mind that can argue against the established position fluently and persistently. This profile does both.`, score: 80, tags: ['Position strength','Stamina'], unexpected: true }
+      ],
+      quote: `Hire this person when the room is too comfortable. They will find the problem before it finds you.`,
+      insight: `The ${p}% pushback rate might read as difficult. The data over ${spn} months shows it is consistent — which means it is structural, not situational. That is the difference between a maverick and someone having a bad day.`
+    },
+
+    'The Catalyst': {
+      summary: `Starts things. High question rate (${q}%), short decisive messages (${avg} words), daytime, high volume — this is someone who moves fast and makes everyone around them move faster. Across ${m.totalConversations} conversations, the pattern is activation: ideas arrive quickly, get stress-tested quickly, and get handed off. The catalyst is not the person who finishes — they are the person who makes finishing possible.`,
+      signals: [
+        { name: 'Activation Energy',     score: Math.min(94,q*2+30), label: `${q}% question rate — energises rooms` },
+        { name: 'Question Velocity',     score: Math.min(91,q*1.8+25), label: 'questions that move things forward' },
+        { name: 'Momentum Generation',   score: Math.min(89,vol/10+50), label: `${vol} messages — high activation rate` },
+        { name: 'Decision Speed',        score: Math.min(88,50+(isShort?25:0)), label: `${avg} words/message — decisive, not deliberate` },
+        { name: 'Energy Transmission',   score: Math.min(86,q*1.5+25), label: 'makes others move faster' },
+        { name: 'Initiation Drive',      score: Math.min(85,q+40), label: 'starts before others have finished deciding' }
+      ],
+      traits: ['Starts things fast','Questions that move things forward','Makes rooms sharper','Hands off when it is moving','High activation energy','Low completion dependency','Daytime peak — consistent and structured','Energises the people around them'],
+      careers: [
+        { title: 'Business Development Lead', why: `${q}% question rate and short decisive messages — this is what BD looks like cognitively. Finds the opening, activates the conversation, hands it over.`, score: 93, tags: ['Activation','Velocity'], unexpected: false },
+        { title: 'Founding CEO', why: `Catalysts start companies. The activation energy, question velocity, and high volume over ${spn} months describe someone who makes things happen by sheer forward motion.`, score: 88, tags: ['Initiation','Energy'], unexpected: false },
+        { title: 'Community / Growth Lead', why: `Growth is fundamentally catalytic — find the lever, activate it, move to the next one. This profile does that naturally.`, score: 85, tags: ['Momentum','Energy'], unexpected: false },
+        { title: 'Partnerships Director', why: `Partnerships require someone who moves fast and makes the other person feel the urgency. The catalyst's short-message, high-question pattern is exactly that.`, score: 81, tags: ['Activation','Velocity'], unexpected: true }
+      ],
+      quote: `This person does not wait for permission to start — and that energy is genuinely contagious.`,
+      insight: `The high question rate (${q}%) is not uncertainty — it is how the catalyst moves things. Questions are not requests for information here. They are activation events.`
+    },
+
+    'The Absorber': {
+      summary: `Low pushback does not mean passive — and this profile makes that clear. At ${avg} words per message with only ${p}% direct challenges, this is someone who processes fully before forming a position. They do not argue with AI because they are integrating, not debating — the real challenge happens later, in real rooms, with real stakes. Across ${m.totalConversations} conversations, the pattern is someone who arrives open and leaves decided.`,
+      signals: [
+        { name: 'Absorption Depth',      score: d,                         label: `${avg} words/message — full processing before output` },
+        { name: 'Processing Patience',   score: Math.min(92,100-p+30),    label: `${p}% pushback — absorbs before filtering` },
+        { name: 'Contextual Awareness',  score: Math.min(90,d-5),         label: 'conclusions are considered, not reactive' },
+        { name: 'Listening Intelligence',score: Math.min(88,100-p+20),    label: 'updates thinking when evidence warrants' },
+        { name: 'Deliberate Response',   score: Math.min(93,d+5),         label: `${lng}% substantive messages — goes all the way in` },
+        { name: 'Information Integration',score: Math.min(87,spn*4+30),   label: `${spn} months of patient consistent engagement` }
+      ],
+      traits: ['Processes before concluding','Absorbs fully before filtering','Real debate happens in rooms, not with tools','Intellectual flexibility','High-quality output from deep input','Patient under complexity','Considered not reactive','Updates position with evidence'],
+      careers: [
+        { title: 'Research Lead', why: `Deep engagement, low reactivity, high processing — the absorber does not rush to conclusions. Research rewards exactly that.`, score: 92, tags: ['Depth','Processing'], unexpected: false },
+        { title: 'Chief of Staff', why: `CoS requires someone who processes enormous inputs and synthesises without distorting. Low pushback with high depth is exactly that profile.`, score: 88, tags: ['Integration','Depth'], unexpected: false },
+        { title: 'Strategy Consultant', why: `Clients need advisors who listen before they prescribe. The ${p}% pushback with ${avg}-word depth — earns conclusions rather than performing them.`, score: 85, tags: ['Receptive','Output quality'], unexpected: false },
+        { title: 'Executive Coach', why: `Genuinely open, deeply processing, not reflexively challenging — the absorber holds space and then acts precisely. Best coaches work exactly this way.`, score: 80, tags: ['Flexibility','Depth'], unexpected: true }
+      ],
+      quote: `Do not mistake the quiet for empty — this person is processing everything, and when they speak, it is finished thinking.`,
+      insight: `The ${p}% pushback rate would look like passivity on paper. Paired with ${avg} words/message and ${d}/100 depth, it is the opposite — someone confident enough in their processing that they do not need to perform disagreement.`
+    },
+
+    'The Precise Asker': {
+      summary: `Solves problems through better questions, not debate. A high question rate (${q}%) with low pushback (${p}%) is not contradiction — it is precision. This profile does not argue with AI because their questions are specific enough to make argument unnecessary. At ${avg} words per message across ${m.totalConversations} conversations, the pattern is interrogative thinking: the right question, asked correctly, does the work.`,
+      signals: [
+        { name: 'Question Precision',    score: Math.min(94,q*2+25), label: `${q}% question rate — highly interrogative` },
+        { name: 'Problem Framing',       score: Math.min(91,q*1.8+20), label: 'frames before asking — minimum viable inquiry' },
+        { name: 'Clarity Drive',         score: Math.min(89,100-p+20), label: `${p}% pushback — precision makes debate unnecessary` },
+        { name: 'Solution Orientation',  score: Math.min(87,q*1.5+25), label: 'questions point toward the answer' },
+        { name: 'Iterative Refinement',  score: Math.min(86,q+40),    label: 'each question sharpens the next' },
+        { name: 'Specification Depth',   score: Math.min(85,d+5),     label: 'gets to the exact answer, not approximately right' }
+      ],
+      traits: ['Question-led not debate-led','Frames before asking','Minimum viable inquiry','Low pushback is precision not passivity','Gets to the exact answer','Iterative question refinement','Problem clarity before solution seeking','Interrogative as a cognitive mode'],
+      careers: [
+        { title: 'Product Manager', why: `${q}% question rate + low pushback — someone who discovers what users actually need by asking the right questions, not the obvious ones.`, score: 93, tags: ['Framing','Precision'], unexpected: false },
+        { title: 'UX Researcher', why: `The precise asker's interrogative mode is the foundation of great user research — specific questions, no leading, clean insights.`, score: 88, tags: ['Questioning','Clarity'], unexpected: false },
+        { title: 'Management Consultant', why: `The highest-value consultant skill is the diagnostic question — the one that reveals the real problem. This profile generates them naturally.`, score: 85, tags: ['Framing','Precision'], unexpected: false },
+        { title: 'Corporate Lawyer', why: `Legal precision requires asking exactly the right question and getting the exact answer. The precise asker's low pushback + high question rate maps directly.`, score: 81, tags: ['Precision','Clarity'], unexpected: true }
+      ],
+      quote: `This person asks the question that makes the next three questions unnecessary. That is a rare cognitive skill.`,
+      insight: `The combination of high questions (${q}%) and low pushback (${p}%) sounds contradictory. It is not — it is the signature of someone whose questions are so well-formed they do not need to argue.`
+    },
+
+    'The Mentor': {
+      summary: `This profile uses AI to develop thinking it will share with others. Long, structured messages (${avg} words average, ${lng}% over 100 words), daytime schedule, consistent across ${spn} months — the pattern is someone who explains rather than argues, who builds frameworks others can follow, who thinks about how ideas land, not just whether they are true.`,
+      signals: [
+        { name: 'Explanatory Depth',     score: Math.min(93,avg/2+50),    label: `${avg} words/message — thinks in full frameworks` },
+        { name: 'Structural Clarity',    score: Math.min(90,d+8),         label: 'builds scaffolds others can follow' },
+        { name: 'Knowledge Transfer',    score: Math.min(89,lng+50),      label: `${lng}% long-form — invests in completeness` },
+        { name: 'Audience Awareness',    score: Math.min(87,100-p+15),    label: `${p}% pushback — adapts to what lands` },
+        { name: 'Generous Thinking',     score: Math.min(86,spn*4+20),    label: `${spn} months of consistent knowledge development` },
+        { name: 'Framework Building',    score: Math.min(85,d+3),         label: 'organises knowledge for others' }
+      ],
+      traits: ['Explains rather than argues','Thinks about how ideas land','Builds frameworks not just answers','Daytime structured thinker','Generous with knowledge','Scaffolds for understanding','Pedagogical instinct','Develops thinking to share it'],
+      careers: [
+        { title: 'Head of Learning & Development', why: `${avg}-word messages and ${lng}% long-form — someone who builds knowledge structures others can follow. That is the L&D role at its best.`, score: 93, tags: ['Pedagogy','Frameworks'], unexpected: false },
+        { title: 'Engineering Manager', why: `The mentor profile — explains rather than dictates, builds frameworks, generous with knowledge — maps directly to technical leadership that develops people.`, score: 88, tags: ['Knowledge transfer','Depth'], unexpected: false },
+        { title: 'Management Consultant', why: `The best consultants leave clients smarter, not just better-served. The mentor's explanatory depth and framework-building instinct does exactly that.`, score: 85, tags: ['Frameworks','Clarity'], unexpected: false },
+        { title: 'Content Strategist', why: `Mentors make complex things legible. Over ${spn} months, this profile has consistently built explanations — that is the core content skill.`, score: 81, tags: ['Pedagogy','Generosity'], unexpected: true }
+      ],
+      quote: `This person makes everyone around them more capable — not through managing but through explaining. That is the rarest leadership trait.`,
+      insight: `The low pushback rate (${p}%) is not because they accept everything — it is because they are already thinking about how to communicate the better answer, not win the argument.`
+    },
+
+    'The Visionary': {
+      summary: `Sees things before they are obvious. ${m.nightPct}% of messages sent after 10pm, ${avg} words per message, high vocabulary richness — the visionary operates in the space before consensus forms. After ${spn} months of sustained engagement, the pattern is someone who builds conviction without needing the room to agree first. Comfortable being early. Comfortable being alone in a position.`,
+      signals: [
+        { name: 'Anticipatory Thinking', score: Math.min(94,night*1.5+30), label: `${m.nightPct}% night activity — pre-consensus thinking` },
+        { name: 'Long-Horizon Vision',   score: Math.min(91,spn*4+20),    label: `${spn} months — long enough to see what others miss` },
+        { name: 'Independent Conviction',score: Math.min(89,100-p+15),    label: `${p}% pushback — confident, not performative` },
+        { name: 'Conceptual Originality',score: Math.min(88,vocab+10),    label: `vocab ${vocab} — conceptual range ahead of mainstream` },
+        { name: 'Night Cognition',       score: Math.min(87,night*1.2+35),label: 'depth arrives when distractions disappear' },
+        { name: 'Pattern Foresight',     score: Math.min(85,deep+40),     label: `${deep}% deep-dive — goes past the obvious signal` }
+      ],
+      traits: ['Sees things before they are obvious','Builds conviction without validation','Comfortable being early','Night-mode ideation','Pre-consensus thinking','Operates alone before the room catches up','Long-game over short wins','High originality — low need for approval'],
+      careers: [
+        { title: 'Founder', why: `The visionary profile is the founding profile — pre-consensus conviction, night-mode depth, long-game orientation. This person was always going to build something.`, score: 94, tags: ['Pre-consensus','Conviction'], unexpected: false },
+        { title: 'Venture Partner', why: `Backs ideas before they are obvious. The ${spn}-month pattern of night-mode, deep-dive, vocabulary-rich thinking is the cognitive fingerprint of a great early-stage investor.`, score: 89, tags: ['Foresight','Conviction'], unexpected: false },
+        { title: 'Creative Director', why: `Visionaries define culture before it arrives. The high vocabulary and night-mode depth suggest someone who is already operating in the next frame.`, score: 85, tags: ['Originality','Pre-consensus'], unexpected: false },
+        { title: 'Chief Strategy Officer', why: `Long-game thinking + independent conviction + ${spn} months of sustained engagement — this person should be setting the 5-year direction, not the quarterly plan.`, score: 82, tags: ['Long-game','Foresight'], unexpected: true }
+      ],
+      quote: `By the time most people see what this person saw, they have already moved on to the next thing.`,
+      insight: `The low pushback rate (${p}%) might look like agreement. It is not — it is the efficiency of someone who does not need AI to validate positions they have already built in their head at ${m.peakHours}.`
+    },
+
+    'The Persuader': {
+      summary: `Uses AI to sharpen arguments they will deploy on people, not on AI. High pushback (${p}%), high volume (${vol} messages), short decisive messages (${avg} words), daytime — this is not someone debating for the sake of it. They are pressure-testing. Every challenge is rehearsal. The persuader is not arguing with AI — they are preparing to be convincing somewhere else.`,
+      signals: [
+        { name: 'Argument Precision',     score: Math.min(94,p+45),         label: `${p}% pushback — stress-tests before deploying` },
+        { name: 'Position Stress-Testing',score: Math.min(91,p+40),         label: 'challenges are rehearsal, not resistance' },
+        { name: 'Rhetorical Clarity',     score: Math.min(89,50+(isShort?25:0)), label: `${avg} words — compressed, not casual` },
+        { name: 'Conviction Velocity',    score: Math.min(88,vol/10+50),    label: `${vol} messages — high output under conviction` },
+        { name: 'Objection Mapping',      score: Math.min(87,p+38),         label: 'anticipates counterarguments as part of thinking' },
+        { name: 'Persuasion Architecture',score: Math.min(85,p+35),         label: 'builds the case, then challenges it, then uses it' }
+      ],
+      traits: ['Uses AI as a rehearsal room','High pushback is preparation not personality','Builds the argument then attacks it','Short decisive messages — compresses naturally','Daytime peak — disciplined and structured','Anticipates objections before they arise','Persuasion is a cognitive mode','Conviction precedes deployment'],
+      careers: [
+        { title: 'Sales Director / CRO', why: `${p}% pushback + ${vol} messages + daytime — this is the cognitive fingerprint of someone who prepares to persuade. The best salespeople are this way.`, score: 94, tags: ['Conviction','Preparation'], unexpected: false },
+        { title: 'Trial Lawyer', why: `Argument stress-testing, objection anticipation, short compressed messages — legal advocacy requires exactly this cognitive approach.`, score: 89, tags: ['Argument precision','Rigour'], unexpected: false },
+        { title: 'Fundraising Lead', why: `Investors push back. The persuader's instinct to anticipate and pre-address objections is the most valuable fundraising skill.`, score: 86, tags: ['Conviction','Preparation'], unexpected: false },
+        { title: 'Policy Advocate', why: `Changing minds at institutional scale requires building arguments that survive scrutiny. This profile builds them and then tries to break them.`, score: 82, tags: ['Persuasion','Stamina'], unexpected: true }
+      ],
+      quote: `This person does not walk into a room unprepared. They have already had every argument — with themselves — before it starts.`,
+      insight: `The high pushback rate (${p}%) is easy to misread as contrarian. The daytime schedule and high volume reveal the real pattern: this is discipline, not personality. They push back because it makes them better.`
+    },
+
+    'The Expert': {
+      summary: `Deep domain authority. This profile does not ask questions — it directs. At ${q}% question rate across ${m.totalConversations} conversations with ${avg} words per message, the pattern is someone who arrives already knowing the domain and uses AI for execution, not education. Low pushback is not passivity — it is confidence. They do not need to argue with AI because they already know what good looks like.`,
+      signals: [
+        { name: 'Domain Authority',      score: Math.min(95,100-q+15),    label: `${q}% question rate — directs, does not ask` },
+        { name: 'Directive Precision',   score: Math.min(92,avg/2+50),    label: `${avg} words/message — detailed, expert-level framing` },
+        { name: 'Knowledge Density',     score: Math.min(90,vocab+10),    label: `vocab ${vocab} — domain-specific richness` },
+        { name: 'Context Economy',       score: Math.min(88,100-q+10),    label: 'assumes shared context — no over-explaining' },
+        { name: 'Instructional Clarity', score: Math.min(87,d+5),         label: 'knows what good looks like, directs toward it' },
+        { name: 'Expertise Depth',       score: Math.min(86,spn*4+20),    label: `${spn} months — sustained expert-level engagement` }
+      ],
+      traits: ['Directs rather than asks','Arrives with domain knowledge','Treats AI as a capable junior','Low pushback is authority not passivity','Assumes context economy','Expert framing in every message','Sustained high-level engagement','Knows the landscape already'],
+      careers: [
+        { title: 'Principal / Distinguished Engineer', why: `${q}% question rate and ${avg}-word messages at expert depth — the cognitive fingerprint of someone who arrived knowing the answer and is delegating the execution.`, score: 94, tags: ['Domain authority','Precision'], unexpected: false },
+        { title: 'Specialist Consultant', why: `Expert profiles sell their knowledge, not their process. The low question rate and sustained engagement over ${spn} months confirms the knowledge is deep and current.`, score: 89, tags: ['Expertise','Depth'], unexpected: false },
+        { title: 'Clinical or Legal Specialist', why: `Domains where authority matters — medicine, law, finance — reward exactly this profile: someone who knows the territory and directs without second-guessing.`, score: 86, tags: ['Authority','Precision'], unexpected: false },
+        { title: 'Research Director', why: `Experts who can direct rather than ask are rare in research leadership. This profile does not need to explore — they know where to go.`, score: 82, tags: ['Domain authority','Direction'], unexpected: true }
+      ],
+      quote: `You do not brief this person — you give them the problem and get out of the way.`,
+      insight: `The low question rate (${q}%) is the most important signal in this profile. Questions are how people learn a domain. The absence of questions here is not incuriosity — it is mastery.`
+    },
+
+    'The Translator': {
+      summary: `Converts complex thinking for different audiences. High vocabulary (${vocab}/100), high deep-dive rate (${deep}%), multi-source engagement — this is not just synthesis. It is rendering. The translator makes hard things legible without making them simple. After ${spn} months, the pattern is someone who is always thinking about how ideas land, not just whether they are correct.`,
+      signals: [
+        { name: 'Conceptual Translation', score: Math.min(94,vocab+10),    label: `vocab ${vocab} — draws from wide territory to find the right frame` },
+        { name: 'Audience Modelling',     score: Math.min(91,deep+40),     label: `${deep}% deep-dive — goes deep enough to translate accurately` },
+        { name: 'Complexity Reduction',   score: Math.min(89,d+8),         label: 'finds the version that lands without losing meaning' },
+        { name: 'Vocabulary Range',       score: Math.min(88,vocab+5),     label: 'register fluency — shifts language to context' },
+        { name: 'Register Fluency',       score: Math.min(87,avg/2+45),    label: `${avg} words/message — enough length to render correctly` },
+        { name: 'Clarity Architecture',   score: Math.min(85,spn*4+20),    label: `${spn} months of consistent clarity-oriented thinking` }
+      ],
+      traits: ['Makes hard things legible not simple','Thinks about how ideas land','Register fluency across contexts','Deep enough to translate accurately','Audience-first framing','Everyone sends them the draft before it goes out','Renders complexity, does not flatten it','Sustained translation instinct'],
+      careers: [
+        { title: 'Editorial Director', why: `High vocab, high deep-dive, multi-source — this is someone who reads at depth and writes for reach. Editorial direction is exactly that translation task.`, score: 93, tags: ['Translation','Clarity'], unexpected: false },
+        { title: 'Science / Technical Writer', why: `The translator profile makes the complex legible without losing the complexity. Science communication rewards exactly this.`, score: 88, tags: ['Register fluency','Depth'], unexpected: false },
+        { title: 'Product Marketing Lead', why: `Product marketing is translation — take the technical reality and render it for the person who needs to care. This profile does it naturally.`, score: 85, tags: ['Audience modelling','Clarity'], unexpected: false },
+        { title: 'Executive Communications Director', why: `Translating strategy for boards, staff, press, and investors simultaneously requires exactly the register fluency this profile demonstrates.`, score: 82, tags: ['Translation','Range'], unexpected: true }
+      ],
+      quote: `This person is the one everyone sends the draft to before it goes out. Their edits do not just fix — they clarify.`,
+      insight: `The high vocabulary (${vocab}/100) might suggest specialist knowledge. Combined with the deep-dive rate (${deep}%), it is something different — the range needed to translate accurately across contexts. Specialists know one language. Translators know several.`
+    }
+
+  }; // end profiles
+
+  const chosen = profiles[archetype] || profiles['The Synthesiser'];
+
+  // Score careers independently from signals
+  const scoredCareers = scoreCareerRoles(m);
+  const careerFits = scoredCareers.map((r, i) => ({
+    title: r.title,
+    why: `Signal score ${r.score} from ${m.userMessages} messages across ${spn} months — the data maps to this role.`,
+    score: Math.min(97, Math.max(68, r.score * 7 + 45)),
+    tags: [r.domain],
+    unexpected: i === 3
+  }));
 
   return {
-    profileName, thinkerType,
-    summary: `This thinker engages at depth rather than surface level, averaging ${m.avgWordsPerMessage} words per message and challenging AI responses ${m.pushbackRatio}% of the time. Only ${m.questionRatio}% of messages are questions — the rest are propositions, hypotheses, and challenges. This is someone who arrives with a position and tests it, not someone who arrives empty-handed. Across ${m.totalConversations} conversations, the pattern is consistent: a mind that thinks in arguments, not fragments.`,
-    signals: [
-      { name: 'Critical Independence', score: Math.min(95,p+50), label: `challenges AI in ${p}% of exchanges` },
-      { name: 'Depth of Engagement', score: d, label: `${m.avgWordsPerMessage} words per message average` },
-      { name: 'Intellectual Assertion', score: Math.min(95,100-q+20), label: `only ${q}% of messages are questions` },
-      { name: 'Human Intelligence', score: Math.min(90,p+40), label: 'thinks about incentives and people' },
-      { name: 'Cross-Domain Fluency', score: Math.min(88,d-5), label: 'moves between domains naturally' },
-      { name: 'Cognitive Stamina', score: Math.min(92, Math.round((m.userMessages/500)*100)+40), label: `${m.totalConversations} sessions sustained at depth` }
-    ],
-    traits: ['Argues before asking','Hypothesis-first','Night-mode cognition','Contrarian by default','Long-game orientation','Independent thinker','Practitioner mindset','Sustained curiosity'],
-    careerFits: [
-      { title: 'Strategic Advisor', why: `The ${p}% pushback rate and ${m.avgWordsPerMessage}-word average signal someone whose value is judgment, not execution. Advisors need to hold a position under pressure — this profile does it naturally.`, score: 94, tags: ['Critical independence','Depth','Stamina'], unexpected: true },
-      { title: 'High-Stakes Partnerships Lead', why: `Partnerships between organisations with different logics require someone who can hold both sides simultaneously. The combination of assertive thinking and sustained engagement over ${m.spanMonths} months is exactly that.`, score: 89, tags: ['Long-game stamina','Cross-domain fluency'], unexpected: true },
-      { title: 'Founder', why: `Independent, nocturnal, contrarian, rejection-resistant — this is a founder's cognitive profile. The question isn't capability. It's whether the right problem has appeared yet.`, score: 85, tags: ['Independence','Stamina','Contrarian instinct'], unexpected: false }
-    ],
-    employerQuote: `This profile demonstrates the kind of rigorous, independent thinking that cannot be trained — built consistently, at depth, over ${m.spanMonths} months.`,
-    hiddenInsight: `The low question ratio (${q}%) combined with the high pushback rate (${p}%) reveals a Socratic pattern — positions are proposed to see if they survive pressure, not to receive an answer. That's rare, and it's the cognitive signature of someone who thinks for themselves.`
+    profileName: archetype,
+    thinkerType: archetype,
+    summary: chosen.summary,
+    signals: chosen.signals,
+    traits: chosen.traits,
+    careerFits,
+    employerQuote: chosen.quote,
+    hiddenInsight: chosen.insight,
+    cultureNarrative: ''
   };
 }
 
 // ── RENDER RESULTS ──
 
 // ── CULTURE MAP ──
-function computeCultureMap(metadata, profile) {
-  // Each dimension is a value 0-100 where 0 = left label, 100 = right label
-  const p = metadata.pushbackRatio || 0;
-  const q = metadata.questionRatio || 0;
-  const avg = metadata.avgWordsPerMessage || 0;
-  const depth = metadata.depthScore || 50;
-  const night = metadata.nightPct || 0;
-  const deep = metadata.deepDiveRatio || 0;
-  const long = metadata.longMessagePct || 0;
-  const span = metadata.spanMonths || 0;
+function computeCultureMap(metadata) {
+  // Each dimension: 0 = left pole, 100 = right pole
+  const p   = metadata.pushbackRatio     || 0;
+  const q   = metadata.questionRatio     || 0;
+  const avg = metadata.avgWordsPerMessage|| 0;
+  const dep = metadata.depthScore        || 50;
+  const ngt = metadata.nightPct          || 0;
+  const dv  = metadata.deepDiveRatio     || 0;
+  const lng = metadata.longMessagePct    || 0;
+  const spn = metadata.spanMonths        || 1;
+  const vol = Math.min(100, (metadata.userMessages || 0) / 15);
+
+  const clamp = (v) => Math.min(95, Math.max(5, Math.round(v)));
 
   const dims = [
     {
-      left: 'Cool & Unbothered',
-      right: 'Intense & All-In',
-      pos: Math.min(95, Math.max(5, Math.round((p * 0.5) + (deep * 0.3) + (long * 0.2)))),
+      id: 'thinkingMode',
+      left: 'Solo Processor',
+      right: 'Social Thinker',
+      pos: clamp((ngt * 0.5) + ((100 - q) * 0.3) + (avg * 0.2)),
       verdict: (v) => v < 35
-        ? `<strong>Cool & Unbothered</strong> — You don't spiral. You process, decide, and move on.`
+        ? `<strong>Solo Processor</strong> — You arrive with conclusions. Thinking happens before the room sees it.`
         : v > 65
-        ? `<strong>Intense & All-In</strong> — When something catches you, you don't let go easily.`
-        : `<strong>Balanced</strong> — Measured by default, intense when it matters.`
+        ? `<strong>Social Thinker</strong> — You build ideas in conversation. The room is part of your process.`
+        : `<strong>Context-switcher</strong> — You shift between both modes depending on what the problem needs.`
     },
     {
-      left: 'Big Picture',
-      right: 'Deep in the Weeds',
-      pos: Math.min(95, Math.max(5, Math.round((depth * 0.4) + (avg * 0.4) + (deep * 0.2)))),
+      id: 'ambiguityResponse',
+      left: 'Needs Clarity First',
+      right: 'Moves Into Fog',
+      pos: clamp((dv * 0.5) + (q * 0.3) + ((100 - avg) * 0.2)),
       verdict: (v) => v < 35
-        ? `<strong>Big Picture</strong> — You think in systems and strategy, not granular detail.`
+        ? `<strong>Needs Clarity First</strong> — You define the problem before you touch it. Ambiguity is something you resolve, not inhabit.`
         : v > 65
-        ? `<strong>Deep in the Weeds</strong> — You're not satisfied until you understand the mechanics.`
-        : `<strong>Fluent in both</strong> — You can zoom in and out. Rare and valuable.`
+        ? `<strong>Moves Into Fog</strong> — You think before the map is complete. Fog is not a blocker — it is where you do your best work.`
+        : `<strong>Adaptive</strong> — You tolerate ambiguity when needed but prefer clear parameters when available.`
     },
     {
-      left: 'Solo Thinker',
-      right: 'Room Energiser',
-      pos: Math.min(95, Math.max(5, Math.round(100 - (night * 0.6) - (long * 0.2) + (q * 0.3)))),
+      id: 'feedbackOrientation',
+      left: 'Seeks Confirmation',
+      right: 'Seeks Friction',
+      pos: clamp((p * 0.6) + (dv * 0.4)),
       verdict: (v) => v < 35
-        ? `<strong>Solo Thinker</strong> — Your best ideas arrive alone. You think before you speak.`
+        ? `<strong>Seeks Confirmation</strong> — You use AI to refine what you already think. Alignment over challenge.`
         : v > 65
-        ? `<strong>Room Energiser</strong> — You think out loud. You make rooms sharper.`
-        : `<strong>Selective collaborator</strong> — You choose when to go deep alone vs when to open it up.`
+        ? `<strong>Seeks Friction</strong> — You use AI as a sparring partner. You trust ideas that survive pressure more than ones that do not.`
+        : `<strong>Selective challenger</strong> — You push back when it genuinely matters, not as a reflex.`
     },
     {
-      left: 'Challenger',
-      right: 'Builder',
-      pos: Math.min(95, Math.max(5, Math.round(100 - (p * 0.7) - (q * 0.2)))),
+      id: 'timeHorizon',
+      left: 'Present-Focused',
+      right: 'Long-Game Thinker',
+      pos: clamp((spn * 3) + (ngt * 0.4) + (dep * 0.3)),
       verdict: (v) => v < 35
-        ? `<strong>Challenger</strong> — You question the brief before you answer it. You make things better.`
+        ? `<strong>Present-Focused</strong> — Your cognitive energy goes into what is in front of you. Execution over anticipation.`
         : v > 65
-        ? `<strong>Builder</strong> — You take the goal and execute. Momentum over debate.`
-        : `<strong>Strategic challenger</strong> — You challenge what matters, build what works.`
+        ? `<strong>Long-Game Thinker</strong> — You think in years, not quarters. The long game is where your attention naturally goes.`
+        : `<strong>Balanced horizon</strong> — You hold near and far simultaneously — tactical when needed, strategic when possible.`
     },
     {
-      left: 'Slow Burn',
-      right: 'Fast Fire',
-      pos: Math.min(95, Math.max(5, Math.round(100 - (span * 1.5) + (q * 0.3) + (p * 0.2)))),
+      id: 'knowledgeMode',
+      left: 'Breadth Collector',
+      right: 'Depth Miner',
+      pos: clamp((avg * 0.4) + (lng * 0.4) + ((100 - q) * 0.2)),
       verdict: (v) => v < 35
-        ? `<strong>Slow Burn</strong> — You let ideas develop. Patience is a competitive advantage for you.`
+        ? `<strong>Breadth Collector</strong> — Wide not deep. You collect signals from everywhere and synthesise fast.`
         : v > 65
-        ? `<strong>Fast Fire</strong> — You iterate quickly. Speed is how you learn.`
-        : `<strong>Adaptable pace</strong> — You match the energy of the situation.`
+        ? `<strong>Depth Miner</strong> — You drill. One topic at a time, until you understand the mechanics, not just the surface.`
+        : `<strong>Range with depth</strong> — You scan wide but commit to depth when something earns it.`
+    },
+    {
+      id: 'pressureResponse',
+      left: 'Needs Space to Think',
+      right: 'Sharpens Under Pressure',
+      pos: clamp(((100 - ngt) * 0.4) + (vol * 0.3) + ((100 - avg) * 0.3)),
+      verdict: (v) => v < 35
+        ? `<strong>Needs Space to Think</strong> — Your best thinking happens with time. Pressure compresses your process in ways that cost quality.`
+        : v > 65
+        ? `<strong>Sharpens Under Pressure</strong> — Deadlines focus you. Constraints produce your clearest thinking.`
+        : `<strong>Situational</strong> — You adapt your pace to what the work demands.`
+    },
+    {
+      id: 'communicationRegister',
+      left: 'Shows the Working',
+      right: 'Delivers the Answer',
+      pos: clamp(((100 - avg) * 0.4) + ((100 - dv) * 0.3) + ((100 - lng) * 0.3)),
+      verdict: (v) => v < 35
+        ? `<strong>Shows the Working</strong> — You think out loud. Your process is visible. People understand not just what you concluded but how.`
+        : v > 65
+        ? `<strong>Delivers the Answer</strong> — You lead with the conclusion. Your communication is compressed and confident.`
+        : `<strong>Context-aware</strong> — You calibrate how much process to show based on who needs to understand it.`
     }
   ];
 
-  // Culture environments derived from overall profile
-  const isIntense = dims[0].pos > 55;
-  const isDeep = dims[1].pos > 55;
-  const isSolo = dims[2].pos < 45;
-  const isChallenger = dims[3].pos < 45;
-  const isFast = dims[4].pos > 55;
+  // Return dimension positions as a flat object for passing to API
+  const dimScores = {};
+  dims.forEach(d => { dimScores[d.id] = d.pos; });
 
-  const thrives = [];
-  const drains = [];
-
-  if (isChallenger) { thrives.push('Roles with creative latitude'); drains.push('Heavy process and bureaucracy'); }
-  if (isIntense) { thrives.push('High-stakes, high-ownership work'); drains.push('Roles without real responsibility'); }
-  if (isSolo) { thrives.push('Deep work environments'); drains.push('Constant meetings and interruptions'); }
-  if (isDeep) { thrives.push('Complex problem domains'); drains.push('Surface-level, repetitive tasks'); }
-  if (isFast) { thrives.push('Fast-moving startups'); drains.push('Slow institutional decision-making'); }
-  if (!isFast) { thrives.push('Research and strategy roles'); drains.push('Pressure to ship before thinking'); }
-  if (!isSolo) { thrives.push('Collaborative, energetic teams'); drains.push('Isolated, heads-down roles'); }
-
-  return { dims, thrives: thrives.slice(0,3), drains: drains.slice(0,3) };
+  return { dims, dimScores };
 }
 
 function renderCultureMap(metadata, profile) {
-  const { dims, thrives, drains } = computeCultureMap(metadata, profile);
+  const { dims } = computeCultureMap(metadata);
   const dimsEl = document.getElementById('cultureDims');
-  const envEl = document.getElementById('cultureEnv');
+  const envEl  = document.getElementById('cultureEnv');
 
-  dimsEl.innerHTML = dims.map((d, i) => {
-    const isLeft = d.pos < 45;
-    const isRight = d.pos > 55;
+  dimsEl.innerHTML = dims.map((d) => {
+    const isLeft  = d.pos < 40;
+    const isRight = d.pos > 60;
     return `
     <div class="culture-dim">
       <div class="culture-labels">
-        <span class="culture-label-l ${isLeft ? 'active' : ''}">${d.left}</span>
+        <span class="culture-label-l ${isLeft  ? 'active' : ''}">${d.left}</span>
         <span class="culture-label-r ${isRight ? 'active' : ''}">${d.right}</span>
       </div>
       <div class="culture-track">
-        <div class="culture-fill" data-pos="${d.pos}" style="width:0;left:${d.pos <= 50 ? d.pos : 50}%;right:${d.pos > 50 ? (100-d.pos) : 50}%"></div>
-        <div class="culture-dot" data-pos="${d.pos}" style="left:50%"></div>
+        <div class="culture-fill" data-pos="${d.pos}" style="width:0;left:${d.pos<=50?d.pos:50}%;right:${d.pos>50?(100-d.pos):50}%"></div>
+        <div class="culture-dot"  data-pos="${d.pos}" style="left:50%"></div>
       </div>
       <div class="culture-verdict">${d.verdict(d.pos)}</div>
     </div>`;
   }).join('');
 
-  envEl.innerHTML = `
-    <div class="culture-env-title">Where you thrive vs where you drain</div>
-    <div class="env-cols">
-      <div class="env-col thrives">
-        <h5>✓ Thrives in</h5>
-        ${thrives.map(t => `<div class="env-item">${t}</div>`).join('')}
-      </div>
-      <div class="env-col drains">
-        <h5>✗ Drained by</h5>
-        ${drains.map(t => `<div class="env-item">${t}</div>`).join('')}
-      </div>
-    </div>`;
+  // Render culture narrative (Claude-generated) or fallback
+  const narrative = profile.cultureNarrative || '';
+  if (narrative) {
+    envEl.innerHTML = `
+      <div class="culture-env-title">Where you do your best work</div>
+      <p class="culture-narrative">${narrative}</p>`;
+  } else {
+    envEl.innerHTML = '';
+  }
 
   // Animate dots after render
   setTimeout(() => {
@@ -1583,14 +2366,45 @@ function renderResults(profile, metadata) {
   // Summary
   document.getElementById('rSummary').textContent = profile.summary;
 
-  // Night owl
+  // Time-of-day mind card
   const peakH = parseInt(Object.entries(metadata.hourCount||{}).sort((a,b)=>b[1]-a[1])[0]?.[0]);
-  const isNightOwl = [22,23,0,1,2].includes(peakH);
   const nightCallout = document.getElementById('nightCallout');
-  if (isNightOwl) {
-    document.getElementById('nightText').textContent = `Peak activity at ${metadata.peakHours}. ${metadata.nightPct}% of all messages sent between 10pm and 2am. This is not a 9-to-5 thinker — ideas arrive at depth when distractions disappear.`;
+  const spnLabel = metadata.spanMonths >= 12
+    ? `The ${metadata.spanMonths}-month pattern shows this has never changed. It is not a phase. It is a cognitive schedule.`
+    : `This pattern holds across ${metadata.spanMonths} months of data.`;
+
+  if ([21,22,23,0,1,2].includes(peakH)) {
+    const peakLabel = peakH === 0 ? 'Midnight' : peakH === 21 ? '9pm' : peakH === 22 ? '10pm' : peakH === 23 ? '11pm' : peakH === 1 ? '1am' : '2am';
+    const hourDesc = peakH === 21 ? 'Not midnight, not 1am — 9pm. The hour when the day has finished but the mind has not.'
+      : peakH === 22 ? 'Not midnight, not 1am — 10pm. The hour when the day has finished but the mind has not.'
+      : peakH === 23 ? '11pm. Not the small hours — the threshold. The last hour before the world goes quiet.'
+      : peakH === 0  ? 'Midnight exactly. The symbolic hour — and apparently the cognitive one too.'
+      : peakH === 1  ? '1am. Past the threshold. This is not evening thinking — it is night thinking.'
+      : '2am. The deepest night hour. Few people operate here by choice.';
+    nightCallout.querySelector('.c-icon').textContent = '🌙';
+    nightCallout.querySelector('.c-title').textContent = 'The Midnight Mind';
+    document.getElementById('nightText').textContent = `${peakLabel} is peak. ${hourDesc} This is a structured night thinker — not chaotic nocturnal energy but deliberate evening cognition. ${spnLabel}`;
+
+  } else if ([18,19,20].includes(peakH)) {
+    const peakLabel = peakH === 18 ? '6pm' : peakH === 19 ? '7pm' : '8pm';
+    nightCallout.querySelector('.c-icon').textContent = '🌆';
+    nightCallout.querySelector('.c-title').textContent = 'The Evening Mind';
+    nightCallout.className = nightCallout.className.replace('night','evening');
+    document.getElementById('nightText').textContent = `${peakLabel} is peak. The working day is over but the thinking is not. This is someone who uses the transition hour — when obligations end and focus returns — as their primary cognitive window. Not a night owl, not a morning person. An evening thinker. ${spnLabel}`;
+
+  } else if ([5,6,7,8,9].includes(peakH)) {
+    const peakLabel = ['5am','6am','7am','8am','9am'][peakH - 5];
+    nightCallout.querySelector('.c-icon').textContent = '🌅';
+    nightCallout.querySelector('.c-title').textContent = 'The Morning Mind';
+    nightCallout.className = nightCallout.className.replace('night','morning');
+    document.getElementById('nightText').textContent = `${peakLabel} is peak. Before the noise starts. This is someone whose best thinking happens in the first window of the day — before meetings, before messages, before the world has formed opinions. The mind is sharpest when the context is still clean. ${spnLabel}`;
+
   } else {
-    nightCallout.style.display = 'none';
+    const peakLabel = peakH !== undefined ? `${peakH}:00` : 'midday';
+    nightCallout.querySelector('.c-icon').textContent = '☀️';
+    nightCallout.querySelector('.c-title').textContent = 'The Daytime Mind';
+    nightCallout.className = nightCallout.className.replace('night','daytime');
+    document.getElementById('nightText').textContent = `${peakLabel} is peak. This is a daytime thinker — someone whose cognitive rhythm aligns with the working world. Collaboration, iteration, and real-time input are natural strengths. Note: if this does not feel accurate, your export may have captured more work-related sessions than personal ones, which can push peak hours toward business hours.`;
   }
 
   // Signals
@@ -1605,6 +2419,8 @@ function renderResults(profile, metadata) {
         </div>
         <div class="bar-t"><div class="bar-f" data-score="${s.score}"></div></div>
         <div class="sig-obs">${s.label}</div>
+        ${s.growth ? `<div class="sig-growth"><div class="sig-growth-lbl">Growth edge</div>${s.growth}</div>` : ''}
+        ${s.managerNote ? `<div class="sig-manager"><div class="sig-manager-lbl">For your manager</div>${s.managerNote}</div>` : ''}
       </div>`;
   });
 
@@ -1668,10 +2484,15 @@ function saveProfile() {
   btn.textContent = 'Saving...';
   btn.disabled = true;
 
+  const realName = (document.getElementById('userRealName')?.value || '').trim();
+  const profileToSave = realName
+    ? { ..._currentProfile, realName }
+    : _currentProfile;
+
   fetch('/api/save', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ profile: _currentProfile, metadata: _currentMetadata })
+    body: JSON.stringify({ profile: profileToSave, metadata: _currentMetadata })
   })
   .then(r => r.json())
   .then(data => {
@@ -1697,8 +2518,494 @@ function copyShareUrl() {
   navigator.clipboard.writeText(url).then(() => {
     const btn = event.target;
     btn.textContent = 'Copied ✓';
-    setTimeout(() => btn.textContent = 'Copy', 2000);
+    setTimeout(() => btn.textContent = 'Copy link', 2000);
   });
+}
+
+function shareLinkedIn() {
+  const url = document.getElementById('shareUrl').value;
+  // LinkedIn feed share — the only endpoint that still works reliably
+  window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(url), '_blank', 'width=600,height=600');
+}
+
+function openPDFPicker() {
+  if (!_currentProfile) return;
+  const modal = document.getElementById('pdfModal');
+  modal.style.display = 'flex';
+}
+
+function closePDFPicker() {
+  document.getElementById('pdfModal').style.display = 'none';
+}
+
+function generatePDF() {
+  closePDFPicker();
+  if (!_currentProfile) return;
+  const realName = (document.getElementById('userRealName')?.value || '').trim();
+
+  // Read checkbox selections
+  const inc = {
+    summary:  document.getElementById('pdf_summary')?.checked !== false,
+    culture:  document.getElementById('pdf_culture')?.checked !== false,
+    signals:  document.getElementById('pdf_signals')?.checked !== false,
+    traits:   document.getElementById('pdf_traits')?.checked !== false,
+    careers:  document.getElementById('pdf_careers')?.checked !== false,
+    employer: document.getElementById('pdf_employer')?.checked !== false,
+    insight:  document.getElementById('pdf_insight')?.checked !== false,
+  };
+
+  // Show/hide sections based on checkboxes before capture
+  const sectionMap = {
+    summary:  document.querySelector('.summary-card'),
+    culture:  document.getElementById('cultureCard'),
+    signals:  document.getElementById('signalsGrid'),
+    traits:   document.querySelector('.traits-wrap'),
+    careers:  document.querySelector('.career-card'),
+    employer: document.querySelector('.employer-card'),
+    insight:  document.querySelector('.callout.insight'),
+  };
+  const hidden = [];
+  Object.entries(sectionMap).forEach(([key, el]) => {
+    if (el && !inc[key]) { el.dataset.pdfHidden = '1'; el.style.display = 'none'; hidden.push(el); }
+  });
+
+  // Load both libraries
+  function loadScript(src, cb) {
+    if (document.querySelector(`script[src="${src}"]`) && window.html2canvas) { cb(); return; }
+    const s = document.createElement('script'); s.src = src;
+    s.onload = cb; s.onerror = () => { restoreSections(); alert('Failed to load library.'); };
+    document.head.appendChild(s);
+  }
+
+  function restoreSections() {
+    hidden.forEach(el => { el.style.display = ''; delete el.dataset.pdfHidden; });
+  }
+
+  function doCapture() {
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', () => {
+      const profileEl = document.getElementById('profileResult');
+      if (!profileEl) { restoreSections(); alert('Profile not found.'); return; }
+
+      // Show a loading indicator
+      const loader = document.createElement('div');
+      loader.id = 'pdfLoader';
+      loader.style.cssText = 'position:fixed;inset:0;background:rgba(247,245,240,0.92);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:Geist,sans-serif;';
+      loader.innerHTML = '<div style="width:40px;height:40px;border:3px solid #e0ddd8;border-top-color:#1a3a2a;border-radius:50%;animation:spin 0.8s linear infinite"></div><div style="font-size:14px;color:#1a3a2a;font-weight:500">Generating PDF…</div>';
+      document.body.appendChild(loader);
+
+      // Add spin keyframe if not present
+      if (!document.getElementById('spinStyle')) {
+        const st = document.createElement('style'); st.id = 'spinStyle';
+        st.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+        document.head.appendChild(st);
+      }
+
+      setTimeout(() => {
+        html2canvas(profileEl, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#f7f5f0',
+          logging: false,
+          windowWidth: 860,
+          onclone: (clonedDoc) => {
+            // Trigger bar animations in clone
+            clonedDoc.querySelectorAll('.bar-fill').forEach(b => {
+              b.style.transition = 'none';
+              b.style.width = b.dataset.score + '%';
+            });
+          }
+        }).then(canvas => {
+          restoreSections();
+          document.body.removeChild(loader);
+
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+          const pageW = 210;
+          const pageH = 297;
+          const margin = 10;
+          const imgW = pageW - margin * 2;
+
+          const canvasW = canvas.width;
+          const canvasH = canvas.height;
+          // Scale factor: mm per pixel
+          const mmPerPx = imgW / canvasW;
+          const totalImgH = canvasH * mmPerPx;
+
+          // Split across pages
+          let yOffset = 0;
+          const sliceH = (pageH - margin * 2) / mmPerPx; // pixels per page
+
+          let pageNum = 0;
+          while (yOffset < canvasH) {
+            if (pageNum > 0) pdf.addPage();
+
+            const sliceCanvas = document.createElement('canvas');
+            sliceCanvas.width = canvasW;
+            sliceCanvas.height = Math.min(sliceH, canvasH - yOffset);
+            const ctx = sliceCanvas.getContext('2d');
+            ctx.drawImage(canvas, 0, -yOffset);
+
+            const imgData = sliceCanvas.toDataURL('image/jpeg', 0.92);
+            const sliceHmm = sliceCanvas.height * mmPerPx;
+            pdf.addImage(imgData, 'JPEG', margin, margin, imgW, sliceHmm);
+
+            yOffset += sliceH;
+            pageNum++;
+          }
+
+          const filename = realName
+            ? 'thinkledger-' + realName.toLowerCase().replace(/\s+/g, '-') + '.pdf'
+            : 'thinkledger-profile.pdf';
+          pdf.save(filename);
+        }).catch(err => {
+          restoreSections();
+          document.body.removeChild(loader);
+          console.error(err);
+          alert('PDF generation failed. Try again.');
+        });
+      }, 100);
+    });
+  }
+
+  // Load html2canvas first
+  if (window.html2canvas) {
+    doCapture();
+  } else {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload = doCapture;
+    s.onerror = () => { restoreSections(); alert('Failed to load screenshot library.'); };
+    document.head.appendChild(s);
+  }
+}
+
+
+function shareTwitter() {
+  const url = document.getElementById('shareUrl').value;
+  const p = _currentProfile || {};
+  const archetype = p.thinkerType || 'a thinker';
+  const text = encodeURIComponent('AI can fake your CV. It cannot fake 12 months of how you actually think. I just got my cognitive profile — ' + archetype + '. Built from metadata only, no content read.');
+  window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + encodeURIComponent(url), '_blank', 'width=600,height=400');
+}
+
+function shareFacebook() {
+  const url = document.getElementById('shareUrl').value;
+  window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank', 'width=600,height=500');
+}
+
+function shareWhatsApp() {
+  const url = document.getElementById('shareUrl').value;
+  const p = _currentProfile || {};
+  const archetype = p.thinkerType || 'a thinker';
+  const text = encodeURIComponent('AI can fake your CV. It cannot fake 12 months of how you actually think. I got my cognitive profile — ' + archetype + '. Check it out: ' + url);
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+
+function computeCultureDimsForCard(m) {
+  const pr=m.pushbackRatio||0, q=m.questionRatio||0, avg=m.avgWordsPerMessage||0;
+  const dep=m.depthScore||50, ngt=m.nightPct||0, dv=m.deepDiveRatio||0;
+  const lng=m.longMessagePct||0, spn=m.spanMonths||1;
+  const vol=Math.min(100,(m.userMessages||0)/15);
+  const cl=v=>Math.min(95,Math.max(5,Math.round(v)));
+  return [
+    {left:'Solo Processor',    right:'Social Thinker',         pos:cl((ngt*0.5)+((100-q)*0.3)+(avg*0.2))},
+    {left:'Needs Clarity',     right:'Moves Into Fog',         pos:cl((dv*0.5)+(q*0.3)+((100-avg)*0.2))},
+    {left:'Seeks Confirmation',right:'Seeks Friction',         pos:cl((pr*0.6)+(dv*0.4))},
+    {left:'Present-Focused',   right:'Long-Game Thinker',      pos:cl((spn*3)+(ngt*0.4)+(dep*0.3))},
+    {left:'Breadth Collector', right:'Depth Miner',            pos:cl((avg*0.4)+(lng*0.4)+((100-q)*0.2))},
+    {left:'Needs Space',       right:'Sharpens Under Pressure',pos:cl(((100-ngt)*0.4)+(vol*0.3)+((100-avg)*0.3))},
+    {left:'Shows Working',     right:'Delivers the Answer',    pos:cl(((100-avg)*0.4)+((100-dv)*0.3)+((100-lng)*0.3))},
+  ];
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  let lines = [];
+  for (let w of words) {
+    const test = line + (line ? ' ' : '') + w;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push({text: line, x, y});
+      line = w;
+      y += lineHeight;
+    } else { line = test; }
+  }
+  if (line) lines.push({text: line, x, y});
+  lines.forEach(l => ctx.fillText(l.text, l.x, l.y));
+  return y;
+}
+
+function downloadImageCard() {
+  const p = _currentProfile || {};
+  const m = _currentMetadata || {};
+  const shareUrl = document.getElementById('shareUrl')?.value || 'thinkledger.vercel.app';
+  const dims = computeCultureDimsForCard(m);
+
+  // ── CARD 1: SPECTRUM — dark 1080×1080 for Instagram/TikTok ──────────────────
+  const c1 = document.getElementById('shareCanvas');
+  c1.width = 1080; c1.height = 1080;
+  const cx = c1.getContext('2d');
+
+  // Background
+  cx.fillStyle = '#0a0a08';
+  cx.fillRect(0, 0, 1080, 1080);
+
+  // Gold top bar
+  cx.fillStyle = '#c9a84c';
+  cx.fillRect(0, 0, 1080, 5);
+
+  // Brand
+  cx.fillStyle = '#c9a84c';
+  cx.font = '500 26px Georgia, serif';
+  cx.fillText('ThinkLedger', 72, 78);
+
+  // Archetype label (small caps style)
+  cx.fillStyle = '#5a5450';
+  cx.font = '400 22px sans-serif';
+  cx.fillText('COGNITIVE PROFILE', 72, 112);
+
+  // Big archetype name
+  cx.fillStyle = '#f2ede4';
+  cx.font = 'italic 600 68px Georgia, serif';
+  const pName = p.profileName || 'Thinker Profile';
+  const pWords = pName.split(' ');
+  let pLine = '', pY = 210;
+  for (let w of pWords) {
+    const test = pLine + (pLine ? ' ' : '') + w;
+    if (cx.measureText(test).width > 930 && pLine) {
+      cx.fillText(pLine, 72, pY); pLine = w; pY += 78;
+    } else { pLine = test; }
+  }
+  cx.fillText(pLine, 72, pY);
+
+  // Thinker type in gold italic
+  cx.fillStyle = '#c9a84c';
+  cx.font = 'italic 400 30px Georgia, serif';
+  cx.fillText(p.thinkerType || '', 72, pY + 50);
+
+  // Thin divider
+  cx.strokeStyle = '#2a2826';
+  cx.lineWidth = 1;
+  cx.beginPath(); cx.moveTo(72, pY + 82); cx.lineTo(1008, pY + 82); cx.stroke();
+
+  // SPECTRUM BARS — 7 dimensions
+  const barStartY = pY + 120;
+  const barH = 8;
+  const rowH = (1080 - barStartY - 100) / 7;
+  const trackX = 72, trackW = 936;
+
+  dims.forEach((d, i) => {
+    const ry = barStartY + i * rowH;
+
+    // Left label
+    const isLeft = d.pos <= 50;
+    cx.fillStyle = isLeft ? '#f2ede4' : '#3a3632';
+    cx.font = isLeft ? '500 18px sans-serif' : '400 18px sans-serif';
+    cx.textAlign = 'left';
+    cx.fillText(d.left, trackX, ry + 14);
+
+    // Right label
+    cx.fillStyle = !isLeft ? '#f2ede4' : '#3a3632';
+    cx.font = !isLeft ? '500 18px sans-serif' : '400 18px sans-serif';
+    cx.textAlign = 'right';
+    cx.fillText(d.right, trackX + trackW, ry + 14);
+
+    // Track
+    const ty = ry + 26;
+    cx.fillStyle = '#1e1c1a';
+    cx.beginPath();
+    cx.roundRect(trackX, ty, trackW, barH, 4);
+    cx.fill();
+
+    // Centre tick
+    cx.fillStyle = '#2e2c2a';
+    cx.fillRect(trackX + trackW/2 - 1, ty - 2, 2, barH + 4);
+
+    // Fill from centre to dot
+    const dotX = trackX + (d.pos / 100) * trackW;
+    const fillX = d.pos <= 50 ? dotX : trackX + trackW/2;
+    const fillW = Math.abs(dotX - (trackX + trackW/2));
+    cx.fillStyle = '#c9a84c';
+    cx.beginPath();
+    cx.roundRect(fillX, ty, fillW, barH, 2);
+    cx.fill();
+
+    // Dot
+    cx.fillStyle = '#c9a84c';
+    cx.beginPath();
+    cx.arc(dotX, ty + barH/2, 11, 0, Math.PI*2);
+    cx.fill();
+    cx.fillStyle = '#0a0a08';
+    cx.beginPath();
+    cx.arc(dotX, ty + barH/2, 5, 0, Math.PI*2);
+    cx.fill();
+  });
+
+  cx.textAlign = 'left';
+
+  // URL footer
+  cx.fillStyle = '#141412';
+  cx.fillRect(0, 1032, 1080, 48);
+  cx.fillStyle = '#4a4640';
+  cx.font = '400 20px sans-serif';
+  cx.fillText(shareUrl, 72, 1062);
+  cx.textAlign = 'right';
+  cx.fillStyle = '#3a3632';
+  cx.fillText('No content read or stored', 1008, 1062);
+  cx.textAlign = 'left';
+
+  // Download card 1
+  const dl1 = document.createElement('a');
+  dl1.download = 'thinkledger-spectrum.png';
+  dl1.href = c1.toDataURL('image/png');
+  dl1.click();
+
+  // ── CARD 2: IDENTITY — light 1200×627 for LinkedIn/Twitter ────────────────
+  setTimeout(() => {
+    const c2 = document.getElementById('shareCanvas');
+    c2.width = 1200; c2.height = 627;
+    const lx = c2.getContext('2d');
+
+    // Background — warm cream
+    lx.fillStyle = '#f7f4ee';
+    lx.fillRect(0, 0, 1200, 627);
+
+    // Forest green left accent bar
+    lx.fillStyle = '#1a3a2a';
+    lx.fillRect(0, 0, 6, 627);
+
+    // Right panel — white card
+    lx.fillStyle = '#ffffff';
+    lx.shadowColor = 'rgba(0,0,0,0.06)';
+    lx.shadowBlur = 20;
+    lx.fillRect(680, 40, 480, 547);
+    lx.shadowBlur = 0;
+
+    // Brand — top left
+    lx.fillStyle = '#1a3a2a';
+    lx.font = '500 22px Georgia, serif';
+    lx.fillText('ThinkLedger', 52, 66);
+
+    // Big archetype name — left panel
+    lx.fillStyle = '#0a0a08';
+    lx.font = 'italic 600 72px Georgia, serif';
+    const name2 = p.profileName || 'Thinker';
+    const n2words = name2.split(' ');
+    let n2line = '', n2y = 190;
+    for (let w of n2words) {
+      const test = n2line + (n2line ? ' ' : '') + w;
+      if (lx.measureText(test).width > 580 && n2line) {
+        lx.fillText(n2line, 52, n2y); n2line = w; n2y += 82;
+      } else { n2line = test; }
+    }
+    lx.fillText(n2line, 52, n2y);
+
+    // Thinker type
+    lx.fillStyle = '#1a3a2a';
+    lx.font = 'italic 400 26px Georgia, serif';
+    lx.fillText(p.thinkerType || '', 52, n2y + 46);
+
+    // Divider line
+    lx.strokeStyle = '#e0dbd0';
+    lx.lineWidth = 1;
+    lx.beginPath(); lx.moveTo(52, n2y + 76); lx.lineTo(620, n2y + 76); lx.stroke();
+
+    // First sentence of summary
+    const sent = ((p.summary || '').split('.')[0] || '') + '.';
+    lx.fillStyle = '#6b6560';
+    lx.font = '300 italic 20px Georgia, serif';
+    wrapText(lx, sent, 52, n2y + 112, 580, 32);
+
+    // Stats row — bottom left
+    const stats = [
+      { v: (m.userMessages||0).toLocaleString(), l: 'messages' },
+      { v: (m.spanMonths||'—') + ' mo', l: 'of data' },
+      { v: m.peakHours||'—', l: 'peak hour' },
+      { v: (m.pushbackRatio||0) + '%', l: 'pushback' },
+    ];
+    stats.forEach((s, i) => {
+      const sx = 52 + i * 148;
+      lx.fillStyle = '#1a3a2a';
+      lx.font = '600 28px Georgia, serif';
+      lx.fillText(s.v, sx, 542);
+      lx.fillStyle = '#9a9490';
+      lx.font = '400 15px sans-serif';
+      lx.fillText(s.l, sx, 564);
+    });
+
+    // Right panel content
+    const rp = 700;
+
+    // "How this mind works" label
+    lx.fillStyle = '#9a9490';
+    lx.font = '500 13px sans-serif';
+    lx.letterSpacing = '2px';
+    lx.fillText('HOW THIS MIND WORKS', rp, 90);
+
+    // Mini spectrum — 4 most distinctive dims (those furthest from centre)
+    const sorted = [...dims].sort((a,b) => Math.abs(b.pos-50) - Math.abs(a.pos-50));
+    const top4 = sorted.slice(0, 4);
+    const mBarW = 420, mBarH = 6;
+    const mStartY = 120;
+    const mRowH = 100;
+
+    top4.forEach((d, i) => {
+      const ry = mStartY + i * mRowH;
+      const isLeft = d.pos <= 50;
+
+      lx.fillStyle = isLeft ? '#1a3a2a' : '#c8c4bc';
+      lx.font = isLeft ? '500 15px sans-serif' : '400 15px sans-serif';
+      lx.textAlign = 'left';
+      lx.fillText(d.left, rp, ry + 14);
+
+      lx.fillStyle = !isLeft ? '#1a3a2a' : '#c8c4bc';
+      lx.font = !isLeft ? '500 15px sans-serif' : '400 15px sans-serif';
+      lx.textAlign = 'right';
+      lx.fillText(d.right, rp + mBarW, ry + 14);
+
+      lx.textAlign = 'left';
+
+      // Track
+      const ty = ry + 26;
+      lx.fillStyle = '#ede9e3';
+      lx.beginPath(); lx.roundRect(rp, ty, mBarW, mBarH, 3); lx.fill();
+
+      // Centre tick
+      lx.fillStyle = '#ddd8d0';
+      lx.fillRect(rp + mBarW/2 - 1, ty - 2, 2, mBarH + 4);
+
+      // Fill
+      const dotX2 = rp + (d.pos / 100) * mBarW;
+      const fX = d.pos <= 50 ? dotX2 : rp + mBarW/2;
+      const fW = Math.abs(dotX2 - (rp + mBarW/2));
+      lx.fillStyle = '#1a3a2a';
+      lx.beginPath(); lx.roundRect(fX, ty, fW, mBarH, 2); lx.fill();
+
+      // Dot
+      lx.fillStyle = '#1a3a2a';
+      lx.beginPath(); lx.arc(dotX2, ty + mBarH/2, 9, 0, Math.PI*2); lx.fill();
+      lx.fillStyle = '#f7f4ee';
+      lx.beginPath(); lx.arc(dotX2, ty + mBarH/2, 4, 0, Math.PI*2); lx.fill();
+
+      // Verdict text
+      const verdict = d.pos < 40 ? d.left : d.pos > 60 ? d.right : 'Balanced';
+      lx.fillStyle = '#9a9490';
+      lx.font = 'italic 13px Georgia, serif';
+      lx.fillText(verdict, rp, ty + mBarH + 22);
+    });
+
+    // URL — bottom right panel
+    lx.fillStyle = '#c8c4bc';
+    lx.font = '400 14px sans-serif';
+    lx.fillText(shareUrl, rp, 590);
+
+    // Download card 2
+    const dl2 = document.createElement('a');
+    dl2.download = 'thinkledger-identity.png';
+    dl2.href = c2.toDataURL('image/png');
+    dl2.click();
+  }, 600);
 }
 
 function copyLink() {
@@ -1717,159 +3024,11 @@ function resetTool() {
   document.getElementById('filesList').style.display = 'none';
   document.getElementById('filesListInner').innerHTML = '';
   document.getElementById('savedBanner').style.display = 'none';
+  const nameField = document.getElementById('userRealName');
+  if (nameField) nameField.value = '';
   _pendingFiles = [];
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
-
-<!-- PDF PICKER MODAL -->
-<div id="pdfModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:12px;padding:32px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;margin-bottom:6px;color:var(--ink)">Choose what to include</div>
-    <div style="font-size:12px;color:var(--mid);margin-bottom:24px">Uncheck anything you want to leave out</div>
-    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
-      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
-        <input type="checkbox" id="pdf_summary" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-        <div><div style="font-size:13px;font-weight:500;color:var(--ink)">Summary</div><div style="font-size:11px;color:var(--mid)">The core paragraph describing this thinking style</div></div>
-      </label>
-      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
-        <input type="checkbox" id="pdf_signals" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-        <div><div style="font-size:13px;font-weight:500;color:var(--ink)">Cognitive Signals</div><div style="font-size:11px;color:var(--mid)">Scored signals with labels</div></div>
-      </label>
-      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
-        <input type="checkbox" id="pdf_traits" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-        <div><div style="font-size:13px;font-weight:500;color:var(--ink)">Thinking Traits</div><div style="font-size:11px;color:var(--mid)">8 observable behavioural patterns</div></div>
-      </label>
-      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
-        <input type="checkbox" id="pdf_culture" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-        <div><div style="font-size:13px;font-weight:500;color:var(--ink)">Culture Map</div><div style="font-size:11px;color:var(--mid)">Cognitive dimensions with verdicts</div></div>
-      </label>
-      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
-        <input type="checkbox" id="pdf_careers" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-        <div><div style="font-size:13px;font-weight:500;color:var(--ink)">Career Fits</div><div style="font-size:11px;color:var(--mid)">4 roles the data maps to</div></div>
-      </label>
-      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
-        <input type="checkbox" id="pdf_employer" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-        <div><div style="font-size:13px;font-weight:500;color:var(--ink)">Employer Quote</div><div style="font-size:11px;color:var(--mid)">What a hiring manager would say</div></div>
-      </label>
-      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;">
-        <input type="checkbox" id="pdf_insight" checked style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;">
-        <div><div style="font-size:13px;font-weight:500;color:var(--ink)">Hidden Signal</div><div style="font-size:11px;color:var(--mid)">The thing the data reveals that's hard to articulate</div></div>
-      </label>
-    </div>
-    <div style="display:flex;gap:10px;">
-      <button onclick="generatePDF()" style="flex:1;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:500;font-family:'Geist',sans-serif;cursor:pointer;">Generate PDF</button>
-      <button onclick="closePDFPicker()" style="padding:12px 20px;background:none;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'Geist',sans-serif;cursor:pointer;color:var(--mid)">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<script>
-function openPDFPicker() {
-  const m = document.getElementById('pdfModal');
-  m.style.display = 'flex';
-}
-function closePDFPicker() {
-  document.getElementById('pdfModal').style.display = 'none';
-}
-
-function generatePDF() {
-  closePDFPicker();
-  if (!_currentProfile) { alert('No profile to save.'); return; }
-  const realName = (document.getElementById('userRealName')?.value || '').trim();
-
-  // Section ID map — what to hide based on unchecked boxes
-  const sectionMap = {
-    summary:  '.summary-card',
-    signals:  '.signals-grid',
-    traits:   '.traits-wrap',
-    culture:  '.culture-card',
-    careers:  '.career-card',
-    employer: '.employer-card',
-    insight:  '.callout.insight',
-  };
-  const hidden = [];
-  Object.entries(sectionMap).forEach(([key, sel]) => {
-    const checked = document.getElementById('pdf_' + key)?.checked !== false;
-    if (!checked) {
-      document.querySelectorAll(sel).forEach(el => {
-        el.style.display = 'none';
-        hidden.push(el);
-      });
-    }
-  });
-
-  // Loading spinner
-  const loader = document.createElement('div');
-  loader.style.cssText = 'position:fixed;inset:0;background:rgba(247,245,240,0.95);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:Geist,sans-serif;';
-  loader.innerHTML = '<div style="width:36px;height:36px;border:3px solid #e0ddd8;border-top-color:#1a3a2a;border-radius:50%;animation:pdfSpin 0.8s linear infinite"></div><div style="font-size:14px;color:#1a3a2a;font-weight:500">Generating PDF…</div>';
-  if (!document.getElementById('pdfSpinStyle')) {
-    const st = document.createElement('style'); st.id = 'pdfSpinStyle';
-    st.textContent = '@keyframes pdfSpin{to{transform:rotate(360deg)}}';
-    document.head.appendChild(st);
-  }
-  document.body.appendChild(loader);
-
-  function restore() {
-    hidden.forEach(el => el.style.display = '');
-    if (document.body.contains(loader)) document.body.removeChild(loader);
-  }
-
-  function doCapture() {
-    const target = document.getElementById('resultsState');
-    if (!target) { restore(); alert('Profile not found.'); return; }
-
-    setTimeout(() => {
-      html2canvas(target, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#f7f5f0',
-        logging: false,
-        windowWidth: 900,
-      }).then(canvas => {
-        restore();
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
-        const pageW = 210, pageH = 297, margin = 8;
-        const imgW = pageW - margin * 2;
-        const mmPerPx = imgW / canvas.width;
-        const sliceHpx = (pageH - margin * 2) / mmPerPx;
-
-        let offsetY = 0, page = 0;
-        while (offsetY < canvas.height) {
-          if (page > 0) pdf.addPage();
-          const sliceH = Math.min(sliceHpx, canvas.height - offsetY);
-          const slice = document.createElement('canvas');
-          slice.width = canvas.width;
-          slice.height = sliceH;
-          slice.getContext('2d').drawImage(canvas, 0, -offsetY);
-          pdf.addImage(slice.toDataURL('image/jpeg', 0.93), 'JPEG', margin, margin, imgW, sliceH * mmPerPx);
-          offsetY += sliceHpx;
-          page++;
-        }
-
-        const fname = realName
-          ? 'thinkledger-' + realName.toLowerCase().replace(/\s+/g,'-') + '.pdf'
-          : 'thinkledger-profile.pdf';
-        pdf.save(fname);
-      }).catch(err => { restore(); console.error(err); alert('PDF failed. Try again.'); });
-    }, 150);
-  }
-
-  // Load jsPDF then html2canvas then capture
-  function loadScript(src, cb) {
-    const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) { cb(); return; }
-    const s = document.createElement('script'); s.src = src;
-    s.onload = cb; s.onerror = () => { restore(); alert('Failed to load PDF library.'); };
-    document.head.appendChild(s);
-  }
-
-  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', () => {
-    loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', doCapture);
-  });
-}
-</script>
-
 </body>
 </html>
