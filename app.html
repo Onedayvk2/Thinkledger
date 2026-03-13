@@ -1067,7 +1067,7 @@
     </div>
 
     <div class="share-row">
-      <button class="btn p" id="saveBtn" onclick="saveProfile()">Save & get shareable link</button>
+      <button class="btn p" id="saveBtn" onclick="saveProfile()">Get shareable link</button>
       <button class="btn s" onclick="openPDFPicker()">Download PDF</button>
       <button class="btn s" onclick="resetTool()">Start Over</button>
     </div>
@@ -1417,7 +1417,12 @@ function extractMetadata(data, platform) {
         const rawTs = msg.created_at || msg.timestamp;
         if (!rawTs) { created = null; }
         else if (typeof rawTs === 'number') { created = new Date(rawTs < 1e10 ? rawTs * 1000 : rawTs); }
-        else { created = new Date(rawTs); }
+        else {
+          // If ISO string has no timezone suffix, JS treats it as local time — force UTC
+          const tsStr = String(rawTs);
+          const hasOffset = tsStr.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(tsStr);
+          created = new Date(hasOffset ? tsStr : tsStr + 'Z');
+        }
       }
       const isUser = role === 'user' || role === 'human';
 
@@ -2311,7 +2316,7 @@ function renderResults(profile, metadata) {
   _currentMetadata = metadata;
   document.getElementById('savedBanner').style.display = 'none';
   const saveBtn = document.getElementById('saveBtn');
-  if (saveBtn) { saveBtn.textContent = 'Save & get shareable link'; saveBtn.disabled = false; saveBtn.style.background = ''; }
+  if (saveBtn) { saveBtn.textContent = 'Get shareable link'; saveBtn.disabled = false; saveBtn.style.background = ''; }
 
   // Header
   document.getElementById('rProfileName').textContent = profile.profileName;
@@ -2498,12 +2503,12 @@ function saveProfile() {
       btn.textContent = '✓ Saved';
       btn.style.background = '#2d7a4f';
     } else {
-      btn.textContent = 'Save & get shareable link';
+      btn.textContent = 'Get shareable link';
       btn.disabled = false;
     }
   })
   .catch(() => {
-    btn.textContent = 'Save & get shareable link';
+    btn.textContent = 'Get shareable link';
     btn.disabled = false;
   });
 }
@@ -2536,203 +2541,145 @@ function closePDFPicker() {
 function generatePDF() {
   closePDFPicker();
   if (!_currentProfile) return;
-  const p = _currentProfile;
-  const m = _currentMetadata || {};
   const realName = (document.getElementById('userRealName')?.value || '').trim();
 
-  // Load jsPDF dynamically
-  const script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-  script.onload = () => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-    const W = 210, margin = 20, contentW = W - margin * 2;
-    let y = 20;
-
-    const addText = (text, x, size, style, color, maxW) => {
-      doc.setFontSize(size);
-      doc.setFont('helvetica', style || 'normal');
-      doc.setTextColor(...(color || [15,15,15]));
-      const lines = doc.splitTextToSize(String(text || ''), maxW || contentW);
-      doc.text(lines, x, y);
-      y += lines.length * (size * 0.45) + 2;
-    };
-
-    const checkPage = (needed) => {
-      if (y + needed > 280) { doc.addPage(); y = 20; }
-    };
-
-    // Header block — layout:
-    // Line 1 (large): Name  (if provided) OR profileName
-    // Line 2 (medium italic): archetype e.g. "The Challenger"
-    // Line 3 (small): meta stats
-    const headerNameLine = realName || p.profileName || 'Thinker Profile';
-    // archetype = first part of thinkerType before any " · " separator
-    const archetypeLine = (p.thinkerType || '').split(' · ')[0] || '';
-    // Only show secondary tendency if it differs from the archetype
-    const secondaryTendency = (p.thinkerType || '').includes(' · ') ? (p.thinkerType || '').split(' · ').slice(1).join(' · ') : '';
-
-    const metaParts = [];
-    if (m.totalConversations) metaParts.push(m.totalConversations + ' conversations');
-    if (m.userMessages) metaParts.push(m.userMessages.toLocaleString() + ' messages');
-    if (m.spanMonths) metaParts.push(m.spanMonths + ' months');
-    if (m.integrityScore) metaParts.push('Integrity ' + m.integrityScore + '/100');
-    const metaLine = metaParts.join('  ·  ');
-
-    // Compute header height: name + archetype + (optional secondary) + meta
-    const headerH = secondaryTendency ? 52 : 46;
-    doc.setFillColor(26, 58, 42);
-    doc.rect(0, 0, W, headerH, 'F');
-
-    // Name line
-    doc.setFontSize(20);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(255,255,255);
-    doc.text(headerNameLine, margin, 16);
-
-    // Archetype line
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'italic');
-    doc.setTextColor(180,210,190);
-    doc.text(archetypeLine, margin, 25);
-
-    // Secondary tendency (only if present and not same as archetype)
-    let nextY = 25;
-    if (secondaryTendency) {
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(150,190,165);
-      doc.text(secondaryTendency, margin, 33);
-      nextY = 33;
-    }
-
-    // Meta line
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(140,180,158);
-    doc.text(metaLine, margin, nextY + 10);
-
-    y = headerH + 12;
-
-    // Summary
-    checkPage(20);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(100,100,95);
-    doc.text('WHO THIS PERSON IS AS A THINKER', margin, y); y += 6;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'italic');
-    doc.setTextColor(15,15,15);
-    const summaryLines = doc.splitTextToSize(p.summary || '', contentW);
-    doc.text(summaryLines, margin, y);
-    y += summaryLines.length * 4.5 + 8;
-
-    // Signals
-    checkPage(20);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(100,100,95);
-    doc.text('COGNITIVE SIGNALS', margin, y); y += 6;
-    (p.signals || []).forEach(s => {
-      checkPage(12);
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(15,15,15);
-      doc.text(s.name, margin, y);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(26,58,42);
-      doc.text(String(s.score), W - margin - 8, y, { align: 'right' });
-      y += 4;
-      doc.setFillColor(224,221,216);
-      doc.rect(margin, y, contentW, 1.5, 'F');
-      doc.setFillColor(26,58,42);
-      doc.rect(margin, y, contentW * (s.score / 100), 1.5, 'F');
-      y += 4;
-      doc.setFontSize(8.5);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(107,103,96);
-      doc.text(s.label || '', margin, y);
-      y += 7;
-    });
-    y += 4;
-
-    // Traits
-    checkPage(16);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(100,100,95);
-    doc.text('THINKING TRAITS', margin, y); y += 6;
-    doc.setFontSize(9.5);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(15,15,15);
-    const traitsText = (p.traits || []).join('   ·   ');
-    const traitLines = doc.splitTextToSize(traitsText, contentW);
-    doc.text(traitLines, margin, y);
-    y += traitLines.length * 4.5 + 8;
-
-    // Career fits
-    checkPage(20);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(100,100,95);
-    doc.text('WHERE THIS PROFILE BELONGS', margin, y); y += 6;
-    (p.careerFits || []).forEach((r, i) => {
-      checkPage(16);
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(i < 3 ? 26 : 180, i < 3 ? 58 : 180, i < 3 ? 42 : 180);
-      doc.text((i + 1) + '.  ' + r.title, margin, y); y += 5;
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(107,103,96);
-      const whyLines = doc.splitTextToSize(r.why || '', contentW - 8);
-      doc.text(whyLines, margin + 8, y);
-      y += whyLines.length * 4 + 5;
-    });
-
-    // Employer quote
-    checkPage(20);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(100,100,95);
-    doc.text('WHAT AN EMPLOYER READS', margin, y); y += 6;
-    doc.setFillColor(232,237,233);
-    const quoteLines = doc.splitTextToSize('"' + (p.employerQuote || '') + '"', contentW - 8);
-    doc.rect(margin, y - 3, 2, quoteLines.length * 5 + 4, 'F');
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'italic');
-    doc.setTextColor(15,15,15);
-    doc.text(quoteLines, margin + 6, y);
-    y += quoteLines.length * 5 + 8;
-
-    // Hidden insight
-    if (p.hiddenInsight) {
-      checkPage(16);
-      doc.setFillColor(250,245,232);
-      const insightLines = doc.splitTextToSize(p.hiddenInsight, contentW - 8);
-      doc.rect(margin, y - 3, contentW, insightLines.length * 5 + 10, 'F');
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(184,150,46);
-      doc.text('A HIDDEN SIGNAL', margin + 4, y + 2); y += 7;
-      doc.setFontSize(9.5);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(15,15,15);
-      doc.text(insightLines, margin + 4, y);
-      y += insightLines.length * 5 + 8;
-    }
-
-    // Footer
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(180,180,175);
-    doc.text('ThinkLedger — thinkledger.vercel.app   ·   No conversation content was read or stored', margin, 290);
-
-    doc.save('thinkledger-profile.pdf');
+  // Read checkbox selections
+  const inc = {
+    summary:  document.getElementById('pdf_summary')?.checked !== false,
+    culture:  document.getElementById('pdf_culture')?.checked !== false,
+    signals:  document.getElementById('pdf_signals')?.checked !== false,
+    traits:   document.getElementById('pdf_traits')?.checked !== false,
+    careers:  document.getElementById('pdf_careers')?.checked !== false,
+    employer: document.getElementById('pdf_employer')?.checked !== false,
+    insight:  document.getElementById('pdf_insight')?.checked !== false,
   };
-  script.onerror = () => alert('Could not load PDF library. Please check your internet connection.');
-  document.head.appendChild(script);
+
+  // Show/hide sections based on checkboxes before capture
+  const sectionMap = {
+    summary:  document.querySelector('.summary-card'),
+    culture:  document.getElementById('cultureCard'),
+    signals:  document.getElementById('signalsGrid'),
+    traits:   document.querySelector('.traits-wrap'),
+    careers:  document.querySelector('.career-card'),
+    employer: document.querySelector('.employer-card'),
+    insight:  document.querySelector('.callout.insight'),
+  };
+  const hidden = [];
+  Object.entries(sectionMap).forEach(([key, el]) => {
+    if (el && !inc[key]) { el.dataset.pdfHidden = '1'; el.style.display = 'none'; hidden.push(el); }
+  });
+
+  // Load both libraries
+  function loadScript(src, cb) {
+    if (document.querySelector(`script[src="${src}"]`) && window.html2canvas) { cb(); return; }
+    const s = document.createElement('script'); s.src = src;
+    s.onload = cb; s.onerror = () => { restoreSections(); alert('Failed to load library.'); };
+    document.head.appendChild(s);
+  }
+
+  function restoreSections() {
+    hidden.forEach(el => { el.style.display = ''; delete el.dataset.pdfHidden; });
+  }
+
+  function doCapture() {
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', () => {
+      const profileEl = document.getElementById('profileResult');
+      if (!profileEl) { restoreSections(); alert('Profile not found.'); return; }
+
+      // Show a loading indicator
+      const loader = document.createElement('div');
+      loader.id = 'pdfLoader';
+      loader.style.cssText = 'position:fixed;inset:0;background:rgba(247,245,240,0.92);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font-family:Geist,sans-serif;';
+      loader.innerHTML = '<div style="width:40px;height:40px;border:3px solid #e0ddd8;border-top-color:#1a3a2a;border-radius:50%;animation:spin 0.8s linear infinite"></div><div style="font-size:14px;color:#1a3a2a;font-weight:500">Generating PDF…</div>';
+      document.body.appendChild(loader);
+
+      // Add spin keyframe if not present
+      if (!document.getElementById('spinStyle')) {
+        const st = document.createElement('style'); st.id = 'spinStyle';
+        st.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+        document.head.appendChild(st);
+      }
+
+      setTimeout(() => {
+        html2canvas(profileEl, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#f7f5f0',
+          logging: false,
+          windowWidth: 860,
+          onclone: (clonedDoc) => {
+            // Trigger bar animations in clone
+            clonedDoc.querySelectorAll('.bar-fill').forEach(b => {
+              b.style.transition = 'none';
+              b.style.width = b.dataset.score + '%';
+            });
+          }
+        }).then(canvas => {
+          restoreSections();
+          document.body.removeChild(loader);
+
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+          const pageW = 210;
+          const pageH = 297;
+          const margin = 10;
+          const imgW = pageW - margin * 2;
+
+          const canvasW = canvas.width;
+          const canvasH = canvas.height;
+          // Scale factor: mm per pixel
+          const mmPerPx = imgW / canvasW;
+          const totalImgH = canvasH * mmPerPx;
+
+          // Split across pages
+          let yOffset = 0;
+          const sliceH = (pageH - margin * 2) / mmPerPx; // pixels per page
+
+          let pageNum = 0;
+          while (yOffset < canvasH) {
+            if (pageNum > 0) pdf.addPage();
+
+            const sliceCanvas = document.createElement('canvas');
+            sliceCanvas.width = canvasW;
+            sliceCanvas.height = Math.min(sliceH, canvasH - yOffset);
+            const ctx = sliceCanvas.getContext('2d');
+            ctx.drawImage(canvas, 0, -yOffset);
+
+            const imgData = sliceCanvas.toDataURL('image/jpeg', 0.92);
+            const sliceHmm = sliceCanvas.height * mmPerPx;
+            pdf.addImage(imgData, 'JPEG', margin, margin, imgW, sliceHmm);
+
+            yOffset += sliceH;
+            pageNum++;
+          }
+
+          const filename = realName
+            ? 'thinkledger-' + realName.toLowerCase().replace(/\s+/g, '-') + '.pdf'
+            : 'thinkledger-profile.pdf';
+          pdf.save(filename);
+        }).catch(err => {
+          restoreSections();
+          document.body.removeChild(loader);
+          console.error(err);
+          alert('PDF generation failed. Try again.');
+        });
+      }, 100);
+    });
+  }
+
+  // Load html2canvas first
+  if (window.html2canvas) {
+    doCapture();
+  } else {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload = doCapture;
+    s.onerror = () => { restoreSections(); alert('Failed to load screenshot library.'); };
+    document.head.appendChild(s);
+  }
 }
+
 
 function shareTwitter() {
   const url = document.getElementById('shareUrl').value;
