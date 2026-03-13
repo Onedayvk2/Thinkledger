@@ -2153,7 +2153,7 @@ function generateLocalProfile(m) {
 
   const realNameForProfile = (document.getElementById('userRealName')?.value || '').trim();
   return {
-    profileName: realNameForProfile || archetype,
+    profileName: archetype,
     thinkerType: archetype,
     summary: chosen.summary,
     signals: chosen.signals,
@@ -2320,10 +2320,20 @@ function renderResults(profile, metadata) {
   const saveBtn = document.getElementById('saveBtn');
   if (saveBtn) { saveBtn.textContent = 'Get shareable link'; saveBtn.disabled = false; saveBtn.style.background = ''; }
 
-  // Header
-  document.getElementById('rProfileName').textContent = profile.profileName;
+  // Header — use typed name if provided, fall back to archetype
+  const typedName = (document.getElementById('userRealName')?.value || '').trim();
+  document.getElementById('rProfileName').textContent = typedName || profile.thinkerType;
   document.getElementById('rThinkerType').textContent = profile.thinkerType || '';
   document.getElementById('rMeta').textContent = `${metadata.totalConversations} conversations · ${metadata.userMessages.toLocaleString()} messages · ${metadata.spanMonths} months`;
+
+  // Live update name heading as user types
+  const nameInput = document.getElementById('userRealName');
+  if (nameInput) {
+    nameInput.oninput = () => {
+      const v = nameInput.value.trim();
+      document.getElementById('rProfileName').textContent = v || profile.thinkerType;
+    };
+  }
 
   // Time span
   const fmt = d => d ? d.toLocaleDateString('en-GB', {month:'short', year:'numeric'}) : '—';
@@ -2546,6 +2556,9 @@ function generatePDF() {
   if (!_currentProfile) return;
   const realName = (document.getElementById('userRealName')?.value || '').trim();
 
+  // Ensure name heading reflects current input value
+  if (realName) document.getElementById('rProfileName').textContent = realName;
+
   // Read checkbox selections
   const inc = {
     summary:  document.getElementById('pdf_summary')?.checked !== false,
@@ -2646,8 +2659,12 @@ function generatePDF() {
               .culture-fill { background-color: #1a3a2a !important; }
               .culture-dot { background-color: #1a3a2a !important; border: 2px solid #ffffff !important; }
               .culture-track { background-color: #e0ddd8 !important; }
-              .employer-card, .career-card, .integrity-wrap, .callout, .culture-card, .insight-card, .privacy-card { page-break-inside: avoid !important; break-inside: avoid !important; }
-              .employer-q { page-break-inside: avoid !important; break-inside: avoid !important; }
+              .callout.night, .callout.morning, .callout.evening { background: #f0f4f2 !important; border-color: #c0d4c8 !important; }
+              .callout.night *, .callout.morning *, .callout.evening * { color: #1a3a2a !important; }
+              .callout.night .c-title, .callout.morning .c-title, .callout.evening .c-title { color: #1a3a2a !important; font-weight: 600 !important; }
+              .callout.night .c-text, .callout.morning .c-text, .callout.evening .c-text { color: #3a4a44 !important; opacity: 1 !important; }
+              .employer-card, .career-card, .integrity-wrap, .callout, .culture-card, .insight-card, .privacy-card, .traits-wrap { page-break-inside: avoid !important; break-inside: avoid !important; }
+              .employer-card { page-break-before: always !important; }
             `;
             clonedDoc.head.appendChild(printStyle);
 
@@ -2701,21 +2718,44 @@ function generatePDF() {
 
           const canvasW = canvas.width;
           const canvasH = canvas.height;
-          // Scale factor: mm per pixel
           const mmPerPx = imgW / canvasW;
-          const totalImgH = canvasH * mmPerPx;
-
-          // Split across pages
-          let yOffset = 0;
           const sliceH = (pageH - margin * 2) / mmPerPx; // pixels per page
 
+          // Build list of element top positions to avoid slicing through
+          const avoidCuts = new Set();
+          const avoidSelectors = ['.employer-card', '.career-card', '.callout', '.culture-card', '.callout.insight', '.privacy-card'];
+          const profileRect = profileEl.getBoundingClientRect();
+          avoidSelectors.forEach(sel => {
+            profileEl.querySelectorAll(sel).forEach(el => {
+              const r = el.getBoundingClientRect();
+              const topPx = (r.top - profileRect.top) * 2; // scale:2
+              const botPx = (r.bottom - profileRect.top) * 2;
+              avoidCuts.add({ top: topPx, bot: botPx });
+            });
+          });
+
+          // Smart slice: if a cut would land inside an element, push it up to just before that element
+          function smartSlice(yStart) {
+            let cut = yStart + sliceH;
+            if (cut >= canvasH) return canvasH;
+            for (const el of avoidCuts) {
+              if (cut > el.top && cut < el.bot) {
+                cut = el.top - 10; // cut just above the element
+                break;
+              }
+            }
+            return Math.max(cut, yStart + sliceH * 0.5); // never make a page too short
+          }
+
+          let yOffset = 0;
           let pageNum = 0;
           while (yOffset < canvasH) {
             if (pageNum > 0) pdf.addPage();
 
+            const nextCut = smartSlice(yOffset);
             const sliceCanvas = document.createElement('canvas');
             sliceCanvas.width = canvasW;
-            sliceCanvas.height = Math.min(sliceH, canvasH - yOffset);
+            sliceCanvas.height = Math.min(nextCut - yOffset, canvasH - yOffset);
             const ctx = sliceCanvas.getContext('2d');
             ctx.drawImage(canvas, 0, -yOffset);
 
@@ -2723,7 +2763,7 @@ function generatePDF() {
             const sliceHmm = sliceCanvas.height * mmPerPx;
             pdf.addImage(imgData, 'JPEG', margin, margin, imgW, sliceHmm);
 
-            yOffset += sliceH;
+            yOffset = nextCut;
             pageNum++;
           }
 
