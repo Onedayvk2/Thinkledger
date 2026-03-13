@@ -958,6 +958,7 @@
 
     <div class="results-header">
       <h2 id="rProfileName">Your Profile</h2>
+      <p id="rThinkerType" style="font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--accent);margin-bottom:4px;"></p>
       <p id="rMeta">Generated from your conversation data</p>
     </div>
 
@@ -2150,8 +2151,9 @@ function generateLocalProfile(m) {
     unexpected: i === 3
   }));
 
+  const realNameForProfile = (document.getElementById('userRealName')?.value || '').trim();
   return {
-    profileName: archetype,
+    profileName: realNameForProfile || archetype,
     thinkerType: archetype,
     summary: chosen.summary,
     signals: chosen.signals,
@@ -2320,6 +2322,7 @@ function renderResults(profile, metadata) {
 
   // Header
   document.getElementById('rProfileName').textContent = profile.profileName;
+  document.getElementById('rThinkerType').textContent = profile.thinkerType || '';
   document.getElementById('rMeta').textContent = `${metadata.totalConversations} conversations · ${metadata.userMessages.toLocaleString()} messages · ${metadata.spanMonths} months`;
 
   // Time span
@@ -2614,45 +2617,76 @@ function generatePDF() {
           logging: false,
           windowWidth: 860,
           onclone: (clonedDoc) => {
-            // Hide UI chrome that shouldn't appear in PDF
+            // Hide UI chrome
             const hideIds = ['saveBtn', 'savedBanner', 'nameFieldWrap'];
             hideIds.forEach(id => { const el = clonedDoc.getElementById(id); if (el) el.style.display = 'none'; });
-            clonedDoc.querySelectorAll('.share-row, .results-header').forEach(el => el.style.display = 'none');
+            clonedDoc.querySelectorAll('.share-row').forEach(el => el.style.display = 'none');
 
-            // Inject high-contrast print styles — force all text dark on white
-            const printStyle = clonedDoc.createElement('style');
-            printStyle.textContent = `
-              * { color: #1a1a1a !important; background-color: transparent !important; border-color: #d0cdc8 !important; }
-              body { background: #ffffff !important; }
-              .summary-card { background: #1a3a2a !important; color: #ffffff !important; }
-              .summary-card * { color: #ffffff !important; }
-              .summary-card .section-label { color: rgba(255,255,255,0.7) !important; }
-              .profile-header-block { background: #1a3a2a !important; }
-              .profile-header-block * { color: #ffffff !important; }
-              .archetype-badge { background: #1a3a2a !important; color: #ffffff !important; }
-              .archetype-badge * { color: #ffffff !important; }
-              .bar-track { background: #e0ddd8 !important; }
-              .bar-fill { background: #1a3a2a !important; }
-              .sig-score, .role-num.top { color: #1a3a2a !important; }
-              .section-label { color: #6b6760 !important; }
-              .mid, [style*="color:var(--mid)"], [style*="color: var(--mid)"] { color: #4a4744 !important; }
-              .insight-card { background: #f5f0e8 !important; border-color: #c8b87a !important; }
-              .insight-label { color: #8a6f20 !important; }
-              .career-role { border-color: #d0cdc8 !important; }
-              .trait { background: #f0ede8 !important; border-color: #d0cdc8 !important; color: #1a1a1a !important; }
-              nav, .share-row, .results-header, #nameFieldWrap, #savedBanner, #saveBtn { display: none !important; }
-            `;
-            clonedDoc.head.appendChild(printStyle);
-
-            // CRITICAL: Kill all animations so nothing is hidden/faded
+            // CRITICAL: Kill animations first so nothing is opacity:0
             const animReset = clonedDoc.createElement('style');
             animReset.textContent = `* { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; }`;
             clonedDoc.head.appendChild(animReset);
 
+            // High-contrast print styles — no background-color:transparent override (kills fills)
+            const printStyle = clonedDoc.createElement('style');
+            printStyle.textContent = `
+              * { color: #1a1a1a !important; border-color: #d0cdc8 !important; }
+              body { background: #ffffff !important; }
+              .summary-card { background: #1a3a2a !important; }
+              .summary-card *, .summary-lbl { color: #ffffff !important; }
+              .summary-card .summary-lbl { color: rgba(255,255,255,0.65) !important; }
+              .sig-score, .role-num.top { color: #1a3a2a !important; }
+              .section-label, .section-title, .ts-label, .integrity-label { color: #6b6760 !important; }
+              .insight-card { background: #f5f0e8 !important; border-color: #c8b87a !important; }
+              .insight-label { color: #8a6f20 !important; }
+              .trait { background: #f0ede8 !important; border-color: #d0cdc8 !important; }
+              nav, .share-row, #nameFieldWrap, #savedBanner, #saveBtn { display: none !important; }
+              .bar-fill { background-color: #1a3a2a !important; }
+              .bar-t, .bar-track { background-color: #e0ddd8 !important; }
+              .culture-fill { background-color: #1a3a2a !important; }
+              .culture-dot { background-color: #1a3a2a !important; border: 2px solid #ffffff !important; }
+              .culture-track { background-color: #e0ddd8 !important; }
+              .employer-card, .career-card, .integrity-wrap, .callout, .culture-card, .insight-card, .privacy-card { page-break-inside: avoid !important; break-inside: avoid !important; }
+              .employer-q { page-break-inside: avoid !important; break-inside: avoid !important; }
+            `;
+            clonedDoc.head.appendChild(printStyle);
+
             // Set bar fills explicitly
             clonedDoc.querySelectorAll('.bar-fill').forEach(b => {
               b.style.width = (b.dataset.score || '0') + '%';
+              b.style.backgroundColor = '#1a3a2a';
             });
+
+            // Fix culture dots and fills — set positions explicitly
+            clonedDoc.querySelectorAll('.culture-dot').forEach(dot => {
+              const pos = parseFloat(dot.dataset.pos || 50);
+              dot.style.left = pos + '%';
+              dot.style.backgroundColor = '#1a3a2a';
+              dot.style.border = '2px solid #ffffff';
+            });
+            clonedDoc.querySelectorAll('.culture-fill').forEach(fill => {
+              const pos = parseFloat(fill.dataset.pos || 50);
+              fill.style.backgroundColor = '#1a3a2a';
+              if (pos <= 50) {
+                fill.style.left = pos + '%';
+                fill.style.right = '50%';
+                fill.style.width = '';
+              } else {
+                fill.style.left = '50%';
+                fill.style.right = (100 - pos) + '%';
+                fill.style.width = '';
+              }
+            });
+
+            // Fix integrity ring
+            const arc = clonedDoc.getElementById('integrityArc');
+            const numEl = clonedDoc.getElementById('integrityNum');
+            if (arc && numEl) {
+              const score = parseInt(numEl.textContent) || 0;
+              const circumference = 188.5;
+              arc.style.strokeDashoffset = circumference - (score / 100) * circumference;
+              arc.style.stroke = '#1a3a2a';
+            }
           }
         }).then(canvas => {
           restoreSections();
