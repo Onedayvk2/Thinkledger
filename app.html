@@ -2601,11 +2601,16 @@ function generatePDF() {
       }
 
       setTimeout(() => {
+        // Briefly force all animated elements visible before capture
+        document.querySelectorAll('#resultsState *').forEach(el => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
         html2canvas(profileEl, {
           scale: 2,
           useCORS: true,
           allowTaint: true,
-          backgroundColor: '#f7f5f0',
+          backgroundColor: '#ffffff',
           logging: false,
           windowWidth: 860,
           onclone: (clonedDoc) => {
@@ -2613,10 +2618,40 @@ function generatePDF() {
             const hideIds = ['saveBtn', 'savedBanner', 'nameFieldWrap'];
             hideIds.forEach(id => { const el = clonedDoc.getElementById(id); if (el) el.style.display = 'none'; });
             clonedDoc.querySelectorAll('.share-row, .results-header').forEach(el => el.style.display = 'none');
-            // Trigger bar animations in clone
+
+            // Inject high-contrast print styles — force all text dark on white
+            const printStyle = clonedDoc.createElement('style');
+            printStyle.textContent = `
+              * { color: #1a1a1a !important; background-color: transparent !important; border-color: #d0cdc8 !important; }
+              body { background: #ffffff !important; }
+              .summary-card { background: #1a3a2a !important; color: #ffffff !important; }
+              .summary-card * { color: #ffffff !important; }
+              .summary-card .section-label { color: rgba(255,255,255,0.7) !important; }
+              .profile-header-block { background: #1a3a2a !important; }
+              .profile-header-block * { color: #ffffff !important; }
+              .archetype-badge { background: #1a3a2a !important; color: #ffffff !important; }
+              .archetype-badge * { color: #ffffff !important; }
+              .bar-track { background: #e0ddd8 !important; }
+              .bar-fill { background: #1a3a2a !important; }
+              .sig-score, .role-num.top { color: #1a3a2a !important; }
+              .section-label { color: #6b6760 !important; }
+              .mid, [style*="color:var(--mid)"], [style*="color: var(--mid)"] { color: #4a4744 !important; }
+              .insight-card { background: #f5f0e8 !important; border-color: #c8b87a !important; }
+              .insight-label { color: #8a6f20 !important; }
+              .career-role { border-color: #d0cdc8 !important; }
+              .trait { background: #f0ede8 !important; border-color: #d0cdc8 !important; color: #1a1a1a !important; }
+              nav, .share-row, .results-header, #nameFieldWrap, #savedBanner, #saveBtn { display: none !important; }
+            `;
+            clonedDoc.head.appendChild(printStyle);
+
+            // CRITICAL: Kill all animations so nothing is hidden/faded
+            const animReset = clonedDoc.createElement('style');
+            animReset.textContent = `* { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; }`;
+            clonedDoc.head.appendChild(animReset);
+
+            // Set bar fills explicitly
             clonedDoc.querySelectorAll('.bar-fill').forEach(b => {
-              b.style.transition = 'none';
-              b.style.width = b.dataset.score + '%';
+              b.style.width = (b.dataset.score || '0') + '%';
             });
           }
         }).then(canvas => {
