@@ -834,7 +834,7 @@
   }
   .culture-dot {
     position: absolute; top: 50%; transform: translate(-50%, -50%);
-    width: 14px; height: 14px; background: var(--accent);
+    width: 12px; height: 12px; background: var(--accent);
     border: 2px solid var(--white); border-radius: 50%;
     box-shadow: 0 1px 4px rgba(0,0,0,0.18);
     transition: left 1.2s cubic-bezier(0.4,0,0.2,1) 0.4s;
@@ -2633,7 +2633,7 @@ function generatePDF() {
           allowTaint: true,
           backgroundColor: '#ffffff',
           logging: false,
-          windowWidth: 860,
+          windowWidth: 800,
           onclone: (clonedDoc) => {
             // Hide UI chrome
             const hideIds = ['saveBtn', 'savedBanner', 'nameFieldWrap'];
@@ -2681,9 +2681,14 @@ function generatePDF() {
             // Fix culture dots and fills — set positions explicitly
             clonedDoc.querySelectorAll('.culture-dot').forEach(dot => {
               const pos = parseFloat(dot.dataset.pos || 50);
-              dot.style.left = pos + '%';
-              dot.style.backgroundColor = '#1a3a2a';
-              dot.style.border = '2px solid #ffffff';
+              // Use margin-left trick instead of transform to center the dot
+              dot.setAttribute('style',
+                `position:absolute; top:50%; left:${pos}%; ` +
+                `width:10px; height:10px; border-radius:50%; ` +
+                `background-color:#1a3a2a; border:2px solid #ffffff; ` +
+                `margin-top:-5px; margin-left:-5px; ` +
+                `transform:none; transition:none;`
+              );
             });
             clonedDoc.querySelectorAll('.culture-fill').forEach(fill => {
               const pos = parseFloat(fill.dataset.pos || 50);
@@ -2717,7 +2722,7 @@ function generatePDF() {
           const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
           const pageW = 210;
           const pageH = 297;
-          const margin = 10;
+          const margin = 8;
           const imgW = pageW - margin * 2;
 
           const canvasW = canvas.width;
@@ -2748,7 +2753,7 @@ function generatePDF() {
                 break;
               }
             }
-            return Math.max(cut, yStart + sliceH * 0.5); // never make a page too short
+            return Math.max(cut, yStart + sliceH * 0.3); // never make a page too short
           }
 
           let yOffset = 0;
