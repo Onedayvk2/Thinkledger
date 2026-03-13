@@ -2562,33 +2562,57 @@ function generatePDF() {
       if (y + needed > 280) { doc.addPage(); y = 20; }
     };
 
-    // Header block
-    doc.setFillColor(26, 58, 42);
-    doc.rect(0, 0, W, 42, 'F');
-    doc.setFontSize(22);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(255,255,255);
-    doc.text(p.profileName || 'Thinker Profile', margin, 18);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'italic');
-    doc.setTextColor(180,210,190);
-    doc.text(p.thinkerType || '', margin, 26);
-    if (realName) {
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(200,220,205);
-      doc.text(realName, margin, 34);
-    }
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(150,190,165);
+    // Header block — layout:
+    // Line 1 (large): Name  (if provided) OR profileName
+    // Line 2 (medium italic): archetype e.g. "The Challenger"
+    // Line 3 (small): meta stats
+    const headerNameLine = realName || p.profileName || 'Thinker Profile';
+    // archetype = first part of thinkerType before any " · " separator
+    const archetypeLine = (p.thinkerType || '').split(' · ')[0] || '';
+    // Only show secondary tendency if it differs from the archetype
+    const secondaryTendency = (p.thinkerType || '').includes(' · ') ? (p.thinkerType || '').split(' · ').slice(1).join(' · ') : '';
+
     const metaParts = [];
     if (m.totalConversations) metaParts.push(m.totalConversations + ' conversations');
     if (m.userMessages) metaParts.push(m.userMessages.toLocaleString() + ' messages');
     if (m.spanMonths) metaParts.push(m.spanMonths + ' months');
     if (m.integrityScore) metaParts.push('Integrity ' + m.integrityScore + '/100');
-    doc.text(metaParts.join('  ·  '), margin, realName ? 34 : 34);
-    y = 52;
+    const metaLine = metaParts.join('  ·  ');
+
+    // Compute header height: name + archetype + (optional secondary) + meta
+    const headerH = secondaryTendency ? 52 : 46;
+    doc.setFillColor(26, 58, 42);
+    doc.rect(0, 0, W, headerH, 'F');
+
+    // Name line
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255,255,255);
+    doc.text(headerNameLine, margin, 16);
+
+    // Archetype line
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(180,210,190);
+    doc.text(archetypeLine, margin, 25);
+
+    // Secondary tendency (only if present and not same as archetype)
+    let nextY = 25;
+    if (secondaryTendency) {
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(150,190,165);
+      doc.text(secondaryTendency, margin, 33);
+      nextY = 33;
+    }
+
+    // Meta line
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(140,180,158);
+    doc.text(metaLine, margin, nextY + 10);
+
+    y = headerH + 12;
 
     // Summary
     checkPage(20);
