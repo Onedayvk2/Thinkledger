@@ -1344,7 +1344,7 @@ function mergeMetadata(metadataArray) {
   return {
     totalConversations, userMessages, avgWordsPerMessage: avgWords,
     questionRatio, pushbackRatio, deepDiveRatio, vocabRichness, depthScore,
-    longMessagePct: longPct, peakHours: peakHourLabel, nightPct,
+    longMessagePct: longPct, peakHours: peakHourLabel, peakHourInt: _ph1, nightPct,
     spanDays, spanMonths, integrityScore: Math.max(30, Math.min(99, integrityScore)),
     firstDate, lastDate, monthChart, hourCount: mergedHourCount,
     platforms, platformCount: platforms.length,
@@ -1496,7 +1496,7 @@ function extractMetadata(data, platform) {
   return {
     totalConversations, userMessages, avgWordsPerMessage: avgWords,
     questionRatio, pushbackRatio, deepDiveRatio, vocabRichness, depthScore,
-    longMessagePct: longPct, peakHours: peakHourLabel, nightPct,
+    longMessagePct: longPct, peakHours: peakHourLabel, peakHourInt: _ph2, nightPct,
     spanDays, spanMonths, integrityScore: Math.max(30, integrityScore),
     firstDate, lastDate, monthChart, hourCount,
     msgsPerConv, convsPerMonth,
@@ -2381,8 +2381,11 @@ function renderResults(profile, metadata) {
   // Summary
   document.getElementById('rSummary').textContent = profile.summary;
 
-  // Time-of-day mind card
-  const peakH = parseInt(Object.entries(metadata.hourCount||{}).sort((a,b)=>b[1]-a[1])[0]?.[0]);
+  // Time-of-day mind card — use pre-computed integer, fallback to hourCount only if missing
+  const peakH = (metadata.peakHourInt !== undefined && !isNaN(metadata.peakHourInt))
+    ? metadata.peakHourInt
+    : parseInt(Object.entries(metadata.hourCount||{}).sort((a,b)=>b[1]-a[1])[0]?.[0]);
+  console.log('[ThinkLedger] peakHourInt:', metadata.peakHourInt, '| peakH used:', peakH, '| hourCount top3:', Object.entries(metadata.hourCount||{}).sort((a,b)=>b[1]-a[1]).slice(0,3));
   const nightCallout = document.getElementById('nightCallout');
   const spnLabel = metadata.spanMonths >= 12
     ? `The ${metadata.spanMonths}-month pattern shows this has never changed. It is not a phase. It is a cognitive schedule.`
