@@ -2499,7 +2499,7 @@ function saveProfile() {
 
   const realName = (document.getElementById('userRealName')?.value || '').trim();
   const profileToSave = realName
-    ? { ..._currentProfile, realName }
+    ? { ..._currentProfile, profileName: realName, realName }
     : _currentProfile;
 
   fetch('/api/save', {
