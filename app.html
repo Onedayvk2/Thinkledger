@@ -781,7 +781,7 @@
   }
   .btn:hover { opacity: 0.8; }
   .btn.p { background: var(--accent); color: var(--white); }
-  .btn.s { background: var(--white); color: var(--ink); border: 1.5px solid var(--border); }
+  .btn.s { background: #ffffff; color: var(--ink); border: 1.5px solid #c8c4bc; }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(12px); }
@@ -2761,7 +2761,7 @@ function downloadImageCard() {
   cx.fillText('ThinkLedger', 72, 78);
 
   // Archetype label (small caps style)
-  cx.fillStyle = '#5a5450';
+  cx.fillStyle = '#7a7470';
   cx.font = '400 22px sans-serif';
   cx.fillText('COGNITIVE PROFILE', 72, 112);
 
@@ -2800,13 +2800,13 @@ function downloadImageCard() {
 
     // Left label
     const isLeft = d.pos <= 50;
-    cx.fillStyle = isLeft ? '#f2ede4' : '#3a3632';
+    cx.fillStyle = isLeft ? '#f2ede4' : '#5a5450';
     cx.font = isLeft ? '500 18px sans-serif' : '400 18px sans-serif';
     cx.textAlign = 'left';
     cx.fillText(d.left, trackX, ry + 14);
 
     // Right label
-    cx.fillStyle = !isLeft ? '#f2ede4' : '#3a3632';
+    cx.fillStyle = !isLeft ? '#f2ede4' : '#5a5450';
     cx.font = !isLeft ? '500 18px sans-serif' : '400 18px sans-serif';
     cx.textAlign = 'right';
     cx.fillText(d.right, trackX + trackW, ry + 14);
@@ -2847,11 +2847,11 @@ function downloadImageCard() {
   // URL footer
   cx.fillStyle = '#141412';
   cx.fillRect(0, 1032, 1080, 48);
-  cx.fillStyle = '#4a4640';
+  cx.fillStyle = '#8a8480';
   cx.font = '400 20px sans-serif';
   cx.fillText(shareUrl, 72, 1062);
   cx.textAlign = 'right';
-  cx.fillStyle = '#3a3632';
+  cx.fillStyle = '#6a6460';
   cx.fillText('No content read or stored', 1008, 1062);
   cx.textAlign = 'left';
 
