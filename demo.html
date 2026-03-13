@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ThinkLedger — Isla Ferreira — Cognitive Profile</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>ThinkLedger — Kael — Cognitive Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --ink: #0f0f0f;
@@ -17,635 +17,121 @@
     --gold: #b8962e;
     --gold-light: #faf5e8;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Syne', sans-serif;
-    background: var(--paper);
-    color: var(--ink);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.6;
-  }
-
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 22px 48px;
-    border-bottom: 1px solid var(--border);
-    background: var(--white);
-  }
-
-  .logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    color: var(--ink);
-  }
+  body { font-family: 'Geist', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 22px 48px; border-bottom: 1px solid var(--border); background: var(--white); }
+  .logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--ink); }
   .logo span { color: var(--accent); }
-
-  .verified-badge {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--accent-light);
-    color: var(--accent);
-    padding: 5px 12px;
-    border-radius: 2px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .page {
-    max-width: 820px;
-    margin: 0 auto;
-    padding: 56px 32px 100px;
-  }
-
-  .profile-top {
-    margin-bottom: 40px;
-    animation: fadeUp 0.5s ease forwards;
-  }
-
-  .profile-eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--mid);
-    margin-bottom: 16px;
-  }
-
-  .profile-name-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-  }
-
-  .profile-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(40px, 7vw, 64px);
-    letter-spacing: -2px;
-    line-height: 1;
-    color: var(--ink);
-  }
-
-  .archetype-pill {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 18px;
-    font-style: italic;
-    color: var(--accent);
-    border: 1.5px solid var(--accent);
-    padding: 8px 20px;
-    border-radius: 100px;
-    white-space: nowrap;
-  }
-
-  .profile-meta {
-    font-size: 13px;
-    color: var(--mid);
-    margin-bottom: 32px;
-  }
-
-  .stat-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 40px;
-    animation: fadeUp 0.5s ease 0.1s both;
-  }
-
-  .stat-cell {
-    background: var(--white);
-    padding: 22px 20px;
-    text-align: center;
-  }
-
-  .stat-number {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    letter-spacing: -1px;
-    color: var(--ink);
-    display: block;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .stat-label {
-    font-size: 11px;
-    color: var(--mid);
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
-
-  .summary-card {
-    background: var(--accent);
-    color: var(--white);
-    border-radius: 10px;
-    padding: 40px 44px;
-    margin-bottom: 24px;
-    animation: fadeUp 0.5s ease 0.15s both;
-  }
-
-  .summary-label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    opacity: 0.6;
-    margin-bottom: 20px;
-  }
-
-  .summary-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 21px;
-    line-height: 1.65;
-    font-style: italic;
-  }
-
-  .section-title {
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--mid);
-    margin-bottom: 20px;
-  }
-
-  .signals-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 24px;
-    animation: fadeUp 0.5s ease 0.2s both;
-  }
-
-  .signal-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 22px 24px;
-  }
-
-  .signal-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .signal-name {
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    color: var(--ink);
-  }
-
-  .signal-score {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 22px;
-    color: var(--accent);
-    line-height: 1;
-  }
-
-  .bar-track {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-
-  .bar-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 2px;
-    width: 0%;
-    transition: width 1.2s cubic-bezier(0.4,0,0.2,1) 0.6s;
-  }
-
-  .signal-observation {
-    font-size: 12px;
-    color: var(--mid);
-    line-height: 1.5;
-  }
-
-  .callout {
-    border-radius: 8px;
-    padding: 24px 28px;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: flex-start;
-    gap: 18px;
-  }
-
-  .callout.night {
-    background: #0f0f1a;
-    color: #c8c4ff;
-    border: 1px solid #2a2a4a;
-    animation: fadeUp 0.5s ease 0.25s both;
-  }
+  .demo-badge { display: flex; align-items: center; gap: 5px; background: #faf5e8; color: var(--gold); padding: 5px 12px; border-radius: 2px; font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; border: 1px solid #e8d9a0; }
+  .page { max-width: 820px; margin: 0 auto; padding: 56px 32px 100px; }
+  .profile-top { margin-bottom: 40px; animation: fadeUp 0.5s ease forwards; }
+  .profile-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--mid); margin-bottom: 16px; }
+  .profile-name-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
+  .profile-name { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 7vw, 64px); letter-spacing: -2px; line-height: 1; color: var(--ink); }
+  .archetype-pill { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-style: italic; color: var(--accent); border: 1.5px solid var(--accent); padding: 8px 20px; border-radius: 100px; white-space: nowrap; }
+  .profile-meta { font-size: 13px; color: var(--mid); margin-bottom: 32px; }
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 40px; animation: fadeUp 0.5s ease 0.1s both; }
+  .stat-cell { background: var(--white); padding: 22px 20px; text-align: center; }
+  .stat-number { font-family: 'Cormorant Garamond', serif; font-size: 32px; letter-spacing: -1px; color: var(--ink); display: block; line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 11px; color: var(--mid); font-weight: 500; letter-spacing: 0.5px; }
+  .summary-card { background: var(--accent); color: var(--white); border-radius: 10px; padding: 40px 44px; margin-bottom: 24px; animation: fadeUp 0.5s ease 0.15s both; }
+  .summary-label { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; margin-bottom: 20px; }
+  .summary-text { font-family: 'Cormorant Garamond', serif; font-size: 21px; line-height: 1.65; font-style: italic; }
+  .section-title { font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: 20px; }
+  .signals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; animation: fadeUp 0.5s ease 0.2s both; }
+  .signal-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 22px 24px; }
+  .signal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .signal-name { font-size: 12px; font-weight: 500; letter-spacing: 0.5px; color: var(--ink); }
+  .signal-score { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--accent); line-height: 1; }
+  .bar-track { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 0%; transition: width 1.2s cubic-bezier(0.4,0,0.2,1) 0.6s; }
+  .signal-observation { font-size: 12px; color: var(--mid); line-height: 1.5; }
+  .callout { border-radius: 8px; padding: 24px 28px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 18px; }
+  .callout.night { background: #0f0f1a; color: #c8c4ff; border: 1px solid #2a2a4a; animation: fadeUp 0.5s ease 0.25s both; }
   .callout.night .callout-title { color: #e8e4ff; }
-
-  .callout.insight {
-    background: var(--gold-light);
-    border: 1px solid #e8d9a0;
-    animation: fadeUp 0.5s ease 0.3s both;
-  }
-  .callout.insight .callout-title { color: var(--gold); }
-
+  .callout.insight { background: #1a3a2a; border: 1px solid #2d5a40; padding: 28px 30px; animation: fadeUp 0.5s ease 0.3s both; }
+  .callout.insight .callout-icon { font-size: 28px; }
+  .callout.insight .callout-title { color: #c9a84c; font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 400; letter-spacing: 0.3px; margin-bottom: 8px; }
+  .callout.insight .callout-text { color: #c8d8c8; font-size: 13px; line-height: 1.75; opacity: 1; }
   .callout-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
   .callout-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
   .callout-text { font-size: 13px; line-height: 1.6; opacity: 0.85; }
-
-  .traits-wrap {
-    margin-bottom: 24px;
-    animation: fadeUp 0.5s ease 0.32s both;
-  }
-
-  .traits-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .trait {
-    padding: 7px 16px;
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    font-size: 13px;
-    color: var(--ink);
-  }
-
-  /* CAREER FIT */
-  .career-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 24px;
-    animation: fadeUp 0.5s ease 0.36s both;
-  }
-
-  .career-header {
-    padding: 28px 36px 22px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .career-intro {
-    font-size: 14px;
-    color: var(--mid);
-    line-height: 1.65;
-    margin-top: 8px;
-  }
-
+  .traits-wrap { margin-bottom: 24px; animation: fadeUp 0.5s ease 0.32s both; }
+  .traits-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .trait { padding: 7px 16px; background: var(--white); border: 1px solid var(--border); border-radius: 2px; font-size: 13px; color: var(--ink); }
+  .career-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 24px; animation: fadeUp 0.5s ease 0.36s both; }
+  .career-header { padding: 28px 36px 22px; border-bottom: 1px solid var(--border); }
+  .career-intro { font-size: 14px; color: var(--mid); line-height: 1.65; margin-top: 8px; }
   .career-roles { padding: 8px 36px 16px; }
-
-  .role-row {
-    display: grid;
-    grid-template-columns: 28px 1fr auto;
-    align-items: start;
-    gap: 16px;
-    padding: 22px 0;
-    border-bottom: 1px solid var(--border);
-  }
+  .role-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: start; gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--border); }
   .role-row:last-child { border-bottom: none; }
-
-  .role-rank {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 28px;
-    color: var(--border);
-    line-height: 1;
-    margin-top: 2px;
-  }
+  .role-rank { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--border); line-height: 1; margin-top: 2px; }
   .role-rank.top { color: var(--accent); }
-
-  .role-title {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-
-  .role-unexpected {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--gold);
-    background: var(--gold-light);
-    border: 1px solid #e8d9a0;
-    padding: 2px 8px;
-    border-radius: 2px;
-    margin-left: 8px;
-    vertical-align: middle;
-  }
-
-  .role-why {
-    font-size: 13px;
-    color: var(--mid);
-    line-height: 1.65;
-  }
-
-  .role-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
-  }
-
-  .role-tag {
-    font-size: 11px;
-    padding: 3px 10px;
-    background: var(--paper);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    color: var(--mid);
-  }
-  .role-tag.match {
-    background: var(--accent-light);
-    border-color: #b8d4c0;
-    color: var(--accent);
-  }
-
-  .fit-score {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
-    color: var(--mid);
-    white-space: nowrap;
-    padding-top: 3px;
-    text-align: right;
-  }
-  .fit-score strong {
-    font-size: 22px;
-    color: var(--ink);
-    display: block;
-    line-height: 1;
-  }
+  .role-title { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+  .role-unexpected { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); background: var(--gold-light); border: 1px solid #e8d9a0; padding: 2px 8px; border-radius: 2px; margin-left: 8px; vertical-align: middle; }
+  .role-why { font-size: 13px; color: var(--mid); line-height: 1.65; }
+  .role-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .role-tag { font-size: 11px; padding: 3px 10px; background: var(--paper); border: 1px solid var(--border); border-radius: 2px; color: var(--mid); }
+  .role-tag.match { background: var(--accent-light); border-color: #b8d4c0; color: var(--accent); }
+  .fit-score { font-family: 'Cormorant Garamond', serif; font-size: 13px; color: var(--mid); white-space: nowrap; padding-top: 3px; text-align: right; }
+  .fit-score strong { font-size: 22px; color: var(--ink); display: block; line-height: 1; }
   .fit-score span { font-size: 11px; }
-
-  .employer-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 32px 36px;
-    margin-bottom: 24px;
-    animation: fadeUp 0.5s ease 0.4s both;
-  }
-
-  .employer-quote {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    font-style: italic;
-    line-height: 1.6;
-    color: var(--ink);
-    margin-bottom: 16px;
-    border-left: 3px solid var(--accent);
-    padding-left: 20px;
-  }
-
+  .employer-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 32px 36px; margin-bottom: 24px; animation: fadeUp 0.5s ease 0.4s both; }
+  .employer-quote { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; line-height: 1.6; color: var(--ink); margin-bottom: 16px; border-left: 3px solid var(--accent); padding-left: 20px; }
   .employer-note { font-size: 12px; color: var(--mid); }
-
-  .privacy-card {
-    background: var(--paper);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 22px 28px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 32px;
-    animation: fadeUp 0.5s ease 0.44s both;
-  }
-
-  .privacy-icon {
-    width: 36px; height: 36px;
-    background: var(--white);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    border: 1px solid var(--border);
-  }
-
+  .integrity-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 40px; animation: fadeUp 0.5s ease 0.12s both; }
+  .timespan-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .ts-label { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: 4px; }
+  .ts-dates { font-family: 'Cormorant Garamond', serif; font-size: 20px; letter-spacing: -0.5px; color: var(--ink); }
+  .ts-arrow { color: var(--accent); margin: 0 4px; }
+  .ts-sub { font-size: 11px; color: var(--mid); margin-top: 2px; }
+  .ts-chart-label { font-size: 10px; color: var(--mid); letter-spacing: 0.5px; margin-bottom: 8px; }
+  .ts-bars { display: flex; align-items: flex-end; gap: 3px; height: 44px; }
+  .ts-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 44px; gap: 4px; }
+  .ts-bar { width: 100%; background: var(--accent); border-radius: 2px 2px 0 0; min-height: 2px; }
+  .ts-bar.peak { background: var(--accent); opacity: 1; }
+  .ts-bar-month { font-size: 8px; color: var(--mid); text-align: center; line-height: 1; height: 10px; white-space: nowrap; }
+  .integrity-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 22px 24px; display: flex; gap: 20px; align-items: flex-start; }
+  .integrity-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+  .integrity-label { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--mid); margin-bottom: 10px; white-space: nowrap; }
+  .integrity-score-wrap { position: relative; width: 80px; height: 80px; margin-bottom: 8px; }
+  .integrity-ring { width: 80px; height: 80px; }
+  .integrity-number { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--ink); line-height: 1; }
+  .integrity-verdict { font-size: 11px; font-weight: 500; color: var(--accent); letter-spacing: 0.3px; white-space: nowrap; }
+  .integrity-right { flex: 1; }
+  .integrity-checks { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
+  .check-row { display: flex; align-items: flex-start; gap: 10px; }
+  .check-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .check-dot.green { background: #2d7a4f; }
+  .check-dot.amber { background: #c49a2a; }
+  .check-text { font-size: 12px; color: var(--mid); line-height: 1.5; }
+  .check-text strong { color: var(--ink); font-weight: 500; }
+  .culture-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 32px; margin-bottom: 24px; animation: fadeUp 0.5s ease 0.34s both; }
+  .culture-dim { margin-bottom: 22px; }
+  .culture-dim:last-child { margin-bottom: 0; }
+  .culture-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; margin-bottom: 8px; }
+  .culture-label { color: var(--mid); }
+  .culture-label.active { color: var(--ink); }
+  .culture-track { position: relative; height: 6px; background: var(--border); border-radius: 3px; }
+  .culture-dot { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 14px; height: 14px; border-radius: 50%; background: var(--ink); border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+  .culture-verdict { font-size: 12px; color: var(--mid); margin-top: 8px; font-style: italic; line-height: 1.5; }
+  .culture-verdict strong { color: var(--ink); font-style: normal; }
+  .culture-env { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .culture-env-title { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+  .culture-env-title.pos { color: #2d7a4f; }
+  .culture-env-title.neg { color: #c0392b; }
+  .culture-env-list { display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--ink); }
+  .privacy-card { background: var(--paper); border: 1px solid var(--border); border-radius: 8px; padding: 22px 28px; display: flex; align-items: center; gap: 16px; margin-bottom: 32px; animation: fadeUp 0.5s ease 0.44s both; }
+  .privacy-icon { width: 36px; height: 36px; background: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--border); }
   .privacy-text { font-size: 12px; color: var(--mid); line-height: 1.5; }
-
-  .share-row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    animation: fadeUp 0.5s ease 0.48s both;
-  }
-
-  .btn {
-    padding: 12px 28px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    font-family: 'Syne', sans-serif;
-    transition: opacity 0.15s;
-  }
+  .share-row { display: flex; gap: 12px; flex-wrap: wrap; animation: fadeUp 0.5s ease 0.48s both; }
+  .btn { padding: 12px 28px; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; font-family: 'Geist', sans-serif; transition: opacity 0.15s; }
   .btn:hover { opacity: 0.8; }
   .btn.primary { background: var(--accent); color: var(--white); }
   .btn.secondary { background: var(--white); color: var(--ink); border: 1.5px solid var(--border); }
-
-  /* INTEGRITY + TIMESPAN */
-  .integrity-wrap {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 40px;
-    animation: fadeUp 0.5s ease 0.12s both;
-  }
-
-  .timespan-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 22px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .ts-label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--mid);
-    margin-bottom: 4px;
-  }
-
-  .ts-dates {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    letter-spacing: -0.5px;
-    color: var(--ink);
-  }
-
-  .ts-arrow { color: var(--accent); margin: 0 4px; }
-
-  .ts-sub {
-    font-size: 11px;
-    color: var(--mid);
-    margin-top: 2px;
-  }
-
-  .ts-chart-label {
-    font-size: 10px;
-    color: var(--mid);
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
-  }
-
-  .ts-bars {
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    height: 44px;
-  }
-
-  .ts-bar-wrap {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    height: 44px;
-    gap: 4px;
-  }
-
-  .ts-bar {
-    width: 100%;
-    background: var(--accent);
-    border-radius: 2px 2px 0 0;
-    min-height: 2px;
-    transition: height 1s ease 0.8s;
-  }
-
-  .ts-bar.gap { background: var(--border); opacity: 0.4; }
-  .ts-bar.peak { background: var(--accent); opacity: 1; }
-
-  .ts-bar-month {
-    font-size: 8px;
-    color: var(--mid);
-    text-align: center;
-    line-height: 1;
-    height: 10px;
-    white-space: nowrap;
-  }
-
-  .integrity-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 22px 24px;
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-  }
-
-  .integrity-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .integrity-label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--mid);
-    margin-bottom: 10px;
-    white-space: nowrap;
-  }
-
-  .integrity-score-wrap {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 8px;
-  }
-
-  .integrity-ring { width: 80px; height: 80px; }
-
-  .integrity-number {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 26px;
-    color: var(--ink);
-    line-height: 1;
-  }
-
-  .integrity-verdict {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--accent);
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-  }
-
-  .integrity-right { flex: 1; }
-
-  .integrity-checks {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-top: 4px;
-  }
-
-  .check-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .check-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 5px;
-  }
-
-  .check-dot.green { background: #2d7a4f; }
-  .check-dot.amber { background: #c49a2a; }
-
-  .check-text {
-    font-size: 12px;
-    color: var(--mid);
-    line-height: 1.5;
-  }
-
-  .check-text strong { color: var(--ink); font-weight: 500; }
-
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
   @media(max-width:600px){
     .integrity-wrap { grid-template-columns: 1fr; }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @media(max-width:600px){
     nav { padding: 16px 20px; }
     .page { padding: 36px 20px 80px; }
     .stat-row { grid-template-columns: 1fr 1fr; }
@@ -655,12 +141,7 @@
     .career-header, .career-roles { padding-left: 20px; padding-right: 20px; }
     .role-row { grid-template-columns: 24px 1fr; }
     .fit-score { display: none; }
-  }
-
-  @media print {
-    nav { position: static; }
-    .share-row { display: none; }
-    body { background: white; }
+    .culture-env { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -668,11 +149,9 @@
 
 <nav>
   <div class="logo"><a href="/" style="text-decoration:none;color:inherit">Think<span>Ledger</span></a></div>
-  <div class="verified-badge">
-    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-    Verified Profile
+  <div class="demo-badge">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    Demo Profile
   </div>
 </nav>
 
@@ -681,64 +160,52 @@
   <div class="profile-top">
     <div class="profile-eyebrow">Cognitive Profile · Claude Export · March 2026</div>
     <div class="profile-name-row">
-      <div class="profile-name">Isla Ferreira</div>
-      <div class="archetype-pill">The Synthesiser</div>
+      <div class="profile-name">Kael</div>
+      <div class="archetype-pill">The Challenger</div>
     </div>
-    <div class="profile-meta">214 conversations · 2,104 messages · 94,200 words · March 2026</div>
+    <div class="profile-meta">130 conversations · 745 messages · Jul 2024 – Feb 2026</div>
   </div>
 
   <div class="stat-row">
-    <div class="stat-cell">
-      <span class="stat-number">45</span>
-      <span class="stat-label">Avg words/message</span>
-    </div>
-    <div class="stat-cell">
-      <span class="stat-number">9%</span>
-      <span class="stat-label">Pushback rate</span>
-    </div>
-    <div class="stat-cell">
-      <span class="stat-number">10pm</span>
-      <span class="stat-label">Peak thinking hour</span>
-    </div>
-    <div class="stat-cell">
-      <span class="stat-number">22%</span>
-      <span class="stat-label">Questions asked</span>
-    </div>
+    <div class="stat-cell"><span class="stat-number">60</span><span class="stat-label">Avg words/message</span></div>
+    <div class="stat-cell"><span class="stat-number">36%</span><span class="stat-label">Pushback rate</span></div>
+    <div class="stat-cell"><span class="stat-number">10pm</span><span class="stat-label">Peak thinking hour</span></div>
+    <div class="stat-cell"><span class="stat-number">11%</span><span class="stat-label">Question rate</span></div>
   </div>
 
-  <!-- TIME SPAN + INTEGRITY -->
   <div class="integrity-wrap">
-
     <div class="timespan-card">
-      <div class="ts-left">
+      <div>
         <div class="ts-label">Profile Window</div>
-        <div class="ts-dates">Jan 2024 <span class="ts-arrow">→</span> Mar 2026</div>
-        <div class="ts-sub">26 months of longitudinal data</div>
+        <div class="ts-dates">Jul 2024 <span class="ts-arrow">→</span> Feb 2026</div>
+        <div class="ts-sub">20 months of longitudinal data</div>
       </div>
-      <div class="ts-chart">
+      <div>
         <div class="ts-chart-label">Message activity over time</div>
         <div class="ts-bars">
-          <div class="ts-bar-wrap"><div class="ts-bar" data-h="4"></div><div class="ts-bar-month">N'24</div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar gap" data-h="0"></div><div class="ts-bar-month"></div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar" data-h="13"></div><div class="ts-bar-month">N'25</div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar" data-h="38"></div><div class="ts-bar-month">D</div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar" data-h="30"></div><div class="ts-bar-month">J</div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar peak" data-h="100"></div><div class="ts-bar-month">F</div></div>
-          <div class="ts-bar-wrap"><div class="ts-bar" data-h="14"></div><div class="ts-bar-month">M'26</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="14"></div><div class="ts-bar-month">J'24</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="18"></div><div class="ts-bar-month">A</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="22"></div><div class="ts-bar-month">S</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="30"></div><div class="ts-bar-month">O</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="28"></div><div class="ts-bar-month">N</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="20"></div><div class="ts-bar-month">D</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="38"></div><div class="ts-bar-month">J'25</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="44"></div><div class="ts-bar-month">F</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="52"></div><div class="ts-bar-month">M</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="48"></div><div class="ts-bar-month">A</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="60"></div><div class="ts-bar-month">M</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="55"></div><div class="ts-bar-month">J</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="70"></div><div class="ts-bar-month">J</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="78"></div><div class="ts-bar-month">A</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="85"></div><div class="ts-bar-month">S</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="82"></div><div class="ts-bar-month">O</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="90"></div><div class="ts-bar-month">N</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="88"></div><div class="ts-bar-month">D</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar peak" data-h="100"></div><div class="ts-bar-month">J'26</div></div>
+          <div class="ts-bar-wrap"><div class="ts-bar" data-h="62"></div><div class="ts-bar-month">F</div></div>
         </div>
       </div>
     </div>
-
     <div class="integrity-card">
       <div class="integrity-left">
         <div class="integrity-label">Profile Integrity</div>
@@ -749,120 +216,78 @@
               stroke-dasharray="213.6" stroke-dashoffset="213.6"
               stroke-linecap="round" transform="rotate(-90 40 40)" id="integrityArc"/>
           </svg>
-          <div class="integrity-number">94</div>
+          <div class="integrity-number">90</div>
         </div>
         <div class="integrity-verdict">High Confidence</div>
       </div>
       <div class="integrity-right">
         <div class="integrity-checks">
-          <div class="check-row">
-            <div class="check-dot green"></div>
-            <div class="check-text"><strong>Longitudinal</strong> — 26 months, exceptional span</div>
-          </div>
-          <div class="check-row">
-            <div class="check-dot green"></div>
-            <div class="check-text"><strong>Natural variance</strong> — gaps and bursts consistent with real usage patterns</div>
-          </div>
-          <div class="check-row">
-            <div class="check-dot green"></div>
-            <div class="check-text"><strong>Volume</strong> — 2,104 messages across 26 months</div>
-          </div>
-          <div class="check-row">
-            <div class="check-dot amber"></div>
-            <div class="check-text"><strong>Single platform</strong> — cross-platform verification would strengthen this further</div>
-          </div>
+          <div class="check-row"><div class="check-dot green"></div><div class="check-text"><strong>Longitudinal</strong> — 20 months of continuous data</div></div>
+          <div class="check-row"><div class="check-dot green"></div><div class="check-text"><strong>Natural variance</strong> — gaps and bursts match real usage patterns</div></div>
+          <div class="check-row"><div class="check-dot green"></div><div class="check-text"><strong>Volume</strong> — 745 messages across 130 conversations</div></div>
+          <div class="check-row"><div class="check-dot amber"></div><div class="check-text"><strong>Single platform</strong> — add a second export to push this to 95+</div></div>
         </div>
       </div>
     </div>
-
   </div>
 
   <div class="summary-card">
-    <div class="summary-label">Cognitive Summary</div>
-    <div class="summary-text">
-      Balance is the rarest cognitive signature — and this profile has it at depth. At 45 words per message across 214 conversations over 26 months, Isla does not optimise for any single mode of thinking. She does not push back often (9%), but when she does, the question is surgical. She asks more than she declares (22% question rate), but the questions have architecture. What emerges across two years of longitudinal data is the portrait of a mind that connects things others keep separate — operating with what cognitive scientists call remote associative capacity, moving between domains without losing the thread that runs through all of them.
-    </div>
+    <div class="summary-label">Who you are as a thinker</div>
+    <div class="summary-text">A 36% pushback rate across 20 months is not a mood — it is a methodology. This mind does not reach for AI to think. It reaches for AI to argue. The position arrives in the message; the exchange exists to test whether it holds. What makes this profile rare is not the challenge rate itself but the precision behind it — at 60 words per message and an 11% question rate, this is someone who challenges from conviction, not confusion. The 10pm peak is structural: the hour when the day's obligations have ended and the thinking can finally be honest.</div>
   </div>
 
   <div class="callout night">
     <div class="callout-icon">🌙</div>
     <div>
       <div class="callout-title">The Midnight Mind</div>
-      <div class="callout-text">10pm is peak. Not midnight, not 1am — 10pm. The hour when the day has finished but the mind has not. This is a structured night thinker — not chaotic nocturnal energy but deliberate evening cognition. The 26-month pattern shows this has never changed. It is not a phase. It is a cognitive schedule.</div>
+      <div class="callout-text">Not midnight, not 1am — 10pm. The hour when the day has finished but the mind has not. This is a structured night thinker — not chaotic nocturnal energy but deliberate evening cognition. The problem gets the full attention it was denied during daylight. The 20-month pattern shows this has never changed. It is not a phase. It is a cognitive schedule.</div>
     </div>
   </div>
 
   <div class="signals-grid">
-
     <div class="signal-card">
-      <div class="signal-top">
-        <div class="signal-name">Remote Associative Capacity</div>
-        <div class="signal-score">94</div>
-      </div>
-      <div class="bar-track"><div class="bar-fill" data-score="94"></div></div>
-      <div class="signal-observation">26 months of topic-switching with no loss of depth. Moves between domains the way others move within one — the thread stays intact.</div>
-    </div>
-
-    <div class="signal-card">
-      <div class="signal-top">
-        <div class="signal-name">Integrative Complexity</div>
-        <div class="signal-score">91</div>
-      </div>
-      <div class="bar-track"><div class="bar-fill" data-score="91"></div></div>
-      <div class="signal-observation">Holds competing frameworks simultaneously without forcing a resolution. 45 words per message — enough to develop an idea, not so many it needs defending.</div>
-    </div>
-
-    <div class="signal-card">
-      <div class="signal-top">
-        <div class="signal-name">Epistemic Curiosity</div>
-        <div class="signal-score">88</div>
-      </div>
-      <div class="bar-track"><div class="bar-fill" data-score="88"></div></div>
-      <div class="signal-observation">22% question rate — well above average. These are not clarification questions. They are gap-seeking ones. The inquiry is the method.</div>
-    </div>
-
-    <div class="signal-card">
-      <div class="signal-top">
-        <div class="signal-name">Deliberate Latency</div>
-        <div class="signal-score">86</div>
-      </div>
-      <div class="bar-track"><div class="bar-fill" data-score="86"></div></div>
-      <div class="signal-observation">9% pushback rate is not passivity — it is pre-commitment processing. Positions form fully before they are voiced. Output quality reflects input depth.</div>
-    </div>
-
-    <div class="signal-card">
-      <div class="signal-top">
-        <div class="signal-name">Conceptual Bridge-Building</div>
-        <div class="signal-score">93</div>
-      </div>
+      <div class="signal-top"><div class="signal-name">Epistemic Vigilance</div><div class="signal-score">93</div></div>
       <div class="bar-track"><div class="bar-fill" data-score="93"></div></div>
-      <div class="signal-observation">The signature of a synthesiser: finds structural similarity across surface difference. Two unrelated fields, one underlying pattern. Sees the bridge before others see the gap.</div>
+      <div class="signal-observation">36% pushback across 130 conversations — and 20 months shows it has not decreased with familiarity. This is not scepticism of AI. It is a refusal to let the first answer close a question that is still open.</div>
     </div>
-
     <div class="signal-card">
-      <div class="signal-top">
-        <div class="signal-name">Longitudinal Consistency</div>
-        <div class="signal-score">96</div>
-      </div>
-      <div class="bar-track"><div class="bar-fill" data-score="96"></div></div>
-      <div class="signal-observation">214 conversations across 26 months with no signature drift. The thinking style at month 1 and month 26 is the same. That stability is extremely rare.</div>
+      <div class="signal-top"><div class="signal-name">Position Crystallisation</div><div class="signal-score">88</div></div>
+      <div class="bar-track"><div class="bar-fill" data-score="88"></div></div>
+      <div class="signal-observation">60 words per message is not explanation — it is argument-loading. The position is already formed before the message is sent. The AI receives a view to engage with, not a question to answer.</div>
     </div>
-
+    <div class="signal-card">
+      <div class="signal-top"><div class="signal-name">Steelmanning Instinct</div><div class="signal-score">86</div></div>
+      <div class="bar-track"><div class="bar-fill" data-score="86"></div></div>
+      <div class="signal-observation">High pushback combined with high vocabulary richness describes someone who has already stress-tested their own position before presenting it. The challenge is not impulsive. It arrives prepared.</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-top"><div class="signal-name">Belief Revision Threshold</div><div class="signal-score">84</div></div>
+      <div class="bar-track"><div class="bar-fill" data-score="84"></div></div>
+      <div class="signal-observation">A depth score of 84 confirms these are not surface objections. The engagement goes until something actually breaks or holds — not until one side runs out of patience.</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-top"><div class="signal-name">Argumentative Reasoning</div><div class="signal-score">91</div></div>
+      <div class="bar-track"><div class="bar-fill" data-score="91"></div></div>
+      <div class="signal-observation">Low question rate (11%) combined with high pushback (36%) is unusual. It means challenge comes from existing belief — not from seeking information to form a view. The conclusion arrived before the conversation did.</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-top"><div class="signal-name">Nocturnal Depth Mode</div><div class="signal-score">82</div></div>
+      <div class="bar-track"><div class="bar-fill" data-score="82"></div></div>
+      <div class="signal-observation">10pm peak, 38% of all messages sent after 10pm. The consistency over 20 months eliminates coincidence. This is the cognitive window — the hours that match the register this mind needs.</div>
+    </div>
   </div>
 
   <div class="traits-wrap">
     <div class="section-title">Thinking Traits</div>
     <div class="traits-list">
-      <span class="trait">Remote associative thinker</span>
-      <span class="trait">Connects before concluding</span>
-      <span class="trait">Evening cognition</span>
-      <span class="trait">Schema flexibility</span>
-      <span class="trait">Absorbs before filtering</span>
-      <span class="trait">Question-led inquiry</span>
-      <span class="trait">Analogical transfer</span>
-      <span class="trait">Holds complexity without collapsing it</span>
-      <span class="trait">Conceptual arbitrage</span>
-      <span class="trait">26-month consistency</span>
+      <span class="trait">Arrives with a position, not a question</span>
+      <span class="trait">Challenges from conviction, not confusion</span>
+      <span class="trait">Low tolerance for premature closure</span>
+      <span class="trait">Makes rooms sharper</span>
+      <span class="trait">Deliberate evening thinker</span>
+      <span class="trait">Holds a view until evidence moves it</span>
+      <span class="trait">Does not move without a reason</span>
+      <span class="trait">Precise rather than loud</span>
     </div>
   </div>
 
@@ -870,199 +295,158 @@
     <div class="callout-icon">💡</div>
     <div>
       <div class="callout-title">A Hidden Signal</div>
-      <div class="callout-text">The 9% pushback rate would look like compliance on a standard personality test. In context, it is the opposite. This is someone whose belief sedimentation process is thorough enough that they rarely need to argue — because by the time they speak, the position is already load-bearing. That is not softness. It is precision.</div>
+      <div class="callout-text">The 11% question rate is the number that explains everything else. Most people who push back at 36% also ask a lot of questions — they challenge because they are uncertain. This profile does not. The questions were already asked, internally, before the message was sent. What arrives in the exchange is the answer to them — and a challenge to anyone who reached a different one. This is not someone who uses AI to find out what they think. They already know. They are checking if you do.</div>
     </div>
   </div>
 
-  <!-- CULTURE MAP -->
-  <div class="culture-card" style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:32px;margin-bottom:20px;">
+  <div class="culture-card">
     <div class="section-title" style="margin-bottom:6px;">Culture &amp; Energy Map</div>
-    <div style="font-size:13px;color:var(--mid);margin-bottom:28px;">How this profile shows up in a room. Derived from conversation behaviour — not self-reported.</div>
+    <div style="font-size:13px;color:var(--mid);margin-bottom:28px;">Seven dimensions of how this profile shows up — derived from conversation behaviour, not self-reported.</div>
 
-    <div style="display:flex;flex-direction:column;gap:22px;">
-
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:500;margin-bottom:8px;">
-          <span style="color:var(--ink)">Cool &amp; Unbothered</span>
-          <span style="color:var(--mid)">Intense &amp; All-In</span>
-        </div>
-        <div style="position:relative;height:6px;background:var(--bg);border-radius:3px;">
-          <div style="position:absolute;left:22%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
-        </div>
-        <div style="font-size:12px;color:var(--mid);margin-top:8px;font-style:italic;"><strong style="color:var(--ink)">Cool &amp; Unbothered</strong> — Low pushback, deliberate latency. Processes fully before responding. Does not spiral.</div>
+    <div class="culture-dim">
+      <div class="culture-labels">
+        <span class="culture-label active">Solo Processor</span>
+        <span class="culture-label">Social Thinker</span>
       </div>
-
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:500;margin-bottom:8px;">
-          <span style="color:var(--mid)">Big Picture</span>
-          <span style="color:var(--ink)">Deep in the Weeds</span>
-        </div>
-        <div style="position:relative;height:6px;background:var(--bg);border-radius:3px;">
-          <div style="position:absolute;left:68%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
-        </div>
-        <div style="font-size:12px;color:var(--mid);margin-top:8px;font-style:italic;"><strong style="color:var(--ink)">Deep in the Weeds</strong> — 45 words per message over 26 months. Goes deep instinctively. The detail is the thinking.</div>
-      </div>
-
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:500;margin-bottom:8px;">
-          <span style="color:var(--ink)">Solo Thinker</span>
-          <span style="color:var(--mid)">Room Energiser</span>
-        </div>
-        <div style="position:relative;height:6px;background:var(--bg);border-radius:3px;">
-          <div style="position:absolute;left:30%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
-        </div>
-        <div style="font-size:12px;color:var(--mid);margin-top:8px;font-style:italic;"><strong style="color:var(--ink)">Solo Thinker</strong> — Evening cognition, pre-commitment processing. Ideas form alone before they enter the room.</div>
-      </div>
-
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:500;margin-bottom:8px;">
-          <span style="color:var(--mid)">Challenger</span>
-          <span style="color:var(--ink)">Builder</span>
-        </div>
-        <div style="position:relative;height:6px;background:var(--bg);border-radius:3px;">
-          <div style="position:absolute;left:72%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
-        </div>
-        <div style="font-size:12px;color:var(--mid);margin-top:8px;font-style:italic;"><strong style="color:var(--ink)">Builder</strong> — Not here to debate. Here to synthesise and ship. 9% pushback means position is earned, then acted on.</div>
-      </div>
-
-      <div>
-        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:500;margin-bottom:8px;">
-          <span style="color:var(--mid)">Slow Burn</span>
-          <span style="color:var(--ink)">Fast Fire</span>
-        </div>
-        <div style="position:relative;height:6px;background:var(--bg);border-radius:3px;">
-          <div style="position:absolute;left:58%;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.2);"></div>
-        </div>
-        <div style="font-size:12px;color:var(--mid);margin-top:8px;font-style:italic;"><strong style="color:var(--ink)">Leans Fast</strong> — 214 conversations across 26 months. Consistent output, not occasional bursts. Sustainable pace.</div>
-      </div>
-
+      <div class="culture-track"><div class="culture-dot" style="left:28%"></div></div>
+      <div class="culture-verdict"><strong>Solo Processor</strong> — Arrives with conclusions. The thinking happened before the room saw it. 10pm is not a social hour.</div>
     </div>
 
-    <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div class="culture-dim">
+      <div class="culture-labels">
+        <span class="culture-label active">Needs Clarity First</span>
+        <span class="culture-label">Moves Into Fog</span>
+      </div>
+      <div class="culture-track"><div class="culture-dot" style="left:20%"></div></div>
+      <div class="culture-verdict"><strong>Needs Clarity First</strong> — Defines the problem before touching it. Ambiguity is something to resolve, not inhabit. The 36% pushback rate is partially this: closing loose definitions before they compound.</div>
+    </div>
+
+    <div class="culture-dim">
+      <div class="culture-labels">
+        <span class="culture-label">Seeks Confirmation</span>
+        <span class="culture-label active">Seeks Friction</span>
+      </div>
+      <div class="culture-track"><div class="culture-dot" style="left:78%"></div></div>
+      <div class="culture-verdict"><strong>Seeks Friction</strong> — Uses AI as a sparring partner. Does not trust answers that have not been tested. The 36% challenge rate is not difficulty — it is quality control.</div>
+    </div>
+
+    <div class="culture-dim">
+      <div class="culture-labels">
+        <span class="culture-label">Present-Focused</span>
+        <span class="culture-label active">Long-Game Thinker</span>
+      </div>
+      <div class="culture-track"><div class="culture-dot" style="left:88%"></div></div>
+      <div class="culture-verdict"><strong>Long-Game Thinker</strong> — 20 months of sustained, accelerating engagement. The thinking compounds. Attention goes to problems that matter in years, not weeks.</div>
+    </div>
+
+    <div class="culture-dim">
+      <div class="culture-labels">
+        <span class="culture-label">Breadth Collector</span>
+        <span class="culture-label active">Depth Miner</span>
+      </div>
+      <div class="culture-track"><div class="culture-dot" style="left:68%"></div></div>
+      <div class="culture-verdict"><strong>Range with depth</strong> — Scans wide but commits hard when something earns it. The 60-word average and high pushback rate both point toward someone who goes deep once engaged.</div>
+    </div>
+
+    <div class="culture-dim">
+      <div class="culture-labels">
+        <span class="culture-label active">Needs Space to Think</span>
+        <span class="culture-label">Sharpens Under Pressure</span>
+      </div>
+      <div class="culture-track"><div class="culture-dot" style="left:32%"></div></div>
+      <div class="culture-verdict"><strong>Needs Space to Think</strong> — The 10pm peak is not random. Best thinking requires the right conditions: low noise, no social overhead, room to follow an argument wherever it goes.</div>
+    </div>
+
+    <div class="culture-dim">
+      <div class="culture-labels">
+        <span class="culture-label">Shows the Working</span>
+        <span class="culture-label active">Delivers the Answer</span>
+      </div>
+      <div class="culture-track"><div class="culture-dot" style="left:72%"></div></div>
+      <div class="culture-verdict"><strong>Delivers the Answer</strong> — Leads with the conclusion. Communication is compressed and confident. The working was done before the message was written.</div>
+    </div>
+
+    <div class="culture-env">
       <div>
-        <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--green);margin-bottom:12px;">✓ Thrives in</div>
-        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--ink);">
-          <span>Ambiguous, cross-domain problems</span>
-          <span>Roles at the intersection of fields</span>
-          <span>Organisations that value synthesis over specialisation</span>
+        <div class="culture-env-title pos">✓ Thrives in</div>
+        <div class="culture-env-list">
+          <span>Environments where challenge is valued, not managed</span>
+          <span>Roles with genuine intellectual ownership</span>
+          <span>Work that is not yet settled — where the right answer matters more than the fast one</span>
         </div>
       </div>
       <div>
-        <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#c0392b;margin-bottom:12px;">✗ Drained by</div>
-        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--ink);">
-          <span>Narrow single-domain work with no lateral scope</span>
-          <span>Environments that penalise connecting the dots</span>
-          <span>Roles where the answer is already known</span>
+        <div class="culture-env-title neg">✗ Drained by</div>
+        <div class="culture-env-list">
+          <span>Consensus cultures where friction is misread as obstruction</span>
+          <span>Roles where the answer is already decided</span>
+          <span>Environments that reward agreement over accuracy</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- CAREER FIT -->
   <div class="career-card">
     <div class="career-header">
       <div class="section-title" style="margin-bottom:8px;">Where This Profile Belongs</div>
-      <div class="career-intro">Derived purely from cognitive signals — pushback rate, depth, human intelligence pattern, cross-domain fluency, stamina. No biographical detail considered. Includes roles you may not have thought of.</div>
+      <div class="career-intro">Derived purely from cognitive signals — pushback rate, message depth, nocturnal pattern, belief revision threshold. No biographical detail considered.</div>
     </div>
-
     <div class="career-roles">
-
       <div class="role-row">
         <div class="role-rank top">1</div>
         <div class="role-body">
-          <div class="role-title">Chief of Staff at a Complex Organisation <span class="role-unexpected">Unexpected</span></div>
-          <div class="role-why">The synthesiser profile — wide domain range, low reactivity, high processing depth — is the cognitive fingerprint of an outstanding Chief of Staff. This role requires someone who can hold the CEO's vision, the CFO's constraints, the team's anxieties, and the market's signals simultaneously, without distorting any of them. The 26-month consistency and 94% remote associative capacity score describe exactly that person. They do not collapse complexity. They carry it.</div>
-          <div class="role-tags">
-            <span class="role-tag match">Integrative complexity</span>
-            <span class="role-tag match">Deliberate latency</span>
-            <span class="role-tag match">Longitudinal consistency</span>
-            <span class="role-tag">Scale-ups · Foundations · Government offices</span>
-          </div>
+          <div class="role-title">Investment Analyst / Head of Due Diligence</div>
+          <div class="role-why">The job is not to find reasons to invest. It is to find the one reason not to — and then decide if it matters. At 36% pushback and a depth score of 84, this profile does that instinctively. The low question rate confirms it: the objection arrives formed, not exploratory.</div>
+          <div class="role-tags"><span class="role-tag match">Epistemic vigilance</span><span class="role-tag match">Steelmanning instinct</span><span class="role-tag">VC · PE · M&amp;A · Credit</span></div>
         </div>
-        <div class="fit-score"><strong>97</strong><span>fit score</span></div>
+        <div class="fit-score"><strong>96</strong><span>fit score</span></div>
       </div>
-
       <div class="role-row">
         <div class="role-rank top">2</div>
         <div class="role-body">
-          <div class="role-title">Innovation Strategy Lead</div>
-          <div class="role-why">Innovation is not about generating ideas — it is about seeing which ideas from one domain solve problems in another. The 93% conceptual bridge-building score and 26 months of cross-domain consistency describe someone whose professional value is exactly that transfer. They find the structural similarity across surface difference. In organisations that have siloed, this profile is the silo-breaker.</div>
-          <div class="role-tags">
-            <span class="role-tag match">Conceptual bridge-building</span>
-            <span class="role-tag match">Schema flexibility</span>
-            <span class="role-tag">Consulting · Research labs · Corporate venture</span>
-          </div>
+          <div class="role-title">Chief of Staff — Hypergrowth Company</div>
+          <div class="role-why">A CoS who challenges from conviction rather than deference is rare. The 20-month longitudinal engagement and Long-Game Thinker profile describes someone who builds institutional knowledge and acts on it — which is the actual job at a company moving faster than its own documentation.</div>
+          <div class="role-tags"><span class="role-tag match">Position crystallisation</span><span class="role-tag match">Long-game thinking</span><span class="role-tag">Series A–C · Deep tech · B2B</span></div>
         </div>
-        <div class="fit-score"><strong>93</strong><span>fit score</span></div>
+        <div class="fit-score"><strong>92</strong><span>fit score</span></div>
       </div>
-
       <div class="role-row">
         <div class="role-rank top">3</div>
         <div class="role-body">
-          <div class="role-title">Senior Researcher or Analyst</div>
-          <div class="role-why">The 22% question rate combined with low pushback and high integrative complexity is the cognitive pattern of a researcher who actually finds things. Not someone who confirms what they already believe — someone who follows the inquiry wherever it leads, absorbs fully before filtering, and arrives at conclusions that hold because the process was rigorous. That is not common in research roles. It is the whole point of them.</div>
-          <div class="role-tags">
-            <span class="role-tag match">Epistemic curiosity</span>
-            <span class="role-tag match">Deliberate latency</span>
-            <span class="role-tag">Think tanks · Policy institutes · Investment research</span>
-          </div>
+          <div class="role-title">Policy Strategist / Senior Research Lead</div>
+          <div class="role-why">Dense arguments + high pushback + nocturnal depth produces outputs that are pre-stress-tested before they leave the draft. In policy environments, that is not a personality trait. It is the entire value of the work.</div>
+          <div class="role-tags"><span class="role-tag match">Argumentative reasoning</span><span class="role-tag match">Belief revision threshold</span><span class="role-tag">Think tanks · Government · NGOs</span></div>
         </div>
-        <div class="fit-score"><strong>91</strong><span>fit score</span></div>
+        <div class="fit-score"><strong>89</strong><span>fit score</span></div>
       </div>
-
       <div class="role-row">
         <div class="role-rank">4</div>
         <div class="role-body">
-          <div class="role-title">Founder — Platforms or Networks <span class="role-unexpected">Unexpected</span></div>
-          <div class="role-why">The synthesiser does not found products. They found connections. The most defensible startups of the next decade will be built on insight that only comes from seeing across domains — identifying what a fintech knows that a logistics company needs, or what biology has solved that software engineering has not. The 94% remote associative capacity score is the founding capability for exactly that type of company.</div>
-          <div class="role-tags">
-            <span class="role-tag match">Remote associative capacity</span>
-            <span class="role-tag match">Conceptual arbitrage</span>
-            <span class="role-tag">Cross-industry platforms · Network businesses</span>
-          </div>
+          <div class="role-title">Technical Founder (0-to-1) <span class="role-unexpected">Unexpected</span></div>
+          <div class="role-why">The signals point toward someone who builds conviction without requiring the room's agreement first. That is the prerequisite for founding — not idea generation, but the willingness to hold a position under pressure while everyone else is still deciding whether to believe it.</div>
+          <div class="role-tags"><span class="role-tag match">Epistemic vigilance</span><span class="role-tag match">Long-game thinker</span><span class="role-tag">Pre-seed · B2B · Infrastructure</span></div>
         </div>
-        <div class="fit-score"><strong>88</strong><span>fit score</span></div>
+        <div class="fit-score"><strong>85</strong><span>fit score</span></div>
       </div>
-
-      <div class="role-row">
-        <div class="role-rank">✗</div>
-        <div class="role-body">
-          <div class="role-title">Where this profile does not thrive</div>
-          <div class="role-why">Deep single-domain specialisation with no lateral movement. The synthesiser's cognitive reward comes from connection across fields — roles that demand 100% focus within one narrow discipline over years will not engage this profile at depth. Not because the capability is missing, but because the environment eliminates the condition the profile needs to do its best work.</div>
-          <div class="role-tags">
-            <span class="role-tag">Narrow technical silos</span>
-            <span class="role-tag">Single-domain research</span>
-            <span class="role-tag">Roles with no strategic dimension</span>
-          </div>
-        </div>
-        <div class="fit-score"><strong>—</strong><span>avoid</span></div>
-      </div>
-
     </div>
   </div>
 
   <div class="employer-card">
     <div class="section-title">What the right employer reads</div>
-    <div class="employer-quote">
-      "Most people operate within a domain. This profile operates between them — and that is precisely where the most valuable and least solved problems live."
-    </div>
+    <div class="employer-quote">"This is the person who will find the problem your team stopped looking for — because everyone else decided six months ago there was not one."</div>
     <div class="employer-note">Derived entirely from conversation structure and behavioural metadata. No conversation content was read or stored.</div>
   </div>
 
   <div class="privacy-card">
     <div class="privacy-icon">
-      <svg width="15" height="15" fill="none" stroke="#1a3a2a" stroke-width="1.8" viewBox="0 0 24 24">
-        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-      </svg>
+      <svg width="15" height="15" fill="none" stroke="#1a3a2a" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
     </div>
-    <div class="privacy-text">
-      <strong style="color:var(--ink)">What was never seen:</strong> No conversation topics, no names, no URLs, no ideas, no projects, no personal details. Only timing patterns, message lengths, question frequency, and pushback signals were extracted.
-    </div>
+    <div class="privacy-text"><strong style="color:var(--ink)">What was never seen:</strong> No conversation topics, no names, no URLs, no ideas, no projects, no personal details. Only timing patterns, message lengths, question frequency, and pushback signals were extracted.</div>
   </div>
 
   <div class="share-row">
-    <button class="btn primary" onclick="window.print()">Download PDF</button>
-    <button class="btn secondary" onclick="copyLink()">Copy Shareable Link</button>
+    <a href="/app" class="btn primary" style="text-decoration:none;">Generate Your Profile</a>
+    <button class="btn secondary" onclick="copyLink()">Copy Link</button>
   </div>
 
 </div>
@@ -1070,37 +454,21 @@
 <script>
   window.addEventListener('load', () => {
     setTimeout(() => {
-      // Signal bars
-      document.querySelectorAll('.bar-fill').forEach(bar => {
-        bar.style.width = bar.dataset.score + '%';
-      });
-
-      // Activity bars
-      document.querySelectorAll('.ts-bar').forEach(bar => {
-        const h = parseInt(bar.dataset.h) || 0;
-        bar.style.height = Math.max(2, Math.round(h * 0.44)) + 'px';
-      });
-
-      // Integrity ring (89/100 = 89% of circumference)
+      document.querySelectorAll('.bar-fill').forEach(bar => { bar.style.width = bar.dataset.score + '%'; });
+      const bars = document.querySelectorAll('.ts-bar');
+      const maxH = Math.max(...[...bars].map(b => parseInt(b.dataset.h) || 0));
+      bars.forEach(bar => { bar.style.height = Math.max(2, Math.round((parseInt(bar.dataset.h)||0) / maxH * 44)) + 'px'; });
       const arc = document.getElementById('integrityArc');
-      if (arc) {
-        const circumference = 213.6;
-        const offset = circumference - (89 / 100) * circumference;
-        arc.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1)';
-        arc.style.strokeDashoffset = offset;
-      }
+      if (arc) { const c = 213.6; arc.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1)'; arc.style.strokeDashoffset = c - (90/100)*c; }
     }, 400);
   });
-
   function copyLink() {
     navigator.clipboard.writeText(window.location.href).then(() => {
-      const btn = document.querySelectorAll('.btn.secondary')[0];
-      const orig = btn.textContent;
+      const btn = event.target; const orig = btn.textContent;
       btn.textContent = 'Copied ✓';
       setTimeout(() => btn.textContent = orig, 2000);
     });
   }
 </script>
-
 </body>
 </html>
