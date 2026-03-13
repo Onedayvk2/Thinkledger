@@ -1322,7 +1322,8 @@ function mergeMetadata(metadataArray) {
   const nightMsgs = (mergedHourCount[22]||0)+(mergedHourCount[23]||0)+(mergedHourCount[0]||0)+(mergedHourCount[1]||0)+(mergedHourCount[2]||0);
   const totalHourMsgs = Object.values(mergedHourCount).reduce((a,b) => a+b, 0);
   const nightPct = totalHourMsgs ? Math.round((nightMsgs / totalHourMsgs) * 100) : 0;
-  const peakHourLabel = peakHour !== undefined ? (peakHour === '0' ? 'midnight' : peakHour + ':00') : 'unknown';
+  const _ph1 = parseInt(peakHour);
+  const peakHourLabel = !isNaN(_ph1) ? (_ph1 === 0 ? 'midnight' : _ph1 < 12 ? _ph1+'am' : _ph1 === 12 ? 'noon' : (_ph1-12)+'pm') : 'unknown';
 
   const depthScore = Math.min(95, Math.max(15, Math.round(avgWords * 1.4)));
   const vocabRichness = Math.min(100, Math.round(50 + (pushbackRatio + questionRatio) / 4));
@@ -1429,8 +1430,8 @@ function extractMetadata(data, platform) {
 
       if (created && !isNaN(created)) {
         timestamps.push(created);
-        hours.push(created.getHours());
-        const mk = `${created.getFullYear()}-${String(created.getMonth()+1).padStart(2,'0')}`;
+        hours.push(created.getUTCHours());
+        const mk = `${created.getUTCFullYear()}-${String(created.getUTCMonth()+1).padStart(2,'0')}`;
         monthCounts[mk] = (monthCounts[mk] || 0) + 1;
       }
 
@@ -1462,7 +1463,8 @@ function extractMetadata(data, platform) {
   const peakHour = Object.entries(hourCount).sort((a,b)=>b[1]-a[1])[0]?.[0];
   const nightMsgs = (hourCount[22]||0)+(hourCount[23]||0)+(hourCount[0]||0)+(hourCount[1]||0)+(hourCount[2]||0);
   const nightPct = hours.length ? Math.round((nightMsgs/hours.length)*100) : 0;
-  const peakHourLabel = peakHour !== undefined ? `${peakHour === '0' ? 'midnight' : peakHour + ':00'}` : 'unknown';
+  const _ph2 = parseInt(peakHour);
+  const peakHourLabel = !isNaN(_ph2) ? (_ph2 === 0 ? 'midnight' : _ph2 < 12 ? _ph2+'am' : _ph2 === 12 ? 'noon' : (_ph2-12)+'pm') : 'unknown';
 
   // Time span
   timestamps.sort((a,b)=>a-b);
